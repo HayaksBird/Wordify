@@ -108,6 +108,7 @@ class _WordTemplateState extends State<WordTemplate> {
   ///Create a new word from the updated fields
   void _submit() {
     final Word newWord = Word(
+      id: word.id,
       word: wordController.text, 
       translation: translationController.text
     );

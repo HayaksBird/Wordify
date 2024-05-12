@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/views/word_template.dart';
 import 'package:wordify/models/data_layer.dart';
+import 'package:wordify/services/word_service.dart';
 
 
 ///Show the main screen with the dictionary of words
@@ -41,13 +42,11 @@ class _MainScreenState extends State<MainScreen> {
 
 
   ///Build a list widget from the word list
+  ///itemBuilder accepts an anonymous function that basically specifies 
+  ///how exactly the list element at an index i should be displayed
   Widget _buildWordList() {
     return ListView.builder(
       itemCount: dictionary.words.length,
-      /*
-      itemBuilder accepts an anonymous function that basically specifies 
-      how exactly the list element at an index i should be displayed
-      */
       itemBuilder: (context, index) => _buildWordTile(dictionary.words[index], index)
     );
   }
@@ -79,19 +78,23 @@ class _MainScreenState extends State<MainScreen> {
         )
       )
     );
+    final Word indexedWord;
 
     if (newWord == null) return;
 
+    indexedWord = await WordService.save(newWord);
+
+    //Update the lists and reset the state
     setState(() {
       if (index != -1) {
         dictionary = Dictionary(
           words: List<Word>.from(dictionary.words)
-            ..[index] = newWord
+            ..[index] = indexedWord
         );
       } else {
         dictionary = Dictionary(
           words: List<Word>.from(dictionary.words)
-            ..add(newWord)
+            ..add(indexedWord)
         );
       }
     });
