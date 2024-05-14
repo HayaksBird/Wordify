@@ -3,8 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 ///Handles the initialization and connection to the database
 class WordifyDatabase {
-  //Create a single instance of the class (singleton)
-  static final WordifyDatabase instance = WordifyDatabase._internal();
+  static final WordifyDatabase instance = WordifyDatabase._internal();  //Create a single instance of the class (singleton)
   static Database? _database; //Single instance of the database
 
 
@@ -12,7 +11,7 @@ class WordifyDatabase {
 
 
   ///If the Database object is null, then create it by establishing the 
-  ///connection to sqlite server.
+  ///connection to the sqlite server.
   Future<Database> get database async {
     if (_database != null) {
       return _database!;

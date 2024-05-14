@@ -11,6 +11,16 @@ class Word {
   });
 
 
+  // Create a Word from a Map
+  factory Word.fromMap(Map<String, dynamic> map) {
+    return Word(
+      id: map['id'] as int,
+      word: map['word'] as String,
+      translation: map['translation'] as String,
+    );
+  }
+
+
   ///Immitate update of an object, when you actually create a new instance of it.
   Word copyWith({
     int? id,

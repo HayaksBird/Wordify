@@ -2,17 +2,6 @@ import 'package:wordify/models/data_layer.dart';
 import 'package:wordify/services/init_database.dart';
 
 class WordService {
-  ///
-  static Future<Word> save(Word word) async {
-    if (word.id == -1) {  //insert
-      return await insert(word);
-    } else {
-      await update(word);
-      return word;
-    }
-  }
-
-
   ///Insets the word into the database and returns its copy with an id present.
   static Future<Word> insert(Word word) async {
     final db = await WordifyDatabase.instance.database;
@@ -42,5 +31,15 @@ class WordService {
       'DELETE FROM words WHERE id = ?',
       [id]
     );
+  }
+
+
+  ///
+  static Future<Dictionary> getAll() async {
+    final db = await WordifyDatabase.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('words');
+    List<Word> words = List<Word>.from(maps.map((map) => Word.fromMap(map)));
+
+    return Dictionary(words: words);
   }
 }
