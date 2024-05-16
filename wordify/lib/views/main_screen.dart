@@ -15,17 +15,7 @@ class MainScreen extends StatefulWidget {
 
 
 class _MainScreenState extends State<MainScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _loadInitialData();
-  }
-
-
-  Future<void> _loadInitialData() async {
-    Dictionary initialDictionary = await WordService.getAll();
-    DictionaryProvider.of(context).value = initialDictionary;
-  }
+  bool _isInit = false;
 
 
   @override
@@ -37,11 +27,21 @@ class _MainScreenState extends State<MainScreen> {
       body: ValueListenableBuilder<Dictionary>( //Rebuild when Dictionary is changed
         valueListenable: DictionaryProvider.of(context),  //Get ValueNotifier<Dictionary>
         builder: (context, dictionary, child) { //Triggered when the ValueNotifier's value changes.
+          if (!_isInit) { _loadInitialData(DictionaryProvider.of(context)); }
           return _buildWordList(dictionary);
         },
       ),
       floatingActionButton: _buildAddWordButton()
     );
+  }
+
+
+  ///
+  Future<void> _loadInitialData(ValueNotifier<Dictionary> notifier) async {
+    _isInit = true;
+
+    Dictionary initialDictionary = await WordService.getAll();
+    notifier.value = initialDictionary;
   }
 
 
