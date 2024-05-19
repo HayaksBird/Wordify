@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/models/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
 
 ///Demonstarte the word editing template

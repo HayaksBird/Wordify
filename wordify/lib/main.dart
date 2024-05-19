@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/models/data_layer.dart';
-import 'package:wordify/state/dictionary_provider.dart';
-import 'package:wordify/views/main_screen.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_provider.dart';
+import 'package:wordify/features/word_tree/presentation/pages/main_screen.dart';
 
 
 void main() {

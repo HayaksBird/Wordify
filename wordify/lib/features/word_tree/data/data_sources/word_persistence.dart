@@ -1,9 +1,9 @@
-import 'package:wordify/models/data_layer.dart';
-import 'package:wordify/services/init_database.dart';
+import 'package:wordify/features/word_tree/data/model/word_model.dart';
+import 'package:wordify/features/word_tree/data/data_sources/init_database.dart';
 
-class WordService {
+class WordPersistence {
   ///Insets the word into the database and returns its copy with an id present.
-  static Future<Word> insert(Word word) async {
+  static Future<WordModel> insert(WordModel word) async {
     final db = await WordifyDatabase.instance.database;
     final int id = await db.rawInsert(
       'INSERT INTO words (word, translation) VALUES (?, ?)',
@@ -15,7 +15,7 @@ class WordService {
 
 
   ///
-  static Future<void> update(Word word) async {
+  static Future<void> update(WordModel word) async {
     final db = await WordifyDatabase.instance.database;
     await db.rawUpdate(
       'UPDATE words SET word = ?, translation = ? WHERE id = ?',
@@ -35,11 +35,11 @@ class WordService {
 
 
   ///
-  static Future<Dictionary> getAll() async {
+  static Future<List<WordModel>> getAll() async {
     final db = await WordifyDatabase.instance.database;
     final List<Map<String, dynamic>> maps = await db.query('words');
-    List<Word> words = List<Word>.from(maps.map((map) => Word.fromMap(map)));
+    List<WordModel> words = List<WordModel>.from(maps.map((map) => WordModel.fromMap(map)));
 
-    return Dictionary(words: words);
+    return words;
   }
 }

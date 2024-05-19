@@ -1,4 +1,4 @@
-import 'package:wordify/models/word.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 ///Contains all words
 class Dictionary {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/state/dictionary_provider.dart';
-import 'package:wordify/views/word_template.dart';
-import 'package:wordify/models/data_layer.dart';
-import 'package:wordify/services/word_service.dart';
+import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_provider.dart';
+import 'package:wordify/features/word_tree/presentation/pages/word_template.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
 
 ///Show the main screen with the dictionary of words
@@ -15,6 +15,7 @@ class MainScreen extends StatefulWidget {
 
 
 class _MainScreenState extends State<MainScreen> {
+  final WordService wordService = WordService();
   bool _isInit = false;
 
 
@@ -40,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadInitialData(ValueNotifier<Dictionary> notifier) async {
     _isInit = true;
 
-    Dictionary initialDictionary = await WordService.getAll();
+    Dictionary initialDictionary = await wordService.getAllWords();
     notifier.value = initialDictionary;
   }
 
@@ -107,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (newWord == null) return;
 
-    final Word indexedWord = await WordService.insert(newWord);
+    final Word indexedWord = await wordService.addWord(newWord);
 
     //Change the value of the notifier, so that the widget gets redrawn.
     dictionaryNotifier.value = Dictionary(
@@ -126,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (newWord == null) return;
 
-    WordService.update(newWord);
+    wordService.updateWord(newWord);
 
     dictionaryNotifier.value =  Dictionary(
       words: List<Word>.from(currentDictionary.words)

@@ -1,19 +1,21 @@
-class Word {
-  final int id;
-  final String word;
-  final String translation;
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
-
-  const Word({
-    this.id = -1,
-    this.word = '',
-    this.translation = ''
+class WordModel extends Word {
+  const WordModel({
+    super.id,
+    super.word,
+    super.translation
   });
 
 
+  ///
+  WordModel.fromWord(Word word)
+      : super(id: word.id, word: word.word, translation: word.translation);
+
+
   // Create a Word from a Map
-  factory Word.fromMap(Map<String, dynamic> map) {
-    return Word(
+  factory WordModel.fromMap(Map<String, dynamic> map) {
+    return WordModel(
       id: map['id'] as int,
       word: map['word'] as String,
       translation: map['translation'] as String,
@@ -22,12 +24,12 @@ class Word {
 
 
   ///Immitate update of an object, when you actually create a new instance of it.
-  Word copyWith({
+  WordModel copyWith({
     int? id,
     String? word,
     String? translation,
   }) {
-    return Word(
+    return WordModel(
       id: id ?? this.id,
       word: word ?? this.word,
       translation: translation ?? this.translation,

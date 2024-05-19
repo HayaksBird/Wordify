@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/models/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
 
 ///Used to pass down the tree an instance of Dictionary.
