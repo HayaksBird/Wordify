@@ -105,7 +105,7 @@ class _WordTemplateState extends State<WordTemplate> {
   }
 
 
-  ///Create a new word from the updated fields
+  ///Create a new word from the updated fields.
   void _submit() {
     final Word newWord = Word(
       id: word.id,
@@ -117,7 +117,7 @@ class _WordTemplateState extends State<WordTemplate> {
   }
 
 
-  ///
+  ///Return back without editing the word.
   void _return() {
     Navigator.pop(context);
   }

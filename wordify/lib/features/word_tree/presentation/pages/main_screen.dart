@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_provider.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/pages/word_template.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
@@ -15,21 +14,42 @@ class MainScreen extends StatefulWidget {
 
 
 class _MainScreenState extends State<MainScreen> {
-  final WordService wordService = WordService();
-  bool _isInit = false;
+  final _bloc = DictionaryBloc();
 
 
+  ///
+  @override
+  void initState() {
+    super.initState();
+    _bloc.loadInitialData(); 
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc.dispose();
+  }
+
+
+  ///
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wordify'),
       ),
-      body: ValueListenableBuilder<Dictionary>( //Rebuild when Dictionary is changed
-        valueListenable: DictionaryProvider.of(context),  //Get ValueNotifier<Dictionary>
-        builder: (context, dictionary, child) { //Triggered when the ValueNotifier's value changes.
-          if (!_isInit) { _loadInitialData(DictionaryProvider.of(context)); }
-          return _buildWordList(dictionary);
+      ///The body listens to the stream, which will return the updated istance of the dictionary.
+      ///After the new istance is received from the stream, the state of the list widget will
+      ///be updated.
+      body: StreamBuilder<Dictionary>(
+        stream: _bloc.dictionaryStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+             return const Center(child: CircularProgressIndicator());
+          } else {
+            return _buildWordList(snapshot.data!);
+          }
         },
       ),
       floatingActionButton: _buildAddWordButton()
@@ -37,20 +57,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 
-  ///
-  Future<void> _loadInitialData(ValueNotifier<Dictionary> notifier) async {
-    _isInit = true;
-
-    Dictionary initialDictionary = await wordService.getAllWords();
-    notifier.value = initialDictionary;
-  }
-
-
   ///Add a new word
   Widget _buildAddWordButton() {
     return FloatingActionButton(
       onPressed: () {
-        _createWord(context);  //Add a new element
+        _openWordTemplate();  //Add a new element
       },
       child: const Icon(Icons.add, color: Color.fromARGB(255, 255, 255, 255))
     );
@@ -73,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildWordTile(Word word, int index) {
     return InkWell (
       onTap: () { //If clicked, open the corresponding template
-        _updateWord(context, index);
+        _openWordTemplate(word, index);
       },
       child: ListTile (
         title: Text(word.word),
@@ -84,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
 
 
   ///
-  Future<Word?> _openWordTemplate([Word? word]) async {
+  Future<void> _openWordTemplate([Word? word, int? index]) async {
     //Specify that the pushed route will return an instance of Word
     final Word? newWord = await Navigator.of(context).push<Word>(
       MaterialPageRoute(
@@ -94,44 +105,7 @@ class _MainScreenState extends State<MainScreen> {
       )
     );
 
-    return newWord;
-  }
-
-
-  ///Add a new word to the dictionary.
-  Future<void> _createWord(BuildContext context) async {
-    ValueNotifier<Dictionary> dictionaryNotifier = DictionaryProvider.of(context);
-    Dictionary currentDictionary = dictionaryNotifier.value;
-
-    //Specify that the pushed route will return an instance of Word
-    final Word? newWord = await _openWordTemplate();
-
-    if (newWord == null) return;
-
-    final Word indexedWord = await wordService.addWord(newWord);
-
-    //Change the value of the notifier, so that the widget gets redrawn.
-    dictionaryNotifier.value = Dictionary(
-        words: List<Word>.from(currentDictionary.words)
-          ..add(indexedWord)
-      );
-  }
-
-
-  ///Update the word.
-  Future<void> _updateWord(BuildContext context, int index) async {
-    ValueNotifier<Dictionary> dictionaryNotifier = DictionaryProvider.of(context);
-    Dictionary currentDictionary = dictionaryNotifier.value;
-
-    final Word? newWord = await _openWordTemplate(currentDictionary.words[index]);
-
-    if (newWord == null) return;
-
-    wordService.updateWord(newWord);
-
-    dictionaryNotifier.value =  Dictionary(
-      words: List<Word>.from(currentDictionary.words)
-        ..[index] = newWord
-    );
+    if (word == null) { _bloc.createWord(newWord); }
+    else { _bloc.updateWord(newWord, index!); }
   }
 }

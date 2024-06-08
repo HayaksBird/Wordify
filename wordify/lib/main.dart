@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_provider.dart';
 import 'package:wordify/features/word_tree/presentation/pages/main_screen.dart';
 
 
@@ -22,10 +20,7 @@ class Wordify extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //Set the DictionaryProvider widget in the tree and set its notifier
-      home: DictionaryProvider( 
-        notifier: ValueNotifier<Dictionary>(const Dictionary()),
-        child: const MainScreen(),
-      ),
+      home: const MainScreen()
     );
   }
 }
