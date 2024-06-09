@@ -45,7 +45,14 @@ class WordRepositoryImpl implements WordRepository {
   
 
   @override
-  Future<void> updateWord(Word word) async {
-    WordPersistence.update(WordModel.fromWord(word));
+  Future<Word> updateWord(Word oldWord, Word newWord) async {
+    WordModel updatedWord = WordModel(
+      id: (oldWord as WordModel).id,
+      word: newWord.word,
+      translation: newWord.translation
+    );
+
+    WordPersistence.update(updatedWord);
+    return updatedWord;
   }
 }

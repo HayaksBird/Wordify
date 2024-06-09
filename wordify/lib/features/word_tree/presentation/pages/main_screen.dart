@@ -94,18 +94,15 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 
-  ///
-  Future<void> _openWordTemplate([Word? word, int? index]) async {
-    //Specify that the pushed route will return an instance of Word
-    final Word? newWord = await Navigator.of(context).push<Word>(
+  ///Open the word template page
+  void _openWordTemplate([Word? word, int? index]) {
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WordTemplate(
-          word: (word ?? const Word()) 
+          word: (word ?? const Word()),
+          index: index 
         )
-      )
+      ),
     );
-
-    if (word == null) { _bloc.createWord(newWord); }
-    else { _bloc.updateWord(newWord, index!); }
   }
 }

@@ -38,12 +38,20 @@ class WordifyDatabase {
 
   ///Create the interior of the database if it does not exist.
   Future<void> _createDatabase(Database db, int version) async {
-    return await db.execute('''
-        CREATE TABLE words (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          word TEXT NOT NULL UNIQUE,
-          translation TEXT NOT NULL
-        )
-      ''');
+    await db.execute('''
+      CREATE TABLE words (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word TEXT NOT NULL UNIQUE,
+        translation TEXT NOT NULL
+      )
+    ''');
+
+    // Insert sample data into words table
+    await db.execute('''
+      INSERT INTO words (word, translation) VALUES 
+        ('Kirche', 'Church'),
+        ('Stadt', 'City'),
+        ('Essen', 'To eat')
+    ''');
   }
 }

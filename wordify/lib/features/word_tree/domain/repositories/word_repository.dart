@@ -5,6 +5,6 @@ abstract class WordRepository {
   Future<Word> addWord(Word word);
   Future<Word> getWord(int id);
   Future<Dictionary> getAllWords();
-  Future<void> updateWord(Word word);
+  Future<Word> updateWord(Word oldWord, Word newWord);
   Future<void> deleteWord(int id);
 }

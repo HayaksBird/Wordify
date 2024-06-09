@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 
 ///Demonstarte the word editing template
 class WordTemplate extends StatefulWidget {
   final Word word;
+  final int? index;
 
-  const WordTemplate({super.key, required this.word});
+  const WordTemplate({super.key, required this.word, this.index});
 
   @override
   State<WordTemplate> createState() => _WordTemplateState();
@@ -14,7 +16,9 @@ class WordTemplate extends StatefulWidget {
 
 
 class _WordTemplateState extends State<WordTemplate> {
+  final _bloc = DictionaryBloc();
   late final Word word;
+  late final int? index;
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
 
@@ -24,6 +28,7 @@ class _WordTemplateState extends State<WordTemplate> {
   void initState() {
     super.initState();
     word = widget.word;
+    index = widget.index;
   }
 
 
@@ -108,12 +113,17 @@ class _WordTemplateState extends State<WordTemplate> {
   ///Create a new word from the updated fields.
   void _submit() {
     final Word newWord = Word(
-      id: word.id,
       word: wordController.text, 
       translation: translationController.text
     );
 
-    Navigator.pop(context, newWord);
+    if (index == null) {
+      _bloc.createWord(newWord);
+    } else {
+      _bloc.updateWord(word, newWord, index!);
+    }
+ 
+    Navigator.pop(context);
   }
 
 

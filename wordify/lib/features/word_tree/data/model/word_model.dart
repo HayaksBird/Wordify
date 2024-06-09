@@ -1,16 +1,21 @@
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
+///Represents the database table row as an object.
+///Used for ORM
 class WordModel extends Word {
+  final int id;
+  
+
   const WordModel({
-    super.id,
+    required this.id,
     super.word,
     super.translation
   });
 
 
   ///
-  WordModel.fromWord(Word word)
-      : super(id: word.id, word: word.word, translation: word.translation);
+  WordModel.fromWord(Word word, {this.id = -1})
+      : super(word: word.word, translation: word.translation);
 
 
   // Create a Word from a Map

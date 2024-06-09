@@ -6,9 +6,18 @@ import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
 ///BLoC class for the main screen. It serves as an intermediary between
 ///the domain and the presentation.
 class DictionaryBloc {
+  static final DictionaryBloc _instance = DictionaryBloc._internal();
   late Dictionary dictionary;
   final _dictionaryController = StreamController<Dictionary>(); //StreamController for output
   final WordService wordService = WordService();
+
+
+  factory DictionaryBloc() {
+    return _instance;
+  }
+
+
+  DictionaryBloc._internal();
 
 
   void dispose() {
@@ -40,14 +49,14 @@ class DictionaryBloc {
 
 
   ///Update the word.
-  Future<void> updateWord(Word? word, int index) async {
-    if (word == null) return;
+  Future<void> updateWord(Word? oldWord, Word? newWord, int index) async {
+    if (oldWord == null || newWord == null) return;
 
-    wordService.updateWord(word);
+    final Word updatedWord = await wordService.updateWord(oldWord, newWord);
 
     dictionary = Dictionary(
       words: List<Word>.from(dictionary.words)
-        ..[index] = word
+        ..[index] = updatedWord
     );
     _dictionaryController.sink.add(dictionary);
   }

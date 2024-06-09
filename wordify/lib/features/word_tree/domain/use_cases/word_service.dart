@@ -16,7 +16,7 @@ class WordService {
   }
 
 
-  void updateWord(Word word) {
-    wordRepo.updateWord(word);
+  Future<Word> updateWord(Word oldWord, Word newWord) {
+    return wordRepo.updateWord(oldWord, newWord);
   }
 }
