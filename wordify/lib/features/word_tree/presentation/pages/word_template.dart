@@ -4,6 +4,7 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 
 
 ///Demonstarte the word editing template
+@Deprecated("")
 class WordTemplate extends StatefulWidget {
   final Word word;
   final int? index;
@@ -118,9 +119,9 @@ class _WordTemplateState extends State<WordTemplate> {
     );
 
     if (index == null) {
-      _bloc.createWord(newWord);
+      //_bloc.createWord(newWord);
     } else {
-      _bloc.updateWord(word, newWord, index!);
+      //_bloc.updateWord(word, newWord, index!);
     }
  
     Navigator.pop(context);

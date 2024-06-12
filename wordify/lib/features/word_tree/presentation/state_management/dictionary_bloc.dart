@@ -1,15 +1,14 @@
 import 'dart:async';
-import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
+import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
 
 ///BLoC class for the main screen. It serves as an intermediary between
 ///the domain and the presentation.
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
-  late Dictionary dictionary;
-  final _dictionaryController = StreamController<Dictionary>(); //StreamController for output
-  final WordService wordService = WordService();
+  final _foldersInViewController = StreamController<List<Folder>>(); //StreamController for output
+  final _activeFoldersController = StreamController<List<Folder>>(); //StreamController for output 
+  final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
   factory DictionaryBloc() {
@@ -21,47 +20,42 @@ class DictionaryBloc {
 
 
   void dispose() {
-    _dictionaryController.close();
+    _foldersInViewController.close();
+    _activeFoldersController.close();
   }
 
 
-  ///Load the initial words from the database.
-  Future<void> loadInitialData() async {
-    dictionary =  await wordService.getAllWords();
-    _dictionaryController.sink.add(dictionary);
+  Future<void> loadFolders() async {
+    _foldersInViewController.sink.add(await _dictionaryManager.getFolderList());
   }
 
 
-  ///Add a new word to the dictionary.
-  ///The updated dictionary is added to the sink, which
-  ///will notify and update the widgets that are dependent on it. 
-  Future<void> createWord(Word? word) async {
-    if (word == null) return;
+  ///If the folder is not activated, activate it; else ignore.
+  ///Activate the state of words list and folders list.
+  ///The state for folders list must also be updated since the
+  //array itlsef is updated.
+  Future<void> accessFolder(Folder folder) async {
+    bool wasActivated = await _dictionaryManager.activateFolder(folder);
 
-    final Word indexedWord = await wordService.addWord(word);
-
-    dictionary = Dictionary(
-      words: List<Word>.from(dictionary.words)
-        ..add(indexedWord)
-    );
-    _dictionaryController.sink.add(dictionary);
+    if (wasActivated) {
+      _activeFoldersController.sink.add(_dictionaryManager.activeFolders);
+      _foldersInViewController.sink.add(_dictionaryManager.foldersInView);
+    }
   }
 
 
-  ///Update the word.
-  Future<void> updateWord(Word? oldWord, Word? newWord, int index) async {
-    if (oldWord == null || newWord == null) return;
+  Future<void> closeFolder(Folder folder) async {
+    bool wasClosed = await _dictionaryManager.deactivateFolder(folder);
 
-    final Word updatedWord = await wordService.updateWord(oldWord, newWord);
-
-    dictionary = Dictionary(
-      words: List<Word>.from(dictionary.words)
-        ..[index] = updatedWord
-    );
-    _dictionaryController.sink.add(dictionary);
+    if (wasClosed) {
+      _activeFoldersController.sink.add(_dictionaryManager.activeFolders);
+    }
   }
 
 
   ///Get the output stream
-  Stream<Dictionary> get dictionaryStream => _dictionaryController.stream;
+  Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
+
+
+  Stream<List<Folder>> get activeFolders => _activeFoldersController.stream;
 }

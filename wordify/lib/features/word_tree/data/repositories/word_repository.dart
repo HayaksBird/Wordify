@@ -1,3 +1,4 @@
+import 'package:wordify/features/word_tree/data/model/folder_model.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/data/model/word_model.dart';
 import 'package:wordify/features/word_tree/domain/repositories/word_repository.dart';
@@ -7,7 +8,7 @@ import 'package:wordify/features/word_tree/data/data_sources/word_persistence.da
 ///database operations.
 class WordRepositoryImpl implements WordRepository {
   //Singleton
-  static final WordRepositoryImpl _instance = WordRepositoryImpl._privateConstructor();
+  static final WordRepositoryImpl _instance = WordRepositoryImpl._internal();
 
 
   factory WordRepositoryImpl() {
@@ -15,39 +16,26 @@ class WordRepositoryImpl implements WordRepository {
   }
 
 
-  WordRepositoryImpl._privateConstructor();
+  WordRepositoryImpl._internal();
 
 
   @override
-  Future<Word> addWord(Word word) async {
-    return WordPersistence.insert(WordModel.fromWord(word));
+  Future<Word> addWord(Folder folder, Word word) async {
+    return WordPersistence.insert(WordModel.fromWord(word), (folder as FolderModel).id);
   }
 
 
   @override
-  Future<void> deleteWord(int id) async{
-    WordPersistence.delete(id);
-  }
-
-
-  @override
-  Future<Dictionary> getAllWords() async{
-    List<WordModel> words = await WordPersistence.getAll();
-    return Dictionary(words : words);
-  }
-
-
-  @override
-  Future<Word> getWord(int id) {
-    // TODO: implement getWord
-    throw UnimplementedError();
+  Future<void> deleteWord(Word word) async{
+    WordPersistence.delete((word as WordModel).id);
   }
   
 
   @override
   Future<Word> updateWord(Word oldWord, Word newWord) async {
-    WordModel updatedWord = WordModel(
-      id: (oldWord as WordModel).id,
+    WordModel oldWordModel = oldWord as WordModel;
+    
+    WordModel updatedWord = oldWordModel.copyWith(
       word: newWord.word,
       translation: newWord.translation
     );

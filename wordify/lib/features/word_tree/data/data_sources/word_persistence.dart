@@ -3,11 +3,12 @@ import 'package:wordify/features/word_tree/data/data_sources/init_database.dart'
 
 class WordPersistence {
   ///Insets the word into the database and returns its copy with an id present.
-  static Future<WordModel> insert(WordModel word) async {
+  static Future<WordModel> insert(WordModel word, int folderId) async {
     final db = await WordifyDatabase.instance.database;
+
     final int id = await db.rawInsert(
-      'INSERT INTO words (word, translation) VALUES (?, ?)',
-      [word.word, word.translation]
+      'INSERT INTO words (folder_id, word, translation) VALUES (?, ?, ?)',
+      [folderId, word.word, word.translation]
     );
 
     return word.copyWith(id: id);
@@ -17,6 +18,7 @@ class WordPersistence {
   ///
   static Future<void> update(WordModel word) async {
     final db = await WordifyDatabase.instance.database;
+
     await db.rawUpdate(
       'UPDATE words SET word = ?, translation = ? WHERE id = ?',
       [word.word, word.translation, word.id]
@@ -27,6 +29,7 @@ class WordPersistence {
   ///
   static Future<void> delete(int id) async {
     final db = await WordifyDatabase.instance.database;
+
     await db.rawDelete(
       'DELETE FROM words WHERE id = ?',
       [id]
@@ -35,8 +38,24 @@ class WordPersistence {
 
 
   ///
+  static Future<List<WordModel>> getWordsOfFolder(int folderId) async {
+    final db = await WordifyDatabase.instance.database;
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'words',
+      where: 'folder_id = ?',
+      whereArgs: [folderId],
+    );
+    List<WordModel> words = List<WordModel>.from(maps.map((map) => WordModel.fromMap(map)));
+
+    return words;
+  }
+
+
+  ///
   static Future<List<WordModel>> getAll() async {
     final db = await WordifyDatabase.instance.database;
+    
     final List<Map<String, dynamic>> maps = await db.query('words');
     List<WordModel> words = List<WordModel>.from(maps.map((map) => WordModel.fromMap(map)));
 

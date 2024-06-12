@@ -6,13 +6,8 @@ class WordService {
   final WordRepository wordRepo = WordRepositoryImpl();
 
 
-  Future<Word> addWord(Word word) async {
-    return wordRepo.addWord(word);
-  }
-
-
-  Future<Dictionary> getAllWords() async {
-    return wordRepo.getAllWords();
+  Future<Word> addWord(Folder folder, Word word) async {
+    return wordRepo.addWord(folder, word);
   }
 
 
