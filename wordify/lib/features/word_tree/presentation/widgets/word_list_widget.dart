@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/folder_content_widget.dart';
@@ -39,13 +40,9 @@ class _WordListWidgetState extends State<WordListWidget> {
 
 
   ///
-  Widget _buildWordsTile(ExpandedFolder folder) {    
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minHeight: 100.0, // Set a minimum height if needed
-        maxHeight: 500.0, // Set a maximum height to constrain the size
-      ),
-      child: FolderContentWidget(folder: folder),
+  Widget _buildWordsTile(ExpandedFolder folder) {
+    return FolderContentTemplate(
+      folderContent: FolderContentWidget(folder: folder)
     );
   }
 }

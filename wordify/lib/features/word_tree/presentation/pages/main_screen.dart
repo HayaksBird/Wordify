@@ -5,6 +5,7 @@ import 'package:wordify/features/word_tree/presentation/widgets/folder_list_widg
 import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
 
 
+///
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
@@ -12,15 +13,15 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
+      body: const Row(
         children: [
           Expanded( //Folders column
-            flex: 35,
-            child: _folderColumn()
+            flex: 25,
+            child: FolderListWidget()
           ),
           Expanded( //Words column
-            flex: 65,
-            child: _wordColumn()
+            flex: 75,
+            child: WordListWidget()
           )
         ]
       ),
@@ -28,21 +29,6 @@ class MainScreen extends StatelessWidget {
         onPressed: () => _openWordTemplate(context)
       ),
     );
-  }
-
-
-  ///
-  Widget _folderColumn() {
-    return const Material(
-      color: Color.fromARGB(255, 194, 152, 227),
-      child: FolderListWidget()
-    );
-  }
-
-
-  ///
-  Widget _wordColumn() {
-    return const WordListWidget();
   }
 
 

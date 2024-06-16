@@ -33,15 +33,18 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Folder>>(
-      stream: _bloc.foldersInView,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          return _buildFolderList(snapshot.data!);
+    return Material(
+      color:  const Color.fromARGB(255, 194, 152, 227),
+      child: StreamBuilder<List<Folder>>(
+        stream: _bloc.foldersInView,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return _buildFolderList(snapshot.data!);
+          }
         }
-      }
+      ),
     );
   }
 

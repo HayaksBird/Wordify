@@ -41,3 +41,34 @@ class FolderHeader extends StatelessWidget {
     );
   }
 }
+
+
+///
+class FolderContentTemplate extends StatelessWidget {
+  final Widget folderContent;
+
+
+  const FolderContentTemplate({super.key, required this.folderContent});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color.fromARGB(255, 194, 152, 227),
+      child: FractionallySizedBox(
+        widthFactor: 0.95,
+        alignment: Alignment.centerRight,
+        child: Container(
+          color: Colors.white,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: 100.0, // Set a minimum height
+              maxHeight: 500.0, // Set a maximum height to constrain the size
+            ),
+            child: folderContent,
+          ),
+        ),
+      ),
+    );
+  }
+}

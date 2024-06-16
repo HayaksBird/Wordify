@@ -64,34 +64,3 @@ class ChooseItemButton extends DropdownButton<Folder> {
         }).toList(),
       );
 }
-
-
-
-///
-class ChooseItemButton1 extends StatelessWidget {
-  final List<Folder> items;
-  Folder? selectedItem;
-  final ValueChanged<Folder?> onChanged;
-
-  ChooseItemButton1({
-    super.key,
-    required this.items,
-    Folder? selectedItem, // Change this to accept a nullable Folder
-    required this.onChanged,
-  }) : selectedItem = items.isNotEmpty ? items.first : null; // Use initializer list to set selectedItem
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<Folder>(
-      hint: const Text("Select a Folder"),
-      value: selectedItem,
-      items: items.map<DropdownMenuItem<Folder>>((Folder folder) {
-          return DropdownMenuItem<Folder>(
-            value: folder,
-            child: Text(folder.name)
-          );
-        }).toList(),
-      onChanged: onChanged,
-    );
-  }
-}
