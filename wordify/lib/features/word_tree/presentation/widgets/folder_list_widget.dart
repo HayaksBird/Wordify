@@ -3,6 +3,8 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 
+///Present the list of type FolderContentWidget,
+///showing all words in an active folder list.
 class FolderListWidget extends StatefulWidget {
   const FolderListWidget({super.key});
 
@@ -22,7 +24,14 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   }
 
 
-   @override
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Folder>>(
       stream: _bloc.foldersInView,

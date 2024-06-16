@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ///
 class FolderHeader extends StatelessWidget {
   final String name;
-  final void Function()? closePressed;
+  final VoidCallback closePressed;
 
 
   const FolderHeader({

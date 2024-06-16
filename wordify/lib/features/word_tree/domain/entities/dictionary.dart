@@ -1,14 +1,29 @@
+import 'dart:collection';
+
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 ///Contains all words
 class Dictionary {
-  final List<Folder> foldersInView;
-  final List<Folder> activeFolders; //Folders that are currently active
+  List<Folder> foldersInView;
+  List<ExpandedFolder> activeFolders; //Folders that are currently active
+  HashMap<String, ExpandedFolder> cachedFolders;
 
 
-  ///The List is immutable, so it won't be accidentally updated.
-  const Dictionary({
-    this.foldersInView = const [],
-    this.activeFolders = const []
-  });
+  Dictionary({
+    List<Folder>? foldersInView,
+    List<ExpandedFolder>? activeFolders,
+    HashMap<String, ExpandedFolder>? cachedFolders,
+  })  : foldersInView = foldersInView ?? [],
+        activeFolders = activeFolders ?? [],
+        cachedFolders = cachedFolders ?? HashMap<String, ExpandedFolder>();
+
+
+  ///
+  void updateActiveFolderList(ExpandedFolder newFolder) {
+    for (int i = 0; i < activeFolders.length; i++) {
+      if (activeFolders[i].name == newFolder.name) {
+        activeFolders[i] = newFolder; 
+      }
+    }
+  }
 }

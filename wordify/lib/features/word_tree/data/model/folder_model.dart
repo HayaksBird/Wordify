@@ -1,6 +1,6 @@
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
-class FolderModel extends Folder {
+class FolderModel extends ExpandedFolder {
   final int id;
 
 
@@ -20,7 +20,7 @@ class FolderModel extends Folder {
 
 
   FolderModel.fromFolder(Folder folder, {this.id = -1})
-      : super(name: folder.name, words: folder.words);
+      : super(name: folder.name);
 
 
   ///Immitate update of an object, when you actually create a new instance of it.

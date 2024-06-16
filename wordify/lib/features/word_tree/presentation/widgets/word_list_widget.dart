@@ -16,7 +16,7 @@ class _WordListWidgetState extends State<WordListWidget> {
   
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Folder>>(
+    return StreamBuilder<List<ExpandedFolder>>(
       stream: _bloc.activeFolders,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -30,7 +30,7 @@ class _WordListWidgetState extends State<WordListWidget> {
 
 
   ///
-  Widget _buildAccessedFoldersTiles(List<Folder> activeFolders) {
+  Widget _buildAccessedFoldersTiles(List<ExpandedFolder> activeFolders) {
     return ListView.builder(
       itemCount: activeFolders.length,
       itemBuilder: (context, index) => _buildWordsTile(activeFolders[index])
@@ -39,7 +39,7 @@ class _WordListWidgetState extends State<WordListWidget> {
 
 
   ///
-  Widget _buildWordsTile(Folder folder) {    
+  Widget _buildWordsTile(ExpandedFolder folder) {    
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minHeight: 100.0, // Set a minimum height if needed

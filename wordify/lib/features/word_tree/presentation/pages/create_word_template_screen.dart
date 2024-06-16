@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 
 ///Demonstarte the word editing template
-@Deprecated("")
-class WordTemplate extends StatefulWidget {
-  final Word word;
-  final int? index;
+class CreateWordTemplate extends StatefulWidget {
+  const CreateWordTemplate({super.key});
 
-  const WordTemplate({super.key, required this.word, this.index});
 
   @override
-  State<WordTemplate> createState() => _WordTemplateState();
+  State<CreateWordTemplate> createState() => _CreateWordTemplateState();
 }
 
 
-class _WordTemplateState extends State<WordTemplate> {
-  final _bloc = DictionaryBloc();
+class _CreateWordTemplateState extends State<CreateWordTemplate> {
+  Folder? storageFolder;
   late final Word word;
-  late final int? index;
+  final _bloc = DictionaryBloc();
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
 
@@ -28,8 +26,8 @@ class _WordTemplateState extends State<WordTemplate> {
   @override
   void initState() {
     super.initState();
-    word = widget.word;
-    index = widget.index;
+    word = const Word();
+    _bloc.loadFolders();
   }
 
 
@@ -39,8 +37,25 @@ class _WordTemplateState extends State<WordTemplate> {
     return Scaffold(
       body: Column (
         children: [
-          Expanded (
-            child: _buildFieldList()
+          Expanded (child: _buildFieldList()),
+
+          StreamBuilder<List<Folder>>(
+            stream: _bloc.foldersInView,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox.shrink();
+              } else {
+                return ChooseItemButton(
+                  items: snapshot.data!,
+                  selectedItem: storageFolder,
+                  onChanged: (Folder? newFolder) {
+                    setState(() {
+                      storageFolder = newFolder;
+                    });
+                  },
+                );
+              }
+            }
           ),
 
           Padding(
@@ -48,41 +63,13 @@ class _WordTemplateState extends State<WordTemplate> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildReturnButton(),
-                _buildSubmitbutton()
+                ReturnButton(onPressed: _return),
+                SubmitButton(onPressed: _submit)
               ]
             )
           )
         ]
       )
-    );
-  }
-
-
-  ///
-  Widget _buildSubmitbutton() {
-    return ElevatedButton (
-      style: ElevatedButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      onPressed: _submit,
-      child: const Text('Submit')
-    );
-  }
-
-
-  ///
-  Widget _buildReturnButton() {
-    return TextButton(
-      style: TextButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      onPressed: _return,
-      child: const Text('Return')
     );
   }
 
@@ -118,11 +105,7 @@ class _WordTemplateState extends State<WordTemplate> {
       translation: translationController.text
     );
 
-    if (index == null) {
-      //_bloc.createWord(newWord);
-    } else {
-      //_bloc.updateWord(word, newWord, index!);
-    }
+    _bloc.addNewWord(storageFolder!, newWord);
  
     Navigator.pop(context);
   }

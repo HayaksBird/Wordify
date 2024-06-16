@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
 
-///BLoC class for the main screen. It serves as an intermediary between
-///the domain and the presentation.
+///BLoC class to work with the dictionary. It serves as an intermediary between
+///the domain and the UI.
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
-  final _foldersInViewController = StreamController<List<Folder>>(); //StreamController for output
-  final _activeFoldersController = StreamController<List<Folder>>(); //StreamController for output 
+  final _foldersInViewController = StreamController<List<Folder>>.broadcast(); //StreamController for output
+  final _activeFoldersController = StreamController<List<ExpandedFolder>>(); //StreamController for output 
   final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
@@ -26,7 +26,7 @@ class DictionaryBloc {
 
 
   Future<void> loadFolders() async {
-    _foldersInViewController.sink.add(await _dictionaryManager.getFolderList());
+    _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
   }
 
 
@@ -38,18 +38,34 @@ class DictionaryBloc {
     bool wasActivated = await _dictionaryManager.activateFolder(folder);
 
     if (wasActivated) {
-      _activeFoldersController.sink.add(_dictionaryManager.activeFolders);
-      _foldersInViewController.sink.add(_dictionaryManager.foldersInView);
+      _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
     }
   }
 
 
-  Future<void> closeFolder(Folder folder) async {
+  ///Deactivate the folder that is activated.
+  Future<void> closeFolder(ExpandedFolder folder) async {
     bool wasClosed = await _dictionaryManager.deactivateFolder(folder);
 
     if (wasClosed) {
-      _activeFoldersController.sink.add(_dictionaryManager.activeFolders);
+      _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
     }
+  }
+
+
+  ///Add new word to a folder.
+  Future<void> addNewWord(Folder folder, Word word) async {
+    await _dictionaryManager.addNewWord(folder, word);
+
+    _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+  }
+
+
+  ///Update the word in a folder.
+  Future<void> updateWord(ExpandedFolder folder, Word oldWord, Word newWord) async {
+    await _dictionaryManager.updateWord(folder, oldWord, newWord);
+
+    _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
   }
 
 
@@ -57,5 +73,5 @@ class DictionaryBloc {
   Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
 
-  Stream<List<Folder>> get activeFolders => _activeFoldersController.stream;
+  Stream<List<ExpandedFolder>> get activeFolders => _activeFoldersController.stream;
 }
