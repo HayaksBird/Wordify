@@ -4,7 +4,7 @@ import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 class UpdateWordTemplate extends StatefulWidget {
-  final ExpandedFolder folder;
+  final Folder folder;
   final Word word;
 
 
@@ -21,7 +21,7 @@ class UpdateWordTemplate extends StatefulWidget {
 
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
-  late final ExpandedFolder folder;
+  late final Folder folder;
   late final Word word;
   late final int index;
   final _bloc = DictionaryBloc();

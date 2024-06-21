@@ -1,13 +1,18 @@
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
-///Will be used for the folders in view list.
-///There is no need for the them to have a list of words param.
+
+///Represents a folder.
+///
+///Not mutable (const) -> a new intance will be requested, when a word in the folder
+///is created/updated/deleted.
 class Folder {
   final String name;
-  
+  final List<Word> words;
+
 
   const Folder({
-    required this.name
+    required this.name,
+    this.words = const []
   });
 
 
@@ -22,16 +27,4 @@ class Folder {
 
   @override
   int get hashCode => name.hashCode;  
-}
-
-
-///The folder that has been accessed (open).
-class ExpandedFolder extends Folder {
-  final List<Word> words;
-
-
-  const ExpandedFolder({
-    required super.name,
-    this.words = const []
-  });
 }

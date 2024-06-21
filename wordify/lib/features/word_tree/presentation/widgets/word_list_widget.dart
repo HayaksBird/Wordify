@@ -17,7 +17,7 @@ class _WordListWidgetState extends State<WordListWidget> {
   
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ExpandedFolder>>(
+    return StreamBuilder<List<Folder>>(
       stream: _bloc.activeFolders,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -31,7 +31,7 @@ class _WordListWidgetState extends State<WordListWidget> {
 
 
   ///
-  Widget _buildAccessedFoldersTiles(List<ExpandedFolder> activeFolders) {
+  Widget _buildAccessedFoldersTiles(List<Folder> activeFolders) {
     return ListView.builder(
       itemCount: activeFolders.length,
       itemBuilder: (context, index) => _buildWordsTile(activeFolders[index])
@@ -40,7 +40,7 @@ class _WordListWidgetState extends State<WordListWidget> {
 
 
   ///
-  Widget _buildWordsTile(ExpandedFolder folder) {
+  Widget _buildWordsTile(Folder folder) {
     return FolderContentTemplate(
       folderContent: FolderContentWidget(folder: folder)
     );

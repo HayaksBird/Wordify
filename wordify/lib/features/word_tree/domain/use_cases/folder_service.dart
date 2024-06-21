@@ -16,17 +16,17 @@ class FolderService {
   }
 
 
-  Future<ExpandedFolder> getAllWords(Folder folder) async {
+  Future<Folder> getAllWords(Folder folder) async {
     return folderRepo.getAllWords(folder);
   }
 
 
-  Future<ExpandedFolder> addToFolder(ExpandedFolder folder, Word word) async {
+  Future<Folder> addToFolder(Folder folder, Word word) async {
     return folderRepo.addToFolder(folder, word);
   }
 
 
-  Future<ExpandedFolder> updateFolder(ExpandedFolder folder, Word oldWord, Word newWord) {
+  Future<Folder> updateFolder(Folder folder, Word oldWord, Word newWord) {
     return folderRepo.updateFolder(folder, oldWord, newWord);
   }
 }

@@ -63,7 +63,12 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         _bloc.accessFolder(folder);
       },
       child: ListTile(
-        title: Text(folder.name),
+        title: Text(
+          folder.name,
+          style: TextStyle(
+            color: _bloc.isActivated(folder.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+          )
+        ),
       ),
     );
   }

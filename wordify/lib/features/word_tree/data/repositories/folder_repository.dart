@@ -34,7 +34,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
-  Future<ExpandedFolder> getAllWords(Folder folder) async {
+  Future<Folder> getAllWords(Folder folder) async {
     FolderModel folderModel = folder as FolderModel;
     List<WordModel> words = await WordPersistence.getWordsOfFolder(folderModel.id);
 
@@ -45,7 +45,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
 
   @override
-  Future<ExpandedFolder> addToFolder(ExpandedFolder folder, Word word) async {
+  Future<Folder> addToFolder(Folder folder, Word word) async {
     FolderModel oldFolder = folder as FolderModel;
     WordModel addedWord = await WordPersistence.insert(WordModel.fromWord(word), (oldFolder).id);
 
@@ -59,7 +59,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
 
   @override
-  Future<ExpandedFolder> updateFolder(ExpandedFolder folder, Word oldWord, Word newWord) async {
+  Future<Folder> updateFolder(Folder folder, Word oldWord, Word newWord) async {
     FolderModel oldFolder = folder as FolderModel;
     WordModel oldWordModel = oldWord as WordModel;
     int oldWordIndex = folder.words.indexOf(oldWord);

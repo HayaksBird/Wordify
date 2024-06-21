@@ -7,7 +7,7 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
   final _foldersInViewController = StreamController<List<Folder>>.broadcast(); //StreamController for output
-  final _activeFoldersController = StreamController<List<ExpandedFolder>>(); //StreamController for output 
+  final _activeFoldersController = StreamController<List<Folder>>(); //StreamController for output 
   final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
@@ -33,22 +33,24 @@ class DictionaryBloc {
   ///If the folder is not activated, activate it; else ignore.
   ///Activate the state of words list and folders list.
   ///The state for folders list must also be updated since the
-  //array itlsef is updated.
+  ///array itlsef is updated.
   Future<void> accessFolder(Folder folder) async {
     bool wasActivated = await _dictionaryManager.activateFolder(folder);
 
     if (wasActivated) {
       _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+      _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
     }
   }
 
 
   ///Deactivate the folder that is activated.
-  Future<void> closeFolder(ExpandedFolder folder) async {
+  Future<void> closeFolder(Folder folder) async {
     bool wasClosed = await _dictionaryManager.deactivateFolder(folder);
 
     if (wasClosed) {
       _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+      _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
     }
   }
 
@@ -62,10 +64,16 @@ class DictionaryBloc {
 
 
   ///Update the word in a folder.
-  Future<void> updateWord(ExpandedFolder folder, Word oldWord, Word newWord) async {
+  Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
     await _dictionaryManager.updateWord(folder, oldWord, newWord);
 
     _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+  }
+
+
+  ///
+  bool isActivated(String name) {
+    return _dictionaryManager.isFolderActive(name);
   }
 
 
@@ -73,5 +81,5 @@ class DictionaryBloc {
   Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
 
-  Stream<List<ExpandedFolder>> get activeFolders => _activeFoldersController.stream;
+  Stream<List<Folder>> get activeFolders => _activeFoldersController.stream;
 }

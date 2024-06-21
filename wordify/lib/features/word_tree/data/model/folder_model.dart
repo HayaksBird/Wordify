@@ -1,6 +1,6 @@
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
-class FolderModel extends ExpandedFolder {
+class FolderModel extends Folder {
   final int id;
 
 

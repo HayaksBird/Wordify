@@ -27,16 +27,16 @@ class DictionaryManager {
   Future<bool> activateFolder(Folder folder) async {
     await _initializationDone;
     
-    if (!_dictionary.activeFolders.contains(folder)) {
+    if (!_dictionary.activeFolders.containsKey(folder.name)) {
       if (!_dictionary.cachedFolders.containsKey(folder.name)) { //If the folder is first clicked
-        ExpandedFolder expandedFolder = await _folderService.getAllWords(folder);
+        Folder expandedFolder = await _folderService.getAllWords(folder);
         
-        _dictionary.activeFolders.insert(0, expandedFolder);
+        _dictionary.activeFolders.insert(expandedFolder.name, expandedFolder);
         _dictionary.cachedFolders[folder.name] = expandedFolder;
       } else {  //If it has been clicked before
-        ExpandedFolder expandedFolder = _dictionary.cachedFolders[folder.name]!;
+        Folder expandedFolder = _dictionary.cachedFolders[folder.name]!;
 
-        _dictionary.activeFolders.insert(0, expandedFolder);
+        _dictionary.activeFolders.insert(expandedFolder.name, expandedFolder);
       }
 
       return true;
@@ -47,12 +47,12 @@ class DictionaryManager {
   ///Remove the folder from the active folder list.
   ///
   ///If the folder has been deactivated return true; else false.
-  Future<bool> deactivateFolder(ExpandedFolder folder) async {
+  Future<bool> deactivateFolder(Folder folder) async {
     await _initializationDone;
     
-    if (_dictionary.activeFolders.contains(folder)) { //If the folder is active
+    if (_dictionary.activeFolders.containsKey(folder.name)) { //If the folder is active
       
-      _dictionary.activeFolders.remove(folder);
+      _dictionary.activeFolders.remove(folder.name);
 
       return true;
     } else { return false; }
@@ -67,11 +67,11 @@ class DictionaryManager {
     await _initializationDone;
 
     if (_dictionary.cachedFolders.containsKey(folder.name)) {
-      ExpandedFolder folderToUpdate = _dictionary.cachedFolders[folder.name]!;
-      ExpandedFolder updatedFolder = await _folderService.addToFolder(folderToUpdate, word);
+      Folder folderToUpdate = _dictionary.cachedFolders[folder.name]!;
+      Folder updatedFolder = await _folderService.addToFolder(folderToUpdate, word);
 
       _dictionary.cachedFolders[folder.name] = updatedFolder;
-      _dictionary.updateActiveFolderList(updatedFolder);
+      _dictionary.activeFolders.update(folder.name, updatedFolder);
     } else {
       _wordService.addWord(folder, word);
     }
@@ -80,22 +80,30 @@ class DictionaryManager {
 
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
-  Future<void> updateWord(ExpandedFolder folder, Word oldWord, Word newWord) async {
-    ExpandedFolder updatedFolder = await _folderService.updateFolder(folder, oldWord, newWord);
+  Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
+    Folder updatedFolder = await _folderService.updateFolder(folder, oldWord, newWord);
 
     _dictionary.cachedFolders[folder.name] = updatedFolder;
-    _dictionary.updateActiveFolderList(updatedFolder);
+    _dictionary.activeFolders.update(folder.name, updatedFolder);
   }
 
 
   ///Initialize the dictionary with the folder list.
   Future<void> _setFolderList() async {
     List<Folder> folders = await _folderService.getAllFolders();
+
     _dictionary = Dictionary(foldersInView: folders);
     _initializationCompleter.complete();
   }
 
 
+  ///
+  bool isFolderActive(String name) {
+    return _dictionary.activeFolders.containsKey(name);
+  }
+
+
+  //GETTERS
   ///
   Future<List<Folder>> get foldersInView async { 
     await _initializationDone;
@@ -104,9 +112,9 @@ class DictionaryManager {
 
 
   ///
-  Future<List<ExpandedFolder>> get activeFolders async {
+  Future<List<Folder>> get activeFolders async {
     await _initializationDone;
-    return _dictionary.activeFolders; 
+    return _dictionary.activeFolders.getList(); 
   }
 
 

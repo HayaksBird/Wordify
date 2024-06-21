@@ -7,7 +7,7 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 
 //Needs bloc only if adds, updates words
 class FolderContentWidget extends StatelessWidget {
-  final ExpandedFolder folder;
+  final Folder folder;
   final _bloc = DictionaryBloc();
 
 

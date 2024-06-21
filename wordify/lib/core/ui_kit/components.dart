@@ -56,9 +56,9 @@ class FolderContentTemplate extends StatelessWidget {
     return Container(
       color: const Color.fromARGB(255, 194, 152, 227),
       child: FractionallySizedBox(
-        widthFactor: 0.95,
-        alignment: Alignment.centerRight,
-        child: Container(
+        widthFactor: 0.90,
+        alignment: Alignment.center,
+        child: Material(
           color: Colors.white,
           child: ConstrainedBox(
             constraints: const BoxConstraints(
