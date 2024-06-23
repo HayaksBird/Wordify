@@ -2,45 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 ///
-class AddWordButton extends FloatingActionButton {
-  const AddWordButton({
+class WordifyFloatingActionButton extends FloatingActionButton {
+  const WordifyFloatingActionButton({
     super.key,
     required VoidCallback super.onPressed,
+    required String tooltip
   }) : super(
         child: const Icon(Icons.add),
-        tooltip: 'Add Word',
+        tooltip: tooltip,
       );
 }
 
 
 ///
-class SubmitButton extends ElevatedButton {
-  SubmitButton({
+class WordifyElevatedButton extends ElevatedButton {
+  WordifyElevatedButton({
     super.key,
     required VoidCallback super.onPressed,
+    required String text,
   }) : super(
         style: ElevatedButton.styleFrom(
           textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: const Text('Submit'),
+        child: Text(text),
       );
 }
 
 
 ///
-class ReturnButton extends TextButton {
-  ReturnButton({
+class WordifyTextButton extends TextButton {
+  WordifyTextButton({
     super.key,
     required VoidCallback super.onPressed,
+    required String text,
   }) : super(
         style: TextButton.styleFrom(
           textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: const Text('Return'),
+        child: Text(text),
       );
 }
 

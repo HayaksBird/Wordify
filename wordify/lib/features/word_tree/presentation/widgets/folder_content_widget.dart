@@ -19,10 +19,12 @@ class FolderContentWidget extends StatelessWidget {
     return Column(
       children: [
         FolderHeader(
-          name: folder.name,
-          closePressed: () {
-            _bloc.closeFolder(folder);
-          }
+          action: DoAction(
+            title: folder.name,
+            action: () {
+              _bloc.closeFolder(folder);
+            }
+          )
         ),
         Expanded(child: _buildWordList(context))
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
@@ -33,8 +34,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color:  const Color.fromARGB(255, 194, 152, 227),
+    return FoolderList(
       child: StreamBuilder<List<Folder>>(
         stream: _bloc.foldersInView,
         builder: (context, snapshot) {
@@ -43,10 +43,11 @@ class _FolderListWidgetState extends State<FolderListWidget> {
           } else {
             return _buildFolderList(snapshot.data!);
           }
-        }
+        },
       ),
     );
   }
+
 
 
   Widget _buildFolderList(List<Folder> folders) {
@@ -58,10 +59,29 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
 
   Widget _buildFolderTile(Folder folder) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         _bloc.accessFolder(folder);
       },
+
+      onSecondaryTapDown: (details) {
+        WordifyOverlayEntry.showOverlay(
+          [
+            DoAction(
+              title: 'Update',
+              action: () {  }
+            ),
+
+            DoAction(
+              title: 'Delete',
+              action: () { _bloc.deleteFolder(folder); }
+            )
+          ], 
+          context,
+          details.globalPosition
+        );
+      },
+      
       child: ListTile(
         title: Text(
           folder.name,

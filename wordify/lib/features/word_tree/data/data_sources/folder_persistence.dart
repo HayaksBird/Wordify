@@ -16,6 +16,38 @@ class FolderPersistence {
   }
 
 
+  ///Delete a folder in a single transaction, in order
+  ///to not delete the folder partially in a case of program error.
+  static Future<void> delete(FolderModel folder) async {
+    final db = await WordifyDatabase.instance.database;
+
+    await db.transaction((txn) async {
+      // Delete all words associated with the folder
+      await txn.rawDelete(
+        'DELETE FROM words WHERE folder_id = ?',
+        [folder.id],
+      );
+      
+      // Delete the folder itself
+      await txn.rawDelete(
+        'DELETE FROM folders WHERE id = ?',
+        [folder.id],
+      );
+    });
+  }
+
+
+  ///
+  static Future<void> update(FolderModel folder) async {
+    final db = await WordifyDatabase.instance.database;
+
+    await db.rawUpdate(
+      'UPDATE folders SET name = ? WHERE id = ?',
+      [folder.name, folder.id],
+    );
+  }
+
+
   ///
   static Future<List<FolderModel>> getAll() async {
     final db = await WordifyDatabase.instance.database;

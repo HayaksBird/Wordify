@@ -57,7 +57,7 @@ class WordifyDatabase {
 
     // Insert sample data into folders table
     await db.execute('''
-      INSERT INTO folders (name) VALUES ('German'), ('Turkish'), ('Japanese')
+      INSERT INTO folders (name) VALUES ('German'), ('Turkish'), ('Japanese'), ('French')
     ''');
 
     // Insert sample data into words table
@@ -83,7 +83,15 @@ class WordifyDatabase {
         ((SELECT id FROM folders WHERE name = 'Japanese'), '食べ物 (たべもの)', 'Food'),
         ((SELECT id FROM folders WHERE name = 'Japanese'), '本 (ほん)', 'Book'),
         ((SELECT id FROM folders WHERE name = 'Japanese'), '車 (くるま)', 'Car'),
-        ((SELECT id FROM folders WHERE name = 'Japanese'), '先生 (せんせい)', 'Teacher');
+        ((SELECT id FROM folders WHERE name = 'Japanese'), '先生 (せんせい)', 'Teacher'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'bonjour', 'hello'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'merci', 'thank you'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'au revoir', 'goodbye'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'excusez-moi', 'excuse me'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'oui', 'yes'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'non', 'no'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'bienvenue', 'welcome'),
+        ((SELECT id FROM folders WHERE name = 'French'), 'pardon', 'sorry');
     ''');
   }
 }

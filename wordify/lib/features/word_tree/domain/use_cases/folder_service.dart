@@ -11,6 +11,16 @@ class FolderService {
   }
 
 
+  Future<void> deleteFolder(Folder folder) async {
+    folderRepo.deleteFolder(folder);
+  }
+
+
+  Future<Folder> updateFolder(Folder oldFolder, Folder newFolder) async {
+    return folderRepo.updateFolder(oldFolder, newFolder);
+  }
+
+
   Future<List<Folder>> getAllFolders() async {
     return folderRepo.getAllFolders();
   }
@@ -26,7 +36,12 @@ class FolderService {
   }
 
 
-  Future<Folder> updateFolder(Folder folder, Word oldWord, Word newWord) {
-    return folderRepo.updateFolder(folder, oldWord, newWord);
+  Future<Folder> updateInFolder(Folder folder, Word oldWord, Word newWord) async {
+    return folderRepo.updateInFolder(folder, oldWord, newWord);
+  }
+
+
+  Future<Folder> deleteFromFolder(Folder folder, Word word) async {
+    return folderRepo.deleteFromFolder(folder, word);
   }
 }

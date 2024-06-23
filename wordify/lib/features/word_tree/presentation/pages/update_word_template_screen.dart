@@ -3,6 +3,7 @@ import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
+///
 class UpdateWordTemplate extends StatefulWidget {
   final Folder folder;
   final Word word;
@@ -50,8 +51,9 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ReturnButton(onPressed: _return),
-                SubmitButton(onPressed: _submit)
+                WordifyTextButton(onPressed: _return, text: 'Return'),
+                WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
+                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
           )
@@ -94,6 +96,14 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
     _bloc.updateWord(folder, word, newWord);
  
+    Navigator.pop(context);
+  }
+
+
+  ///
+  void _delete() {
+    _bloc.deleteWord(folder, word);
+
     Navigator.pop(context);
   }
 

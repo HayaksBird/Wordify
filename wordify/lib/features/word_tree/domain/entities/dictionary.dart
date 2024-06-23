@@ -15,4 +15,14 @@ class Dictionary {
   })  : foldersInView = foldersInView ?? [],
         activeFolders = activeFolders ??  StackLinkedHashMap<String, Folder>(),
         cachedFolders = cachedFolders ?? <String, Folder>{};
+
+
+  ///
+  void updateFolderInView(String name, Folder newFolder) {
+    for (int i = 0; i < foldersInView.length; i++) {
+      if (foldersInView[i].name == name) {
+        foldersInView[i] = newFolder;
+      }
+    }
+  }
 }

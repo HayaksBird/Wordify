@@ -45,14 +45,22 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SizedBox.shrink();
               } else {
-                return ChooseItemButton(
-                  items: snapshot.data!,
-                  selectedItem: storageFolder,
-                  onChanged: (Folder? newFolder) {
-                    setState(() {
-                      storageFolder = newFolder;
-                    });
-                  },
+                /*
+                StatefulBuilder ensures that only the ChooseItemButton widget gets
+                updated when the button value is changed.
+                */
+                return StatefulBuilder(
+                  builder: (context, setState) {
+                    return ChooseItemButton(
+                      items: snapshot.data!,
+                      selectedItem: storageFolder,
+                      onChanged: (Folder? newFolder) {
+                        setState(() {
+                          storageFolder = newFolder;
+                        });
+                      },
+                    );
+                  }
                 );
               }
             }
@@ -63,8 +71,8 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ReturnButton(onPressed: _return),
-                SubmitButton(onPressed: _submit)
+                WordifyTextButton(onPressed: _return, text: 'Return'),
+                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
           )

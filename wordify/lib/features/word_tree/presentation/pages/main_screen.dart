@@ -25,8 +25,9 @@ class MainScreen extends StatelessWidget {
           )
         ]
       ),
-      floatingActionButton: AddWordButton(
-        onPressed: () => _openWordTemplate(context)
+      floatingActionButton: WordifyFloatingActionButton(
+        onPressed: () => _openWordTemplate(context),
+        tooltip: 'Add a word',
       ),
     );
   }

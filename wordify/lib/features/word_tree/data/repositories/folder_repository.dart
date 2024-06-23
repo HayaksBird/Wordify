@@ -27,6 +27,13 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
+  Future<void> deleteFolder(Folder folder) async {
+    await FolderPersistence.delete(folder as FolderModel);
+  }
+
+
+  ///
+  @override
   Future<List<Folder>> getAllFolders() async {
     return FolderPersistence.getAll();
   }
@@ -59,7 +66,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
 
   @override
-  Future<Folder> updateFolder(Folder folder, Word oldWord, Word newWord) async {
+  Future<Folder> updateInFolder(Folder folder, Word oldWord, Word newWord) async {
     FolderModel oldFolder = folder as FolderModel;
     WordModel oldWordModel = oldWord as WordModel;
     int oldWordIndex = folder.words.indexOf(oldWord);
@@ -77,5 +84,36 @@ class FolderRepositoryImpl implements FolderRepository {
     );
 
     return newFolder;
+  }
+  
+
+  @override
+  Future<Folder> deleteFromFolder(Folder folder, Word word) async {
+    WordModel wordModel = word as WordModel;
+    FolderModel folderModel = folder as FolderModel;
+
+    await WordPersistence.delete(wordModel.id);
+
+    FolderModel newFolder = folderModel.copyWith(
+      words: List<Word>.from(folderModel.words)
+        ..remove(wordModel)
+    );
+
+    return newFolder;
+  }
+
+  
+  ///
+  @override
+  Future<Folder> updateFolder(Folder oldFolder, Folder newFolder) async {
+    FolderModel oldFolderModel = oldFolder as FolderModel;
+
+    FolderModel newFolderModel = oldFolderModel.copyWith(
+      name: newFolder.name
+    );
+
+    await FolderPersistence.update(newFolderModel);
+
+    return newFolderModel;
   }
 }

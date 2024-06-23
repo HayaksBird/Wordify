@@ -81,10 +81,40 @@ class DictionaryManager {
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
   Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
-    Folder updatedFolder = await _folderService.updateFolder(folder, oldWord, newWord);
+    Folder updatedFolder = await _folderService.updateInFolder(folder, oldWord, newWord);
 
     _dictionary.cachedFolders[folder.name] = updatedFolder;
     _dictionary.activeFolders.update(folder.name, updatedFolder);
+  }
+
+
+  ///
+  Future<void> deleteWord(Folder folder, Word word) async {
+    Folder updatedFolder = await _folderService.deleteFromFolder(folder, word);
+
+    _dictionary.cachedFolders[folder.name] = updatedFolder;
+    _dictionary.activeFolders.update(folder.name, updatedFolder);
+  }
+
+
+  ///
+  Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
+    Folder updatedFolder = await _folderService.updateFolder(oldFolder, newFolder);
+
+    _dictionary.updateFolderInView(oldFolder.name, updatedFolder);
+
+    _dictionary.activeFolders.remove(oldFolder.name);
+    _dictionary.cachedFolders.remove(oldFolder.name);
+  }
+
+
+  ///
+  Future<void> deleteFolder(Folder folder) async {
+    _folderService.deleteFolder(folder);
+
+    _dictionary.foldersInView.removeWhere((obj) => obj.name == folder.name);
+    _dictionary.activeFolders.remove(folder.name);
+    _dictionary.cachedFolders.remove(folder.name);
   }
 
 

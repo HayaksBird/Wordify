@@ -26,7 +26,7 @@ class DictionaryBloc {
 
 
   Future<void> loadFolders() async {
-    _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
+    updateFolderView();
   }
 
 
@@ -38,8 +38,8 @@ class DictionaryBloc {
     bool wasActivated = await _dictionaryManager.activateFolder(folder);
 
     if (wasActivated) {
-      _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
-      _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
+      updateWordView();
+      updateFolderView();
     }
   }
 
@@ -49,8 +49,8 @@ class DictionaryBloc {
     bool wasClosed = await _dictionaryManager.deactivateFolder(folder);
 
     if (wasClosed) {
-      _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
-      _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
+      updateWordView();
+      updateFolderView();
     }
   }
 
@@ -59,7 +59,7 @@ class DictionaryBloc {
   Future<void> addNewWord(Folder folder, Word word) async {
     await _dictionaryManager.addNewWord(folder, word);
 
-    _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+    updateWordView();
   }
 
 
@@ -67,13 +67,42 @@ class DictionaryBloc {
   Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
     await _dictionaryManager.updateWord(folder, oldWord, newWord);
 
-    _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+    updateWordView();
+  }
+
+
+  ///
+  Future<void> deleteWord(Folder folder, Word word) async {
+    await _dictionaryManager.deleteWord(folder, word);
+
+    updateWordView();
+  }
+
+
+  ///
+  Future<void> deleteFolder(Folder folder) async {
+    await _dictionaryManager.deleteFolder(folder);
+
+    updateWordView();
+    updateFolderView();
   }
 
 
   ///
   bool isActivated(String name) {
     return _dictionaryManager.isFolderActive(name);
+  }
+
+
+  ///
+  Future<void> updateWordView() async {
+    _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
+  }
+
+
+  ///
+  Future<void> updateFolderView() async {
+    _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
   }
 
 
