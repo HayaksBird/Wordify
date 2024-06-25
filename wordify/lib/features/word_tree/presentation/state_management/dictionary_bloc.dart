@@ -89,6 +89,23 @@ class DictionaryBloc {
 
 
   ///
+  Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
+    await _dictionaryManager.updateFolder(oldFolder, newFolder);
+
+    updateFolderView();
+    updateWordView();
+  }
+
+
+  ///
+  Future<void> createFolder(Folder folder) async {
+    await _dictionaryManager.createFolder(folder);
+
+    updateFolderView();
+  }
+
+
+  ///
   bool isActivated(String name) {
     return _dictionaryManager.isFolderActive(name);
   }

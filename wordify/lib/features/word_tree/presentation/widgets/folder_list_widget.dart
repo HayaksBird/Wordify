@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 
@@ -35,16 +37,30 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   @override
   Widget build(BuildContext context) {
     return FoolderList(
-      child: StreamBuilder<List<Folder>>(
-        stream: _bloc.foldersInView,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return _buildFolderList(snapshot.data!);
-          }
+      child: GestureDetector(
+        onSecondaryTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const CreateFolderTemplate()
+            ),
+          );
         },
-      ),
+
+        child: Stack(
+          children: [
+            StreamBuilder<List<Folder>>(
+              stream: _bloc.foldersInView,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return _buildFolderList(snapshot.data!);
+                }
+              },
+            )
+          ],
+        )
+      )
     );
   }
 
@@ -69,7 +85,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
           [
             DoAction(
               title: 'Update',
-              action: () {  }
+              action: () { _updateFolder(folder); }
             ),
 
             DoAction(
@@ -89,6 +105,17 @@ class _FolderListWidgetState extends State<FolderListWidget> {
             color: _bloc.isActivated(folder.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
           )
         ),
+      ),
+    );
+  }
+
+
+  void _updateFolder(Folder folder) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => UpdateFolderTemplate(
+          folder: folder
+        )
       ),
     );
   }

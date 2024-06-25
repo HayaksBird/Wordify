@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 ///
 class FolderHeader extends StatelessWidget {
-  final DoAction action;
+  final String name;
+  final VoidCallback closePressed;
 
 
   const FolderHeader({
     super.key, 
-    required this.action
+    required this.name,
+    required this.closePressed
   });
 
 
@@ -20,14 +22,14 @@ class FolderHeader extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            action.title,
+            name,
             style: const TextStyle(
               fontSize: 18
             )
           ),
           const Spacer(),
           IconButton(
-            onPressed: () { action.action(); },
+            onPressed: closePressed,
             icon: const Icon(
               Icons.close,
               color: Colors.black,

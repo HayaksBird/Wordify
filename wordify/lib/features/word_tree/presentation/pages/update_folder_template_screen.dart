@@ -1,41 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
+
 ///
-class UpdateWordTemplate extends StatefulWidget {
+class UpdateFolderTemplate extends StatefulWidget {
   final Folder folder;
-  final Word word;
 
 
-  const UpdateWordTemplate({
+  const UpdateFolderTemplate({
     super.key,
-    required this.word,
     required this.folder
   });
 
 
   @override
-  State<UpdateWordTemplate> createState() => _UpdateWordTemplateState();
+  State<UpdateFolderTemplate> createState() => _UpdateFolderTemplateState();
 }
 
 
-class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
+class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   late final Folder folder;
-  late final Word word;
-  //late final int index;
   final _bloc = DictionaryBloc();
-  final TextEditingController wordController = TextEditingController();
-  final TextEditingController translationController = TextEditingController();
-
+  final TextEditingController nameController = TextEditingController();
 
 
   @override
   void initState() {
     super.initState();
     folder = widget.folder;
-    word = widget.word;
   }
 
 
@@ -44,7 +38,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
     return Scaffold(
       body: Column(
         children: [
-          Expanded (child: _buildFieldList()),
+          Expanded(child: _buildFieldList()),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
@@ -52,7 +46,6 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 WordifyTextButton(onPressed: _return, text: 'Return'),
-                WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
                 WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
@@ -67,8 +60,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   Widget _buildFieldList() {
     return ListView(
       children: <Widget>[
-        _buildFieldTile(wordController, 'Word', word.word),
-        _buildFieldTile(translationController, 'Translation', word.translation)
+        _buildFieldTile(nameController, 'Name', folder.name),
       ]
     );
   }
@@ -89,21 +81,12 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
   ///
   void _submit() {
-    final Word newWord = Word(
-      word: wordController.text, 
-      translation: translationController.text
+    final Folder newFolder = Folder(
+      name: nameController.text
     );
 
-    _bloc.updateWord(folder, word, newWord);
+    _bloc.updateFolder(folder, newFolder);
  
-    Navigator.pop(context);
-  }
-
-
-  ///
-  void _delete() {
-    _bloc.deleteWord(folder, word);
-
     Navigator.pop(context);
   }
 

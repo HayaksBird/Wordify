@@ -102,7 +102,6 @@ class DictionaryManager {
     Folder updatedFolder = await _folderService.updateFolder(oldFolder, newFolder);
 
     _dictionary.updateFolderInView(oldFolder.name, updatedFolder);
-
     _dictionary.activeFolders.remove(oldFolder.name);
     _dictionary.cachedFolders.remove(oldFolder.name);
   }
@@ -115,6 +114,14 @@ class DictionaryManager {
     _dictionary.foldersInView.removeWhere((obj) => obj.name == folder.name);
     _dictionary.activeFolders.remove(folder.name);
     _dictionary.cachedFolders.remove(folder.name);
+  }
+
+
+  ///
+  Future<void> createFolder(Folder folder) async {
+    Folder newFolder = await _folderService.addFolder(folder);
+
+    _dictionary.foldersInView.add(newFolder);
   }
 
 
