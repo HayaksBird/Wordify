@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/word_validation_bloc.dart';
 
 ///
 class UpdateWordTemplate extends StatefulWidget {
@@ -24,10 +25,11 @@ class UpdateWordTemplate extends StatefulWidget {
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final Folder folder;
   late final Word word;
-  //late final int index;
-  final _bloc = DictionaryBloc();
-  final TextEditingController wordController = TextEditingController();
-  final TextEditingController translationController = TextEditingController();
+  final _wordValidationBloc = WordValidationBloc();
+  final _dictionaryBloc = DictionaryBloc();
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController wordController;
+  late final TextEditingController translationController;
 
 
 
@@ -36,73 +38,64 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
     super.initState();
     folder = widget.folder;
     word = widget.word;
+    wordController = TextEditingController(text: word.word);
+    translationController = TextEditingController(text: word.translation);
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded (child: _buildFieldList()),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: wordController,
+              decoration: const InputDecoration(labelText: "Word"),
+              validator: (value) => _wordValidationBloc.validateWordWord(value!),
+            ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+            TextFormField(
+              controller: translationController,
+              decoration: const InputDecoration(labelText: "Translation"),
+              validator: (value) => _wordValidationBloc.validateWordTranslation(value!),
+            ),
+
+            const Spacer(),
+
+            ButtonsInRow(
+              buttons: [
                 WordifyTextButton(onPressed: _return, text: 'Return'),
                 WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
                 WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
-          )
-        ]
+          ]
+        ),
       )
     );
   }
 
 
   ///
-  Widget _buildFieldList() {
-    return ListView(
-      children: <Widget>[
-        _buildFieldTile(wordController, 'Word', word.word),
-        _buildFieldTile(translationController, 'Translation', word.translation)
-      ]
-    );
-  }
-
-
-  ///
-  Widget _buildFieldTile(TextEditingController controller, String fieldName, String initValue) {
-    controller.text = initValue;
-
-    return ListTile (
-      title: TextFormField(
-        controller: controller,
-      ),
-      subtitle: Text(fieldName)
-    );
-  }
-
-
-  ///
   void _submit() {
-    final Word newWord = Word(
-      word: wordController.text, 
-      translation: translationController.text
-    );
+    if (_formKey.currentState!.validate()) {
+      final Word newWord = Word(
+        word: wordController.text, 
+        translation: translationController.text
+      );
 
-    _bloc.updateWord(folder, word, newWord);
- 
-    Navigator.pop(context);
+      _dictionaryBloc.updateWord(folder, word, newWord);
+  
+      Navigator.pop(context);
+    }
   }
 
 
   ///
   void _delete() {
-    _bloc.deleteWord(folder, word);
+    _dictionaryBloc.deleteWord(folder, word);
 
     Navigator.pop(context);
   }

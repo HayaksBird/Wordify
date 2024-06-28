@@ -49,12 +49,13 @@ class WordifyTextButton extends TextButton {
 
 
 ///
-class ChooseItemButton extends DropdownButton<Folder> {
+class ChooseItemButton extends DropdownButtonFormField<Folder> {
   ChooseItemButton({
     super.key,
     required List<Folder> items,
-    Folder? selectedItem,
+    required Folder? selectedItem,
     required ValueChanged<Folder?> super.onChanged,
+    super.validator,
   }) : super(
         hint: const Text("Select a Folder"),
         value: selectedItem,
@@ -63,6 +64,30 @@ class ChooseItemButton extends DropdownButton<Folder> {
             value: folder,
             child: Text(folder.name),
           );
-        }).toList(),
+        }).toList()
       );
+}
+
+
+///
+class ButtonsInRow extends StatelessWidget {
+  final List<Widget> buttons;
+  
+  
+  const ButtonsInRow({
+    super.key,
+    required this.buttons
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: buttons
+      )
+    );
+  }
 }

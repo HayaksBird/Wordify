@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
@@ -17,39 +18,32 @@ class FolderListWidget extends StatefulWidget {
 
 
 class _FolderListWidgetState extends State<FolderListWidget> {
-  final _bloc = DictionaryBloc();
+  final _dictionaryBloc = DictionaryBloc();
 
 
   @override
   void initState() {
     super.initState();
-    _bloc.loadFolders();
+    _dictionaryBloc.loadFolders();
   }
 
 
   @override
   void dispose() {
     super.dispose();
-    _bloc.dispose();
+    _dictionaryBloc.dispose();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return FoolderList(
+    return FolderList(
       child: GestureDetector(
-        onSecondaryTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const CreateFolderTemplate()
-            ),
-          );
-        },
-
+        onSecondaryTap: () => _createFolder(),
         child: Stack(
           children: [
             StreamBuilder<List<Folder>>(
-              stream: _bloc.foldersInView,
+              stream: _dictionaryBloc.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -68,8 +62,14 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
   Widget _buildFolderList(List<Folder> folders) {
     return ListView.builder(
-      itemCount: folders.length,
-      itemBuilder: (context, index) => _buildFolderTile(folders[index])
+      itemCount: folders.length + 1,
+      itemBuilder: (context, index) {
+        if (index == folders.length) {
+          return const SizedBox(height: 100); //Add extra space at the end of the list
+        } else {
+          return _buildFolderTile(folders[index]);
+        }
+      },
     );
   }
 
@@ -77,7 +77,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   Widget _buildFolderTile(Folder folder) {
     return GestureDetector(
       onTap: () {
-        _bloc.accessFolder(folder);
+        _dictionaryBloc.accessFolder(folder);
       },
 
       onSecondaryTapDown: (details) {
@@ -90,7 +90,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
             DoAction(
               title: 'Delete',
-              action: () { _bloc.deleteFolder(folder); }
+              action: () { _dictionaryBloc.deleteFolder(folder); }
             )
           ], 
           context,
@@ -102,7 +102,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         title: Text(
           folder.name,
           style: TextStyle(
-            color: _bloc.isActivated(folder.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+            color: _dictionaryBloc.isActivated(folder.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
           )
         ),
       ),
@@ -116,6 +116,15 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         builder: (_) => UpdateFolderTemplate(
           folder: folder
         )
+      ),
+    );
+  }
+
+
+  void _createFolder() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const CreateFolderTemplate()
       ),
     );
   }

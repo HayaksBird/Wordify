@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
-
+import 'package:wordify/features/word_tree/presentation/state_management/folder_validation_bloc.dart';
 
 ///
 class CreateFolderTemplate extends StatefulWidget {
@@ -17,7 +17,9 @@ class CreateFolderTemplate extends StatefulWidget {
 
 
 class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
-  final _bloc = DictionaryBloc();
+  final _dictionaryBloc = DictionaryBloc();
+  final _folderValidationBloc = FolderValidationBloc();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
 
 
@@ -30,56 +32,42 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(child: _buildFieldList()),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Name"),
+              validator: (value) => _folderValidationBloc.validateFolderName(value!),
+            ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+            const Spacer(),
+
+            ButtonsInRow(
+              buttons: [
                 WordifyTextButton(onPressed: _return, text: 'Return'),
                 WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
-          )
-        ]
+          ]
+        ),
       )
     );
   }
 
 
   ///
-  Widget _buildFieldList() {
-    return ListView(
-      children: <Widget>[
-        _buildFieldTile(nameController, 'Name'),
-      ]
-    );
-  }
-
-
-  ///
-  Widget _buildFieldTile(TextEditingController controller, String fieldName) {
-    return ListTile (
-      title: TextFormField(
-        controller: controller,
-      ),
-      subtitle: Text(fieldName)
-    );
-  }
-
-
-  ///
   void _submit() {
-    final Folder newFolder = Folder(
-      name: nameController.text
-    );
+    if (_formKey.currentState!.validate()) {
+      final Folder newFolder = Folder(
+        name: nameController.text
+      );
 
-    _bloc.createFolder(newFolder);
- 
-    Navigator.pop(context);
+      _dictionaryBloc.createFolder(newFolder);
+
+      Navigator.pop(context);
+    }
   }
 
 

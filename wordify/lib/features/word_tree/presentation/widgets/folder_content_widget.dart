@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
@@ -8,7 +8,7 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 //Needs bloc only if adds, updates words
 class FolderContentWidget extends StatelessWidget {
   final Folder folder;
-  final _bloc = DictionaryBloc();
+  final _dictionaryBloc = DictionaryBloc();
 
 
   FolderContentWidget({super.key, required this.folder});
@@ -20,7 +20,7 @@ class FolderContentWidget extends StatelessWidget {
       children: [
         FolderHeader(
           name: folder.name,
-          closePressed: () { _bloc.closeFolder(folder); }
+          closePressed: () { _dictionaryBloc.closeFolder(folder); }
         ),
         Expanded(child: _buildWordList(context))
       ],

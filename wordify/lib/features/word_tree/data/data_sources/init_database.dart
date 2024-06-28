@@ -49,7 +49,7 @@ class WordifyDatabase {
       CREATE TABLE words (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         folder_id INTEGER NOT NULL,
-        word TEXT NOT NULL UNIQUE,
+        word TEXT NOT NULL,
         translation TEXT NOT NULL,
         FOREIGN KEY (folder_id) REFERENCES folders (id)
       )

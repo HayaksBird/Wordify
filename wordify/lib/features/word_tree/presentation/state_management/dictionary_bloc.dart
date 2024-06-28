@@ -26,7 +26,7 @@ class DictionaryBloc {
 
 
   Future<void> loadFolders() async {
-    updateFolderView();
+    _updateFolderView();
   }
 
 
@@ -38,8 +38,8 @@ class DictionaryBloc {
     bool wasActivated = await _dictionaryManager.activateFolder(folder);
 
     if (wasActivated) {
-      updateWordView();
-      updateFolderView();
+      _updateWordView();
+      _updateFolderView();
     }
   }
 
@@ -49,8 +49,8 @@ class DictionaryBloc {
     bool wasClosed = await _dictionaryManager.deactivateFolder(folder);
 
     if (wasClosed) {
-      updateWordView();
-      updateFolderView();
+      _updateWordView();
+      _updateFolderView();
     }
   }
 
@@ -59,7 +59,7 @@ class DictionaryBloc {
   Future<void> addNewWord(Folder folder, Word word) async {
     await _dictionaryManager.addNewWord(folder, word);
 
-    updateWordView();
+    _updateWordView();
   }
 
 
@@ -67,7 +67,7 @@ class DictionaryBloc {
   Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
     await _dictionaryManager.updateWord(folder, oldWord, newWord);
 
-    updateWordView();
+    _updateWordView();
   }
 
 
@@ -75,7 +75,7 @@ class DictionaryBloc {
   Future<void> deleteWord(Folder folder, Word word) async {
     await _dictionaryManager.deleteWord(folder, word);
 
-    updateWordView();
+    _updateWordView();
   }
 
 
@@ -83,8 +83,8 @@ class DictionaryBloc {
   Future<void> deleteFolder(Folder folder) async {
     await _dictionaryManager.deleteFolder(folder);
 
-    updateWordView();
-    updateFolderView();
+    _updateWordView();
+    _updateFolderView();
   }
 
 
@@ -92,8 +92,8 @@ class DictionaryBloc {
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
     await _dictionaryManager.updateFolder(oldFolder, newFolder);
 
-    updateFolderView();
-    updateWordView();
+    _updateFolderView();
+    _updateWordView();
   }
 
 
@@ -101,7 +101,7 @@ class DictionaryBloc {
   Future<void> createFolder(Folder folder) async {
     await _dictionaryManager.createFolder(folder);
 
-    updateFolderView();
+    _updateFolderView();
   }
 
 
@@ -112,13 +112,13 @@ class DictionaryBloc {
 
 
   ///
-  Future<void> updateWordView() async {
+  Future<void> _updateWordView() async {
     _activeFoldersController.sink.add(await _dictionaryManager.activeFolders);
   }
 
 
   ///
-  Future<void> updateFolderView() async {
+  Future<void> _updateFolderView() async {
     _foldersInViewController.sink.add(await _dictionaryManager.foldersInView);
   }
 

@@ -5,15 +5,22 @@ import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/folder_service.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
 
+///The class that manages the dictionary of the app.
 class DictionaryManager {
-  late Dictionary _dictionary;
+  static final DictionaryManager _instance = DictionaryManager._internal();
+  late final Dictionary _dictionary;
   final FolderService _folderService = FolderService();
   final WordService _wordService = WordService();
   final Completer<void> _initializationCompleter = Completer<void>();
 
 
-  DictionaryManager() {
-    _setFolderList();
+  factory DictionaryManager() {
+    return _instance;
+  }
+
+
+  DictionaryManager._internal() { 
+    _setFolderList(); 
   }
 
 
@@ -122,6 +129,16 @@ class DictionaryManager {
     Folder newFolder = await _folderService.addFolder(folder);
 
     _dictionary.foldersInView.add(newFolder);
+  }
+
+
+  ///
+  bool isFolderInView(String name) {
+    for (Folder folder in _dictionary.foldersInView) {
+      if (folder.name == name) { return true; }
+    }
+
+    return false;
   }
 
 

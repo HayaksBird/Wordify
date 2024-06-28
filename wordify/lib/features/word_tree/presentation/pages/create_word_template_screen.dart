@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/folder_validation_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/word_validation_bloc.dart';
 
 
 ///Demonstarte the word editing template
@@ -17,7 +19,10 @@ class CreateWordTemplate extends StatefulWidget {
 class _CreateWordTemplateState extends State<CreateWordTemplate> {
   Folder? storageFolder;
   late final Word word;
-  final _bloc = DictionaryBloc();
+  final _formKey = GlobalKey<FormState>();
+  final _dictionaryBloc = DictionaryBloc();
+  final _wordValidationBloc = WordValidationBloc();
+  final _folderValidationBloc = FolderValidationBloc(); 
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
 
@@ -27,7 +32,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   void initState() {
     super.initState();
     word = const Word();
-    _bloc.loadFolders();
+    _dictionaryBloc.loadFolders();
   }
 
 
@@ -35,87 +40,77 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column (
-        children: [
-          Expanded (child: _buildFieldList()),
+      body: Form(
+        key: _formKey,
+        child: Column (
+          children: [
+            TextFormField(
+              controller: wordController,
+              decoration: const InputDecoration(labelText: "Word"),
+              validator: (value) => _wordValidationBloc.validateWordWord(value!),
+            ),
 
-          StreamBuilder<List<Folder>>(
-            stream: _bloc.foldersInView,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox.shrink();
-              } else {
-                /*
-                StatefulBuilder ensures that only the ChooseItemButton widget gets
-                updated when the button value is changed.
-                */
-                return StatefulBuilder(
-                  builder: (context, setState) {
-                    return ChooseItemButton(
-                      items: snapshot.data!,
-                      selectedItem: storageFolder,
-                      onChanged: (Folder? newFolder) {
-                        setState(() {
-                          storageFolder = newFolder;
-                        });
-                      },
-                    );
-                  }
-                );
+            TextFormField(
+              controller: translationController,
+              decoration: const InputDecoration(labelText: "Translation"),
+              validator: (value) => _wordValidationBloc.validateWordTranslation(value!),
+            ),
+
+            const Spacer(),
+        
+            StreamBuilder<List<Folder>>(
+              stream: _dictionaryBloc.foldersInView,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                } else {
+                  /*
+                  StatefulBuilder ensures that only the ChooseItemButton widget gets
+                  updated when the button value is changed.
+                  */
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return ChooseItemButton(
+                        validator: (value) => _folderValidationBloc.validateChooseFolder(value),
+                        items: snapshot.data!,
+                        selectedItem: storageFolder,
+                        onChanged: (Folder? newFolder) {
+                          setState(() {
+                            storageFolder = newFolder;
+                          });
+                        },
+                      );
+                    }
+                  );
+                }
               }
-            }
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+            ),
+        
+            ButtonsInRow(
+              buttons: [
                 WordifyTextButton(onPressed: _return, text: 'Return'),
                 WordifyElevatedButton(onPressed: _submit, text: 'Submit')
               ]
             )
-          )
-        ]
+          ]
+        ),
       )
-    );
-  }
-
-
-  ///
-  Widget _buildFieldList() {
-    return ListView(
-      children: <Widget>[
-        _buildFieldTile(wordController, 'Word', word.word),
-        _buildFieldTile(translationController, 'Translation', word.translation)
-      ]
-    );
-  }
-
-
-  ///
-  Widget _buildFieldTile(TextEditingController controller, String fieldName, String initValue) {
-    controller.text = initValue;
-
-    return ListTile (
-      title: TextFormField(
-        controller: controller,
-      ),
-      subtitle: Text(fieldName)
     );
   }
 
 
   ///Create a new word from the updated fields.
   void _submit() {
-    final Word newWord = Word(
-      word: wordController.text, 
-      translation: translationController.text
-    );
+    if (_formKey.currentState!.validate()) {
+      final Word newWord = Word(
+        word: wordController.text, 
+        translation: translationController.text
+      );
 
-    _bloc.addNewWord(storageFolder!, newWord);
- 
-    Navigator.pop(context);
+      _dictionaryBloc.addNewWord(storageFolder!, newWord);
+  
+      Navigator.pop(context);
+    }
   }
 
 

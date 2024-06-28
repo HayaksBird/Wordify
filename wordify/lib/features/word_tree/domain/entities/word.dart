@@ -1,3 +1,4 @@
+///A word
 class Word {
   final String word;
   final String translation;
