@@ -21,8 +21,13 @@ class FolderService {
   }
 
 
-  Future<List<Folder>> getAllFolders() async {
-    return folderRepo.getAllFolders();
+  Future<List<Folder>> getRootFolders() async {
+    return folderRepo.getRootFolders();
+  }
+
+
+  Future<List<Folder>> getChildFolders(Folder folder) async {
+    return folderRepo.getChildFolders(folder);
   }
 
 

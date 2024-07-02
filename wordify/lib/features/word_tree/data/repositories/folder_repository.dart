@@ -34,10 +34,18 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
-  Future<List<Folder>> getAllFolders() async {
-    return FolderPersistence.getAll();
+  Future<List<Folder>> getRootFolders() async {
+    return FolderPersistence.getRootFolders();
   }
   
+
+  @override
+  Future<List<Folder>> getChildFolders(Folder folder) {
+    FolderModel folderModel = folder as FolderModel;
+
+    return FolderPersistence.getFolders(folderModel.id);
+  }
+
 
   ///
   @override

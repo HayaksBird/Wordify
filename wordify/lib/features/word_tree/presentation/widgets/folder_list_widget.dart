@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
+import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
@@ -42,13 +43,13 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         onSecondaryTap: () => _createFolder(),
         child: Stack(
           children: [
-            StreamBuilder<List<Folder>>(
+            StreamBuilder<List<NTreeNode<Folder>>>(
               stream: _dictionaryBloc.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  return _buildFolderList(snapshot.data!);
+                  return _buildRootFolderList(snapshot.data!);
                 }
               },
             )
@@ -60,52 +61,81 @@ class _FolderListWidgetState extends State<FolderListWidget> {
 
 
 
-  Widget _buildFolderList(List<Folder> folders) {
+  Widget _buildRootFolderList(List<NTreeNode<Folder>> rootFolders) {
     return ListView.builder(
-      itemCount: folders.length + 1,
+      itemCount: rootFolders.length + 1,
       itemBuilder: (context, index) {
-        if (index == folders.length) {
+        if (index == rootFolders.length) {
           return const SizedBox(height: 100); //Add extra space at the end of the list
         } else {
-          return _buildFolderTile(folders[index]);
+          return _buildFolderTile(rootFolders[index]);
         }
-      },
+      }
     );
   }
 
 
-  Widget _buildFolderTile(Folder folder) {
-    return GestureDetector(
-      onTap: () {
-        _dictionaryBloc.accessFolder(folder);
-      },
+  ///
+  Widget _buildInnerFolderList(List<NTreeNode<Folder>> folders) {
+    return ListView.builder(
+      itemCount: folders.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return _buildFolderTile(folders[index]);
+      }
+    );
+  }
 
-      onSecondaryTapDown: (details) {
-        WordifyOverlayEntry.showOverlay(
-          [
-            DoAction(
-              title: 'Update',
-              action: () { _updateFolder(folder); }
+
+  ///
+  Widget _buildFolderTile(NTreeNode<Folder> folder) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            _dictionaryBloc.updateSubfolders(folder.item);
+          },
+
+          /*
+          onDoubleTap: () {
+            _dictionaryBloc.accessFolder(folder.item);
+          },*/
+        
+          onSecondaryTapDown: (details) {
+            WordifyOverlayEntry.showOverlay(
+              [
+                DoAction(
+                  title: 'Update',
+                  action: () { _updateFolder(folder.item); }
+                ),
+        
+                DoAction(
+                  title: 'Delete',
+                  action: () { _dictionaryBloc.deleteFolder(folder.item); }
+                )
+              ], 
+              context,
+              details.globalPosition
+            );
+          },
+          
+          child: ListTile(
+            title: Text(
+              folder.item.name,
+              style: TextStyle(
+                color: _dictionaryBloc.isActivated(folder.item.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+              )
             ),
-
-            DoAction(
-              title: 'Delete',
-              action: () { _dictionaryBloc.deleteFolder(folder); }
-            )
-          ], 
-          context,
-          details.globalPosition
-        );
-      },
-      
-      child: ListTile(
-        title: Text(
-          folder.name,
-          style: TextStyle(
-            color: _dictionaryBloc.isActivated(folder.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
-          )
+          ),
         ),
-      ),
+
+        if (folder.childrenNodes.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: _buildInnerFolderList(folder.childrenNodes),
+          )
+      ]
     );
   }
 

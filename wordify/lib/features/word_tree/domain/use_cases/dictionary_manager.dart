@@ -1,26 +1,20 @@
 import 'dart:async';
 
+import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/folder_service.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
 
 ///The class that manages the dictionary of the app.
-class DictionaryManager {
-  static final DictionaryManager _instance = DictionaryManager._internal();
-  late final Dictionary _dictionary;
+class DictionaryStateManager {
+  final Dictionary _dictionary = Dictionary();
   final FolderService _folderService = FolderService();
-  final WordService _wordService = WordService();
   final Completer<void> _initializationCompleter = Completer<void>();
 
 
-  factory DictionaryManager() {
-    return _instance;
-  }
-
-
-  DictionaryManager._internal() { 
-    _setFolderList(); 
+  DictionaryStateManager() { 
+    _setRootFolders(); 
   }
 
 
@@ -66,13 +60,75 @@ class DictionaryManager {
   }
 
 
+  ///
+  bool isFolderActive(String name) {
+    return _dictionary.activeFolders.containsKey(name);
+  }
+
+
+  ///
+  Future<bool> expandFolder(Folder folder) async {
+    if (!_dictionary.foldersInView.containsChildren(folder)) {
+      List<Folder> children = await _folderService.getChildFolders(folder);
+
+      _dictionary.foldersInView.insert(folder, children);
+
+      return true;
+    } else { return false; }
+  }
+
+
+  ///
+  Future<bool> collapseFolder(Folder folder) async {
+    if (_dictionary.foldersInView.containsChildren(folder)) {
+      _dictionary.foldersInView.deleteChildren(folder);
+
+      return true;
+    } else { return false; }
+  }
+
+
+
+  ///Initialize the dictionary with the folder list.
+  Future<void> _setRootFolders() async {
+    List<Folder> folders = await _folderService.getRootFolders();
+
+    _dictionary.foldersInView = NTree<Folder>()..setRoot(folders);
+    _initializationCompleter.complete();
+  }
+  
+
+  //GETTERS
+  ///
+  Future<NTree<Folder>> get foldersInView async { 
+    await _initializationDone;
+    return _dictionary.foldersInView; 
+  }
+
+  ///
+  Future<List<Folder>> get activeFolders async {
+    await _initializationDone;
+    return _dictionary.activeFolders.getList(); 
+  }
+
+  ///Wait until the folder list is initialized
+  Future<void> get _initializationDone => _initializationCompleter.future;
+}
+
+
+
+///WORDS OPERATION MANAGER FOR DICTIONARY
+class DictionaryWordsManager {
+  final Dictionary _dictionary = Dictionary();
+  final WordService _wordService = WordService();
+  final FolderService _folderService = FolderService();
+
+
   ///If the folder of the word you are adding is not in cache, then just add in to db
   ///(we don't want to perform unnecessary caching).
   ///If the folder is in cache, then update the folder of the new word and store it in cache.
   ///If necessary, then also update the active folder list.
   Future<void> addNewWord(Folder folder, Word word) async {
-    await _initializationDone;
-
     if (_dictionary.cachedFolders.containsKey(folder.name)) {
       Folder folderToUpdate = _dictionary.cachedFolders[folder.name]!;
       Folder updatedFolder = await _folderService.addToFolder(folderToUpdate, word);
@@ -102,76 +158,27 @@ class DictionaryManager {
     _dictionary.cachedFolders[folder.name] = updatedFolder;
     _dictionary.activeFolders.update(folder.name, updatedFolder);
   }
+}
+
+
+
+///FOLDERS OPERATION MANAGER FOR DICTIONARY
+class DictionaryFoldersManager {
+
+  ///
+  Future<void> createFolder(Folder folder) async {
+
+  }
 
 
   ///
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
-    Folder updatedFolder = await _folderService.updateFolder(oldFolder, newFolder);
 
-    _dictionary.updateFolderInView(oldFolder.name, updatedFolder);
-    _dictionary.activeFolders.remove(oldFolder.name);
-    _dictionary.cachedFolders.remove(oldFolder.name);
   }
 
 
   ///
   Future<void> deleteFolder(Folder folder) async {
-    _folderService.deleteFolder(folder);
 
-    _dictionary.foldersInView.removeWhere((obj) => obj.name == folder.name);
-    _dictionary.activeFolders.remove(folder.name);
-    _dictionary.cachedFolders.remove(folder.name);
   }
-
-
-  ///
-  Future<void> createFolder(Folder folder) async {
-    Folder newFolder = await _folderService.addFolder(folder);
-
-    _dictionary.foldersInView.add(newFolder);
-  }
-
-
-  ///
-  bool isFolderInView(String name) {
-    for (Folder folder in _dictionary.foldersInView) {
-      if (folder.name == name) { return true; }
-    }
-
-    return false;
-  }
-
-
-  ///Initialize the dictionary with the folder list.
-  Future<void> _setFolderList() async {
-    List<Folder> folders = await _folderService.getAllFolders();
-
-    _dictionary = Dictionary(foldersInView: folders);
-    _initializationCompleter.complete();
-  }
-
-
-  ///
-  bool isFolderActive(String name) {
-    return _dictionary.activeFolders.containsKey(name);
-  }
-
-
-  //GETTERS
-  ///
-  Future<List<Folder>> get foldersInView async { 
-    await _initializationDone;
-    return _dictionary.foldersInView; 
-  }
-
-
-  ///
-  Future<List<Folder>> get activeFolders async {
-    await _initializationDone;
-    return _dictionary.activeFolders.getList(); 
-  }
-
-
-  ///Wait until the folder list is initialized
-  Future<void> get _initializationDone => _initializationCompleter.future;
 }

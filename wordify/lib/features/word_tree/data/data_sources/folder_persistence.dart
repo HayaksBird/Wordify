@@ -49,10 +49,30 @@ class FolderPersistence {
 
 
   ///
-  static Future<List<FolderModel>> getAll() async {
+  static Future<List<FolderModel>> getRootFolders() async {
     final db = await WordifyDatabase.instance.database;
-    
-    final List<Map<String, dynamic>> maps = await db.query('folders');
+
+    //Corrected query to select folders where parent_id is NULL
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM folders WHERE parent_id IS NULL'
+    );
+
+    List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
+
+    return folders;
+  }
+
+
+  ///
+  static Future<List<FolderModel>> getFolders(int parentId) async {
+    final db = await WordifyDatabase.instance.database;
+
+    //Query to select folders with the given parent_id
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM folders WHERE parent_id = ?',
+      [parentId]
+    );
+
     List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
 
     return folders;

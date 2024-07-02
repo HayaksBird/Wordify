@@ -9,8 +9,10 @@ abstract class FolderRepository {
   Future<Folder> updateFolder(Folder oldFolder, Folder newFolder);
   ///Delete a folder.
   Future<void> deleteFolder(Folder folder);
-  ///Get a list of all folders in the system.
-  Future<List<Folder>> getAllFolders();
+  ///Get a list of root folders in the system.
+  Future<List<Folder>> getRootFolders();
+  ///Get a list of all child folders of a certain folder.
+  Future<List<Folder>> getChildFolders(Folder folder);
   
   ///Fill up the folder with words.
   Future<Folder> getAllWords(Folder folder);

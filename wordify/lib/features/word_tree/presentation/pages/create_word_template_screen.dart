@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/folder_validation_bloc.dart';
@@ -58,7 +59,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
             const Spacer(),
         
-            StreamBuilder<List<Folder>>(
+            StreamBuilder<List<NTreeNode<Folder>>>(
               stream: _dictionaryBloc.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -72,7 +73,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
                     builder: (context, setState) {
                       return ChooseItemButton(
                         validator: (value) => _folderValidationBloc.validateChooseFolder(value),
-                        items: snapshot.data!,
+                        items: /*snapshot.data!*/ [],
                         selectedItem: storageFolder,
                         onChanged: (Folder? newFolder) {
                           setState(() {
