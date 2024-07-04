@@ -3,36 +3,36 @@ import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 
 ///Present the list of type FolderContentWidget,
 ///showing all words in an active folder list.
-class FolderListWidget extends StatefulWidget {
-  const FolderListWidget({super.key});
+class FolderViewWidget extends StatefulWidget {
+  const FolderViewWidget({super.key});
 
   @override
-  State<FolderListWidget> createState() => _FolderListWidgetState();
+  State<FolderViewWidget> createState() => _FolderViewWidgetState();
 }
 
 
-class _FolderListWidgetState extends State<FolderListWidget> {
-  final _dictionaryBloc = DictionaryBloc();
+class _FolderViewWidgetState extends State<FolderViewWidget> {
+  final _dictionaryStateBloc = DictionaryStateBloc();
+  final _dictionaryContentBloc = DictionaryContentBloc();
 
 
   @override
   void initState() {
     super.initState();
-    _dictionaryBloc.loadFolders();
+    _dictionaryStateBloc.loadFolders();
   }
 
 
   @override
   void dispose() {
     super.dispose();
-    _dictionaryBloc.dispose();
+    _dictionaryStateBloc.dispose();
   }
 
 
@@ -44,7 +44,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         child: Stack(
           children: [
             StreamBuilder<List<NTreeNode<Folder>>>(
-              stream: _dictionaryBloc.foldersInView,
+              stream: _dictionaryStateBloc.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -94,16 +94,21 @@ class _FolderListWidgetState extends State<FolderListWidget> {
       children: [
         GestureDetector(
           onTap: () {
-            _dictionaryBloc.updateSubfolders(folder.item);
+            _dictionaryStateBloc.updateSubfolders(folder.item);
           },
 
           onDoubleTap: () {
-            _dictionaryBloc.accessFolder(folder.item);
+            _dictionaryStateBloc.accessFolder(folder.item);
           },
         
           onSecondaryTapDown: (details) {
             WordifyOverlayEntry.showOverlay(
               [
+                DoAction(
+                  title: 'Create',
+                  action: () { _createFolder(folder.item); }
+                ),
+
                 DoAction(
                   title: 'Update',
                   action: () { _updateFolder(folder.item); }
@@ -111,7 +116,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
         
                 DoAction(
                   title: 'Delete',
-                  action: () { _dictionaryBloc.deleteFolder(folder.item); }
+                  action: () { _dictionaryContentBloc.deleteFolder(folder.item); }
                 )
               ], 
               context,
@@ -123,7 +128,7 @@ class _FolderListWidgetState extends State<FolderListWidget> {
             title: Text(
               folder.item.name,
               style: TextStyle(
-                color: _dictionaryBloc.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+                color: _dictionaryStateBloc.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
               )
             ),
           ),
@@ -150,10 +155,12 @@ class _FolderListWidgetState extends State<FolderListWidget> {
   }
 
 
-  void _createFolder() {
+  void _createFolder([Folder? parentFolder]) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const CreateFolderTemplate()
+        builder: (_) => CreateFolderTemplate(
+          parentFolder: parentFolder
+        )
       ),
     );
   }

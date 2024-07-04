@@ -8,8 +8,8 @@ class FolderPersistence {
     final db = await WordifyDatabase.instance.database;
 
     final int id = await db.rawInsert(
-      'INSERT INTO folders (name) VALUES (?)',
-      [folder.name]
+      'INSERT INTO folders (name, parent_id) VALUES (?, ?)',
+      [folder.name, folder.parentId]
     );
 
     return folder.copyWith(id: id);

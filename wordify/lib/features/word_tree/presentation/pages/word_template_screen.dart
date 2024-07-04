@@ -3,8 +3,7 @@ import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/folder_validation_bloc.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/word_validation_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
 
 
 ///Demonstarte the word editing template
@@ -19,9 +18,9 @@ class CreateWordTemplate extends StatefulWidget {
 
 class _CreateWordTemplateState extends State<CreateWordTemplate> {
   Folder? storageFolder;
-  late final Word word;
   final _formKey = GlobalKey<FormState>();
-  final _dictionaryBloc = DictionaryBloc();
+  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _dictionaryStateBloc = DictionaryStateBloc();
   final _wordValidationBloc = WordValidationBloc();
   final _folderValidationBloc = FolderValidationBloc(); 
   final TextEditingController wordController = TextEditingController();
@@ -32,8 +31,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   void initState() {
     super.initState();
-    word = const Word();
-    _dictionaryBloc.loadFolders();
+    _dictionaryStateBloc.loadFolders();
   }
 
 
@@ -60,7 +58,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             const Spacer(),
         
             StreamBuilder<List<NTreeNode<Folder>>>(
-              stream: _dictionaryBloc.foldersInView,
+              stream: _dictionaryStateBloc.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox.shrink();
@@ -108,10 +106,115 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
         translation: translationController.text
       );
 
-      _dictionaryBloc.addNewWord(storageFolder!, newWord);
+      _dictionaryContentBloc.createWord(storageFolder!, newWord);
   
       Navigator.pop(context);
     }
+  }
+
+
+  ///Return back without editing the word.
+  void _return() {
+    Navigator.pop(context);
+  }
+}
+
+
+
+///
+class UpdateWordTemplate extends StatefulWidget {
+  final FolderWords expandedFolder;
+  final Word word;
+
+
+  const UpdateWordTemplate({
+    super.key,
+    required this.word,
+    required this.expandedFolder
+  });
+
+
+  @override
+  State<UpdateWordTemplate> createState() => _UpdateWordTemplateState();
+}
+
+
+class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
+  late final FolderWords expandedFolder;
+  late final Word word;
+  final _wordValidationBloc = WordValidationBloc();
+  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController wordController;
+  late final TextEditingController translationController;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    expandedFolder = widget.expandedFolder;
+    word = widget.word;
+    wordController = TextEditingController(text: word.word);
+    translationController = TextEditingController(text: word.translation);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: wordController,
+              decoration: const InputDecoration(labelText: "Word"),
+              validator: (value) => _wordValidationBloc.validateWordWord(value!),
+            ),
+
+            TextFormField(
+              controller: translationController,
+              decoration: const InputDecoration(labelText: "Translation"),
+              validator: (value) => _wordValidationBloc.validateWordTranslation(value!),
+            ),
+
+            const Spacer(),
+
+            ButtonsInRow(
+              buttons: [
+                WordifyTextButton(onPressed: _return, text: 'Return'),
+                WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
+                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
+              ]
+            )
+          ]
+        ),
+      )
+    );
+  }
+
+
+  ///
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      final Word newWord = Word(
+        word: wordController.text, 
+        translation: translationController.text
+      );
+
+      _dictionaryContentBloc.updateWord(expandedFolder, word, newWord);
+  
+      Navigator.pop(context);
+    }
+  }
+
+
+  ///
+  void _delete() {
+    _dictionaryContentBloc.deleteWord(expandedFolder, word);
+
+    Navigator.pop(context);
   }
 
 

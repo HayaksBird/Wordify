@@ -2,13 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+
+class WordViewWidget extends StatefulWidget {
+  const WordViewWidget({super.key});
+
+  @override
+  State<WordViewWidget> createState() => _WordViewWidgetState();
+}
+
+class _WordViewWidgetState extends State<WordViewWidget> {
+  final _dictionaryStateBloc = DictionaryStateBloc();
+
+  
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<FolderWords>>(
+      stream: _dictionaryStateBloc.activeFolders,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        } else {
+          return _buildAccessedFoldersTiles(snapshot.data!);
+        }
+      }
+    );
+  }
+
+
+  ///
+  Widget _buildAccessedFoldersTiles(List<FolderWords> activeFolders) {
+    return ListView.builder(
+      itemCount: activeFolders.length,
+      itemBuilder: (context, index) => _buildWordsTile(activeFolders[index])
+    );
+  }
+
+
+  ///
+  Widget _buildWordsTile(FolderWords activeFolder) {
+    return FolderContentTemplate(
+      folderContent: FolderContentWidget(activeFolder: activeFolder)
+    );
+  }
+}
+
+
 
 //Needs bloc only if adds, updates words
 class FolderContentWidget extends StatelessWidget {
+  final _dictionaryStateBloc = DictionaryStateBloc();
   final FolderWords activeFolder;
-  final _dictionaryBloc = DictionaryBloc();
 
 
   FolderContentWidget({super.key, required this.activeFolder});
@@ -19,8 +64,8 @@ class FolderContentWidget extends StatelessWidget {
     return Column(
       children: [
         FolderHeader(
-          name: _dictionaryBloc.getFullPath(activeFolder),
-          closePressed: () { _dictionaryBloc.closeFolder(activeFolder); }
+          name: _dictionaryStateBloc.getFullPath(activeFolder),
+          closePressed: () { _dictionaryStateBloc.closeFolder(activeFolder); }
         ),
         Expanded(child: _buildWordList(context))
       ],

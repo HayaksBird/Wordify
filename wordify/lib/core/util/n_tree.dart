@@ -26,6 +26,28 @@ class NTree<T> {
 
 
   ///
+  void addChild(T? parent, T child) {
+    if (parent == null) { //Insert new root folder
+      NTreeNode<T> childNode = NTreeNode<T>(item: child, parent: _root);
+
+      _root!.addChild(childNode);
+
+      itemInTree[child] = childNode;
+    } else {
+      NTreeNode<T>? parentNode = itemInTree[parent];
+
+      if (parentNode != null) { //Insert new subfolder
+        NTreeNode<T> childNode = NTreeNode<T>(item: child, parent: parentNode);
+
+        parentNode.addChild(childNode);
+
+        itemInTree[child] = childNode;
+      } else { throw ArgumentError('The parent item does not exist in the tree'); }
+    }
+  }
+
+
+  ///
   void insert(T parent, List<T> children) {
     NTreeNode<T>? parentNode = itemInTree[parent];
 
@@ -48,16 +70,6 @@ class NTree<T> {
     if (node != null) {
       node.item = newItem;
     } else { throw ArgumentError('The item cannot be updated, since it does not exist'); }
-  }
-
-
-  ///
-  void deleteChildren(T item) {
-    NTreeNode<T>? node = itemInTree[item];
-
-    if (node != null) {
-      node.childrenNodes = [];
-    } else { throw ArgumentError('The item cannot be deleted, since it does not exist'); }
   }
 
 

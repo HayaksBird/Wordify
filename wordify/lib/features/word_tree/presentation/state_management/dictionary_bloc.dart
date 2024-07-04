@@ -3,24 +3,40 @@ import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
 
+
+final _foldersInViewController = StreamController<List<NTreeNode<Folder>>>.broadcast(); //StreamController for output
+final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
+
+final DictionaryStateManager _dictionaryStateManager = DictionaryStateManager();
+final DictionaryWordsManager _dictionaryWordsManager = DictionaryWordsManager();
+final DictionaryFoldersManager _dictionaryFoldersManager = DictionaryFoldersManager();
+
+
+///
+Future<void> _updateWordView() async {
+  _activeFoldersController.sink.add(await _dictionaryStateManager.activeFolders);
+}
+
+
+///
+Future<void> _updateFolderView() async {
+  _foldersInViewController.sink.add((await _dictionaryStateManager.foldersInView).getRootFolders);
+}
+
+
+
 ///BLoC class to work with the dictionary. It serves as an intermediary between
 ///the domain and the UI.
-class DictionaryBloc {
-  static final DictionaryBloc _instance = DictionaryBloc._internal();
-  final _foldersInViewController = StreamController<List<NTreeNode<Folder>>>.broadcast(); //StreamController for output
-  final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
-  
-  final DictionaryStateManager _dictionaryStateManager = DictionaryStateManager();
-  final DictionaryWordsManager _dictionaryWordsManager = DictionaryWordsManager();
-  final DictionaryFoldersManager _dictionaryFoldersManager = DictionaryFoldersManager();
+class DictionaryStateBloc {
+  static final DictionaryStateBloc _instance = DictionaryStateBloc._internal();
 
 
-  factory DictionaryBloc() {
+  factory DictionaryStateBloc() {
     return _instance;
   }
 
 
-  DictionaryBloc._internal();
+  DictionaryStateBloc._internal();
 
 
   void dispose() {
@@ -79,12 +95,40 @@ class DictionaryBloc {
 
   //
   String getFullPath(FolderWords expandedFolder) {
-    return _dictionaryStateManager.fullPath(expandedFolder.folder);
+    return fullPath(expandedFolder.folder);
   }
 
 
+  ///
+  bool isActivated(Folder folder) {
+    return _dictionaryStateManager.isFolderActive(folder);
+  }
+
+
+  ///Get the output stream
+  Stream<List<NTreeNode<Folder>>> get foldersInView => _foldersInViewController.stream;
+
+
+  Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
+}
+
+
+
+///
+class DictionaryContentBloc {
+  static final DictionaryContentBloc _instance = DictionaryContentBloc._internal();
+
+
+  factory DictionaryContentBloc() {
+    return _instance;
+  }
+
+
+  DictionaryContentBloc._internal();
+
+
   ///Add new word to a folder.
-  Future<void> addNewWord(Folder folder, Word word) async {
+  Future<void> createWord(Folder folder, Word word) async {
     await _dictionaryWordsManager.addNewWord(folder, word);
 
     _updateWordView();
@@ -126,34 +170,9 @@ class DictionaryBloc {
 
 
   ///
-  Future<void> createFolder(Folder folder) async {
-    await _dictionaryFoldersManager.createFolder(folder);
+  Future<void> createFolder(Folder? parentFolder, Folder folder) async {
+    await _dictionaryFoldersManager.createFolder(parentFolder, folder);
 
     _updateFolderView();
   }
-
-
-  ///
-  bool isActivated(Folder folder) {
-    return _dictionaryStateManager.isFolderActive(folder);
-  }
-
-
-  ///
-  Future<void> _updateWordView() async {
-    _activeFoldersController.sink.add(await _dictionaryStateManager.activeFolders);
-  }
-
-
-  ///
-  Future<void> _updateFolderView() async {
-    _foldersInViewController.sink.add((await _dictionaryStateManager.foldersInView).getRootFolders);
-  }
-
-
-  ///Get the output stream
-  Stream<List<NTreeNode<Folder>>> get foldersInView => _foldersInViewController.stream;
-
-
-  Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
 }

@@ -17,8 +17,15 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
-  Future<Folder> addFolder(Folder folder) async {
-    return FolderPersistence.insert(FolderModel.fromFolder(folder));
+  Future<Folder> addFolder(Folder? parentFolder, Folder folder) async {
+    FolderModel? parentFolderModel = parentFolder as FolderModel?;
+    FolderModel folderModel = FolderModel.fromFolder(folder);
+
+    FolderModel newFolderModel = folderModel.copyWith(
+      parentId: parentFolderModel?.id
+    );
+
+    return FolderPersistence.insert(newFolderModel);
   }
 
 

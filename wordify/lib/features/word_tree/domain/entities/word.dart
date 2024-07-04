@@ -5,7 +5,7 @@ class Word {
 
 
   const Word({
-    this.word = '',
-    this.translation = ''
+    required this.word,
+    required this.translation
   });
 }

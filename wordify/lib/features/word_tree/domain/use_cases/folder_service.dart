@@ -6,8 +6,8 @@ class FolderService {
   final FolderRepository folderRepo = FolderRepositoryImpl();
 
 
-  Future<Folder> addFolder(Folder folder) async {
-    return folderRepo.addFolder(folder);
+  Future<Folder> addFolder(Folder? parentFolder, Folder folder) async {
+    return folderRepo.addFolder(parentFolder, folder);
   }
 
 

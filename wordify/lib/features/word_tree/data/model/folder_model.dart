@@ -20,7 +20,7 @@ class FolderModel extends Folder {
   }
 
 
-  FolderModel.fromFolder(Folder folder, {this.id = -1, this.parentId = -1})
+  FolderModel.fromFolder(Folder folder, {this.id = -1, this.parentId})
       : super(name: folder.name);
 
 

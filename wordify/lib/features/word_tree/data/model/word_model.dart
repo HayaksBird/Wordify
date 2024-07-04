@@ -10,8 +10,8 @@ class WordModel extends Word {
   const WordModel({
     required this.id,
     required this.folderId,
-    super.word,
-    super.translation
+    required super.word,
+    required super.translation
   });
 
 

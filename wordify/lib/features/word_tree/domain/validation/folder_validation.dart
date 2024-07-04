@@ -4,7 +4,6 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 ///
 class FolderValidation {
   final DictionaryStateManager _dictionaryStateManager = DictionaryStateManager();
-
   ///
   String? validateName({required String name, String? oldName}) {
 

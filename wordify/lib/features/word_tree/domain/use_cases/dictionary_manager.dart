@@ -7,17 +7,29 @@ import 'package:wordify/features/word_tree/domain/use_cases/folder_service.dart'
 import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
 
 
+final Dictionary _dictionary = Dictionary();
+final WordService _wordService = WordService();
+final FolderService _folderService = FolderService();
+
+
+///
+String fullPath(Folder folder) {
+  return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
+}
+
+
 ///The class that manages the dictionary of the app.
 class DictionaryStateManager {
-  final Dictionary _dictionary = Dictionary();
-  final FolderService _folderService = FolderService();
-  final WordService _wordService = WordService();
+  static final DictionaryStateManager _instance = DictionaryStateManager._internal();
   final Completer<void> _initializationCompleter = Completer<void>();
 
 
-  DictionaryStateManager() { 
-    _setRootFolders(); 
+  factory DictionaryStateManager() {
+    return _instance;
   }
+
+
+  DictionaryStateManager._internal() { _setRootFolders(); }
 
 
   ///Update the list of currently active folders.
@@ -100,12 +112,6 @@ class DictionaryStateManager {
   }
 
 
-  ///
-  String fullPath(Folder folder) {
-    return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
-  }
-
-
   ///Initialize the dictionary with the folder list.
   Future<void> _setRootFolders() async {
     List<Folder> folders = await _folderService.getRootFolders();
@@ -136,8 +142,15 @@ class DictionaryStateManager {
 
 ///WORDS OPERATION MANAGER FOR DICTIONARY
 class DictionaryWordsManager {
-  final Dictionary _dictionary = Dictionary();
-  final WordService _wordService = WordService();
+  static final DictionaryWordsManager _instance = DictionaryWordsManager._internal();
+
+
+  factory DictionaryWordsManager() {
+    return _instance;
+  }
+
+
+  DictionaryWordsManager._internal();
 
 
   ///If the folder of the word you are adding is not in cache, then just add in to db
@@ -184,22 +197,28 @@ class DictionaryWordsManager {
     //_dictionary.cachedFolders[path] = expandedFolder;
     //_dictionary.activeFolders.update(path, expandedFolder);
   }
-
-
-  ///
-  String fullPath(Folder folder) {
-    return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
-  }
 }
 
 
 
 ///FOLDERS OPERATION MANAGER FOR DICTIONARY
 class DictionaryFoldersManager {
+  static final DictionaryFoldersManager _instance = DictionaryFoldersManager._internal();
+
+
+  factory DictionaryFoldersManager() {
+    return _instance;
+  }
+
+
+  DictionaryFoldersManager._internal();
+
 
   ///
-  Future<void> createFolder(Folder folder) async {
+  Future<void> createFolder(Folder? parentFolder, Folder folder) async {
+    Folder newFolder = await _folderService.addFolder(parentFolder, folder);
 
+    _dictionary.foldersInView.addChild(parentFolder, newFolder);
   }
 
 
