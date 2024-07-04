@@ -6,14 +6,14 @@ import 'package:wordify/features/word_tree/presentation/state_management/word_va
 
 ///
 class UpdateWordTemplate extends StatefulWidget {
-  final Folder folder;
+  final FolderWords expandedFolder;
   final Word word;
 
 
   const UpdateWordTemplate({
     super.key,
     required this.word,
-    required this.folder
+    required this.expandedFolder
   });
 
 
@@ -23,7 +23,7 @@ class UpdateWordTemplate extends StatefulWidget {
 
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
-  late final Folder folder;
+  late final FolderWords expandedFolder;
   late final Word word;
   final _wordValidationBloc = WordValidationBloc();
   final _dictionaryBloc = DictionaryBloc();
@@ -36,7 +36,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   @override
   void initState() {
     super.initState();
-    folder = widget.folder;
+    expandedFolder = widget.expandedFolder;
     word = widget.word;
     wordController = TextEditingController(text: word.word);
     translationController = TextEditingController(text: word.translation);
@@ -86,7 +86,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
         translation: translationController.text
       );
 
-      _dictionaryBloc.updateWord(folder, word, newWord);
+      _dictionaryBloc.updateWord(expandedFolder, word, newWord);
   
       Navigator.pop(context);
     }
@@ -95,7 +95,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
   ///
   void _delete() {
-    _dictionaryBloc.deleteWord(folder, word);
+    _dictionaryBloc.deleteWord(expandedFolder, word);
 
     Navigator.pop(context);
   }

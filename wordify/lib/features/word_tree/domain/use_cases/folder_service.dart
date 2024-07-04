@@ -29,24 +29,4 @@ class FolderService {
   Future<List<Folder>> getChildFolders(Folder folder) async {
     return folderRepo.getChildFolders(folder);
   }
-
-
-  Future<Folder> getAllWords(Folder folder) async {
-    return folderRepo.getAllWords(folder);
-  }
-
-
-  Future<Folder> addToFolder(Folder folder, Word word) async {
-    return folderRepo.addToFolder(folder, word);
-  }
-
-
-  Future<Folder> updateInFolder(Folder folder, Word oldWord, Word newWord) async {
-    return folderRepo.updateInFolder(folder, oldWord, newWord);
-  }
-
-
-  Future<Folder> deleteFromFolder(Folder folder, Word word) async {
-    return folderRepo.deleteFromFolder(folder, word);
-  }
 }

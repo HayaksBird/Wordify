@@ -9,8 +9,8 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 class Dictionary {
   static final Dictionary _instance = Dictionary._internal();
   late NTree<Folder> foldersInView;
-  late StackLinkedHashMap<String, Folder> activeFolders; //Folders that are currently active
-  late Map<String, Folder> cachedFolders;
+  late StackLinkedHashMap<String, FolderWords> activeFolders; //Folders that are currently active
+  late Map<String, FolderWords> cachedFolders;
 
 
   factory Dictionary() {
@@ -20,7 +20,7 @@ class Dictionary {
 
   Dictionary._internal() {
     foldersInView = NTree<Folder>();
-    activeFolders = StackLinkedHashMap<String, Folder>();
-    cachedFolders = <String, Folder>{};
+    activeFolders = StackLinkedHashMap<String, FolderWords>();
+    cachedFolders = <String, FolderWords>{};
   }
 }

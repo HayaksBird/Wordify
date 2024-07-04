@@ -8,7 +8,7 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
   final _foldersInViewController = StreamController<List<NTreeNode<Folder>>>.broadcast(); //StreamController for output
-  final _activeFoldersController = StreamController<List<Folder>>(); //StreamController for output 
+  final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
   
   final DictionaryStateManager _dictionaryStateManager = DictionaryStateManager();
   final DictionaryWordsManager _dictionaryWordsManager = DictionaryWordsManager();
@@ -49,8 +49,8 @@ class DictionaryBloc {
 
 
   ///Deactivate the folder that is activated.
-  Future<void> closeFolder(Folder folder) async {
-    bool wasClosed = await _dictionaryStateManager.deactivateFolder(folder);
+  Future<void> closeFolder(FolderWords expandedFolder) async {
+    bool wasClosed = await _dictionaryStateManager.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
       _updateWordView();
@@ -77,6 +77,12 @@ class DictionaryBloc {
   }
 
 
+  //
+  String getFullPath(FolderWords expandedFolder) {
+    return _dictionaryStateManager.fullPath(expandedFolder.folder);
+  }
+
+
   ///Add new word to a folder.
   Future<void> addNewWord(Folder folder, Word word) async {
     await _dictionaryWordsManager.addNewWord(folder, word);
@@ -86,16 +92,16 @@ class DictionaryBloc {
 
 
   ///Update the word in a folder.
-  Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
-    await _dictionaryWordsManager.updateWord(folder, oldWord, newWord);
+  Future<void> updateWord(FolderWords expandedFolder, Word oldWord, Word newWord) async {
+    await _dictionaryWordsManager.updateWord(expandedFolder.folder, oldWord, newWord);
 
     _updateWordView();
   }
 
 
   ///
-  Future<void> deleteWord(Folder folder, Word word) async {
-    await _dictionaryWordsManager.deleteWord(folder, word);
+  Future<void> deleteWord(FolderWords expandedFolder, Word word) async {
+    await _dictionaryWordsManager.deleteWord(expandedFolder.folder, word);
 
     _updateWordView();
   }
@@ -128,8 +134,8 @@ class DictionaryBloc {
 
 
   ///
-  bool isActivated(String name) {
-    return _dictionaryStateManager.isFolderActive(name);
+  bool isActivated(Folder folder) {
+    return _dictionaryStateManager.isFolderActive(folder);
   }
 
 
@@ -149,5 +155,5 @@ class DictionaryBloc {
   Stream<List<NTreeNode<Folder>>> get foldersInView => _foldersInViewController.stream;
 
 
-  Stream<List<Folder>> get activeFolders => _activeFoldersController.stream;
+  Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
 }

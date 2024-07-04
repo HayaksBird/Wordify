@@ -74,6 +74,44 @@ class NTree<T> {
 
 
   ///
+  String getPathToItem<R>(T item, R Function(T) pathSelector) {
+    NTreeNode<T>? node = itemInTree[item];
+
+    if (node != null) {
+      String path = '${pathSelector(node.item)}';
+
+      while (node!.parent != null && node.parent!.parent != null) {
+        node = node.parent;
+
+        path = '${pathSelector(node!.item)}/$path';
+      }
+
+      return path;
+    } else { throw ArgumentError('Cannot view item\'s path, since it does not exist'); }
+  }
+
+
+  ///
+  void changeActivityStatus(T item, bool status) {
+    NTreeNode<T>? node = itemInTree[item];
+
+    if (node != null) {
+      node.activity = status;
+    } else { throw ArgumentError('Cannot update activity status of item, since it does not exist'); }
+  }
+
+
+  ///
+  bool getActivityStatus(T item) {
+    NTreeNode<T>? node = itemInTree[item];
+
+    if (node != null) {
+      return node.activity;
+    } else { throw ArgumentError('Cannot get activity status of item, since it does not exist'); }
+  }
+
+
+  ///
   List<NTreeNode<T>> get getRootFolders => _root?.childrenNodes ?? [];
 }
 
@@ -83,6 +121,7 @@ class NTreeNode<T> {
   T _item;
   final NTreeNode<T>? _parent;
   List<NTreeNode<T>> _childrenNodes;
+  bool _activity = true;
 
 
   NTreeNode({
@@ -103,6 +142,8 @@ class NTreeNode<T> {
   //Getters
   T get item => _item;
 
+  bool get activity => _activity;
+
   NTreeNode<T>? get parent => _parent;
 
   List<NTreeNode<T>> get childrenNodes => _childrenNodes;
@@ -110,6 +151,8 @@ class NTreeNode<T> {
 
   //Setters
   set item(T value) { _item = value; }
+
+  set activity(bool value) { _activity = value; }
 
   set childrenNodes(List<NTreeNode<T>> value) { _childrenNodes = value; }
 }

@@ -6,10 +6,12 @@ import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/folder_service.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/word_service.dart';
 
+
 ///The class that manages the dictionary of the app.
 class DictionaryStateManager {
   final Dictionary _dictionary = Dictionary();
   final FolderService _folderService = FolderService();
+  final WordService _wordService = WordService();
   final Completer<void> _initializationCompleter = Completer<void>();
 
 
@@ -27,17 +29,19 @@ class DictionaryStateManager {
   ///If the folder has been activated return true; else false.
   Future<bool> activateFolder(Folder folder) async {
     await _initializationDone;
-    
-    if (!_dictionary.activeFolders.containsKey(folder.name)) {
-      if (!_dictionary.cachedFolders.containsKey(folder.name)) { //If the folder is first clicked
-        Folder expandedFolder = await _folderService.getAllWords(folder);
-        
-        _dictionary.activeFolders.insert(expandedFolder.name, expandedFolder);
-        _dictionary.cachedFolders[folder.name] = expandedFolder;
-      } else {  //If it has been clicked before
-        Folder expandedFolder = _dictionary.cachedFolders[folder.name]!;
 
-        _dictionary.activeFolders.insert(expandedFolder.name, expandedFolder);
+    String path = fullPath(folder);
+    
+    if (!_dictionary.activeFolders.containsKey(path)) {
+      if (!_dictionary.cachedFolders.containsKey(path)) { //If the folder is first clicked
+        FolderWords expandedFolder = FolderWords(folder, await _wordService.getWordsOfFolder(folder));
+        
+        _dictionary.activeFolders.insert(path, expandedFolder);
+        _dictionary.cachedFolders[path] = expandedFolder;
+      } else {  //If it has been clicked before
+        FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
+
+        _dictionary.activeFolders.insert(path, expandedFolder);
       }
 
       return true;
@@ -48,12 +52,13 @@ class DictionaryStateManager {
   ///Remove the folder from the active folder list.
   ///
   ///If the folder has been deactivated return true; else false.
-  Future<bool> deactivateFolder(Folder folder) async {
+  Future<bool> deactivateFolder(FolderWords expandedFolder) async {
     await _initializationDone;
+
+    String path = fullPath(expandedFolder.folder);
     
-    if (_dictionary.activeFolders.containsKey(folder.name)) { //If the folder is active
-      
-      _dictionary.activeFolders.remove(folder.name);
+    if (_dictionary.activeFolders.containsKey(path)) { //If the folder is active
+      _dictionary.activeFolders.remove(path);
 
       return true;
     } else { return false; }
@@ -61,8 +66,11 @@ class DictionaryStateManager {
 
 
   ///
-  bool isFolderActive(String name) {
-    return _dictionary.activeFolders.containsKey(name);
+  bool isFolderActive(Folder folder) {
+    String path = fullPath(folder);
+    bool val = _dictionary.activeFolders.containsKey(path);
+
+    return val;
   }
 
 
@@ -74,6 +82,10 @@ class DictionaryStateManager {
       _dictionary.foldersInView.insert(folder, children);
 
       return true;
+    } else if (!_dictionary.foldersInView.getActivityStatus(folder)) {
+      _dictionary.foldersInView.changeActivityStatus(folder, true);
+
+      return true;
     } else { return false; }
   }
 
@@ -81,12 +93,17 @@ class DictionaryStateManager {
   ///
   Future<bool> collapseFolder(Folder folder) async {
     if (_dictionary.foldersInView.containsChildren(folder)) {
-      _dictionary.foldersInView.deleteChildren(folder);
+      _dictionary.foldersInView.changeActivityStatus(folder, false);
 
       return true;
     } else { return false; }
   }
 
+
+  ///
+  String fullPath(Folder folder) {
+    return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
+  }
 
 
   ///Initialize the dictionary with the folder list.
@@ -106,7 +123,7 @@ class DictionaryStateManager {
   }
 
   ///
-  Future<List<Folder>> get activeFolders async {
+  Future<List<FolderWords>> get activeFolders async {
     await _initializationDone;
     return _dictionary.activeFolders.getList(); 
   }
@@ -121,7 +138,6 @@ class DictionaryStateManager {
 class DictionaryWordsManager {
   final Dictionary _dictionary = Dictionary();
   final WordService _wordService = WordService();
-  final FolderService _folderService = FolderService();
 
 
   ///If the folder of the word you are adding is not in cache, then just add in to db
@@ -129,12 +145,14 @@ class DictionaryWordsManager {
   ///If the folder is in cache, then update the folder of the new word and store it in cache.
   ///If necessary, then also update the active folder list.
   Future<void> addNewWord(Folder folder, Word word) async {
-    if (_dictionary.cachedFolders.containsKey(folder.name)) {
-      Folder folderToUpdate = _dictionary.cachedFolders[folder.name]!;
-      Folder updatedFolder = await _folderService.addToFolder(folderToUpdate, word);
+    String path = fullPath(folder);
 
-      _dictionary.cachedFolders[folder.name] = updatedFolder;
-      _dictionary.activeFolders.update(folder.name, updatedFolder);
+    if (_dictionary.cachedFolders.containsKey(path)) {
+      FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
+      expandedFolder.words.add(await _wordService.addWord(folder, word));
+
+      //_dictionary.cachedFolders[path] = expandedFolder;
+      //_dictionary.activeFolders.update(path, expandedFolder);
     } else {
       _wordService.addWord(folder, word);
     }
@@ -144,19 +162,33 @@ class DictionaryWordsManager {
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
   Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
-    Folder updatedFolder = await _folderService.updateInFolder(folder, oldWord, newWord);
+    String path = fullPath(folder);
+    Word updatedWord = await _wordService.updateWord(folder, oldWord, newWord);
+    FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
 
-    _dictionary.cachedFolders[folder.name] = updatedFolder;
-    _dictionary.activeFolders.update(folder.name, updatedFolder);
+    expandedFolder.updateWord(oldWord, updatedWord);
+
+    //_dictionary.cachedFolders[path] = expandedFolder;
+    //_dictionary.activeFolders.update(path, expandedFolder);
   }
 
 
   ///
   Future<void> deleteWord(Folder folder, Word word) async {
-    Folder updatedFolder = await _folderService.deleteFromFolder(folder, word);
+    String path = fullPath(folder);
+    FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
 
-    _dictionary.cachedFolders[folder.name] = updatedFolder;
-    _dictionary.activeFolders.update(folder.name, updatedFolder);
+    expandedFolder.words.remove(word);
+    _wordService.deleteWord(word);
+
+    //_dictionary.cachedFolders[path] = expandedFolder;
+    //_dictionary.activeFolders.update(path, expandedFolder);
+  }
+
+
+  ///
+  String fullPath(Folder folder) {
+    return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
   }
 }
 

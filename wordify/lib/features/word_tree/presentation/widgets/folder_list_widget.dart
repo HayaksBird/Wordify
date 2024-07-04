@@ -97,10 +97,9 @@ class _FolderListWidgetState extends State<FolderListWidget> {
             _dictionaryBloc.updateSubfolders(folder.item);
           },
 
-          /*
           onDoubleTap: () {
             _dictionaryBloc.accessFolder(folder.item);
-          },*/
+          },
         
           onSecondaryTapDown: (details) {
             WordifyOverlayEntry.showOverlay(
@@ -124,13 +123,13 @@ class _FolderListWidgetState extends State<FolderListWidget> {
             title: Text(
               folder.item.name,
               style: TextStyle(
-                color: _dictionaryBloc.isActivated(folder.item.name) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+                color: _dictionaryBloc.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
               )
             ),
           ),
         ),
 
-        if (folder.childrenNodes.isNotEmpty)
+        if (folder.childrenNodes.isNotEmpty && folder.activity)
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: _buildInnerFolderList(folder.childrenNodes),

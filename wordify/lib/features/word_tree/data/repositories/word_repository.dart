@@ -19,15 +19,42 @@ class WordRepositoryImpl implements WordRepository {
   WordRepositoryImpl._internal();
 
 
+  ///
   @override
-  Future<void> addWord(Folder folder, Word word) async {
+  Future<Word> addWord(Folder folder, Word word) async {
     FolderModel folderModel = folder as FolderModel;
-    await WordPersistence.insert(WordModel.fromWord(word), folderModel.id);
+    return WordPersistence.insert(WordModel.fromWord(word), folderModel.id);
   }
   
 
+  ///
   @override
   Future<void> deleteWord(Word word) async{
     WordPersistence.delete((word as WordModel).id);
+  }
+  
+
+  ///
+  @override
+  Future<List<Word>> getWordsOfFolder(Folder folder) async {
+    FolderModel folderModel = folder as FolderModel;
+
+    return WordPersistence.getWordsOfFolder(folderModel.id);
+  }
+
+
+  ///
+  @override
+  Future<Word> updateWord(Folder folder, Word oldWord, Word newWord) async {
+    WordModel oldWordModel = oldWord as WordModel;
+
+    WordModel updatedWord = oldWordModel.copyWith(
+      word: newWord.word,
+      translation: newWord.translation
+    );
+
+    await WordPersistence.update(updatedWord);
+
+    return updatedWord;
   }
 }

@@ -7,8 +7,7 @@ class FolderModel extends Folder {
   const FolderModel({
     required this.id,
     required this.parentId,
-    required super.name,
-    super.words
+    required super.name
   });
 
 
@@ -35,8 +34,7 @@ class FolderModel extends Folder {
     return FolderModel(
       id: id ?? this.id,
       parentId: parentId ?? this.parentId,
-      name: name ?? this.name,
-      words: words ?? this.words,
+      name: name ?? this.name
     );
   }
 }

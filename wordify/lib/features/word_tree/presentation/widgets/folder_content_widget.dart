@@ -7,11 +7,11 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 
 //Needs bloc only if adds, updates words
 class FolderContentWidget extends StatelessWidget {
-  final Folder folder;
+  final FolderWords activeFolder;
   final _dictionaryBloc = DictionaryBloc();
 
 
-  FolderContentWidget({super.key, required this.folder});
+  FolderContentWidget({super.key, required this.activeFolder});
 
 
   @override
@@ -19,8 +19,8 @@ class FolderContentWidget extends StatelessWidget {
     return Column(
       children: [
         FolderHeader(
-          name: folder.name,
-          closePressed: () { _dictionaryBloc.closeFolder(folder); }
+          name: _dictionaryBloc.getFullPath(activeFolder),
+          closePressed: () { _dictionaryBloc.closeFolder(activeFolder); }
         ),
         Expanded(child: _buildWordList(context))
       ],
@@ -31,8 +31,8 @@ class FolderContentWidget extends StatelessWidget {
   ///
   Widget _buildWordList(BuildContext context) {
     return ListView.builder(
-      itemCount: folder.words.length,
-      itemBuilder: (context, index) => _buildFolderTile(context, folder.words[index])
+      itemCount: activeFolder.words.length,
+      itemBuilder: (context, index) => _buildFolderTile(context, activeFolder.words[index])
     );
   }
 
@@ -57,7 +57,7 @@ class FolderContentWidget extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => UpdateWordTemplate(
           word: word,
-          folder: folder
+          expandedFolder: activeFolder,
         )
       ),
     );
