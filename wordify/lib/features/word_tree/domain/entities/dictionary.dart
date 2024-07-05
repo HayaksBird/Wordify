@@ -8,6 +8,7 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 ///set of all folders which have ever been opened (a caching mechanism)
 class Dictionary {
   static final Dictionary _instance = Dictionary._internal();
+
   late NTree<Folder> foldersInView;
   late StackLinkedHashMap<String, FolderWords> activeFolders; //Folders that are currently active
   late Map<String, FolderWords> cachedFolders;

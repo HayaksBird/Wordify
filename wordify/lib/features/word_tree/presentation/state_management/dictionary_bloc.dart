@@ -6,21 +6,18 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 
 final _foldersInViewController = StreamController<List<NTreeNode<Folder>>>.broadcast(); //StreamController for output
 final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
-
-final DictionaryStateManager _dictionaryStateManager = DictionaryStateManager();
-final DictionaryWordsManager _dictionaryWordsManager = DictionaryWordsManager();
-final DictionaryFoldersManager _dictionaryFoldersManager = DictionaryFoldersManager();
+final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
 ///
 Future<void> _updateWordView() async {
-  _activeFoldersController.sink.add(await _dictionaryStateManager.activeFolders);
+  _activeFoldersController.sink.add(await _dictionaryManager.state.activeFolders);
 }
 
 
 ///
 Future<void> _updateFolderView() async {
-  _foldersInViewController.sink.add((await _dictionaryStateManager.foldersInView).getRootFolders);
+  _foldersInViewController.sink.add((await _dictionaryManager.state.foldersInView).getRootFolders);
 }
 
 
@@ -55,7 +52,7 @@ class DictionaryStateBloc {
   ///The state for folders list must also be updated since the
   ///array itlsef is updated.
   Future<void> accessFolder(Folder folder) async {
-    bool wasActivated = await _dictionaryStateManager.activateFolder(folder);
+    bool wasActivated = await _dictionaryManager.state.activateFolder(folder);
 
     if (wasActivated) {
       _updateWordView();
@@ -66,7 +63,7 @@ class DictionaryStateBloc {
 
   ///Deactivate the folder that is activated.
   Future<void> closeFolder(FolderWords expandedFolder) async {
-    bool wasClosed = await _dictionaryStateManager.deactivateFolder(expandedFolder);
+    bool wasClosed = await _dictionaryManager.state.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
       _updateWordView();
@@ -76,10 +73,10 @@ class DictionaryStateBloc {
 
 
   ///
-  Future<void> updateSubfolders(Folder folder) async {
-    bool didExpand = await _dictionaryStateManager.expandFolder(folder);
+  Future<void> updateSubfolderStatus(Folder folder) async {
+    bool didExpand = await _dictionaryManager.state.expandFolder(folder);
 
-    if (!didExpand) { _dictionaryStateManager.collapseFolder(folder); }
+    if (!didExpand) { _dictionaryManager.state.collapseFolder(folder); }
 
     _updateFolderView();
   }
@@ -87,7 +84,7 @@ class DictionaryStateBloc {
 
   ///
   Future<void> closeSubfolders(Folder folder) async {
-    await _dictionaryStateManager.collapseFolder(folder);
+    await _dictionaryManager.state.collapseFolder(folder);
 
     _updateFolderView();
   }
@@ -101,7 +98,13 @@ class DictionaryStateBloc {
 
   ///
   bool isActivated(Folder folder) {
-    return _dictionaryStateManager.isFolderActive(folder);
+    return _dictionaryManager.state.isFolderActive(folder);
+  }
+
+
+  ///
+  bool isToExpand(NTreeNode<Folder> folder) {
+    return folder.childrenNodes.isNotEmpty && folder.activity;
   }
 
 
@@ -129,7 +132,7 @@ class DictionaryContentBloc {
 
   ///Add new word to a folder.
   Future<void> createWord(Folder folder, Word word) async {
-    await _dictionaryWordsManager.addNewWord(folder, word);
+    await _dictionaryManager.words.addNewWord(folder, word);
 
     _updateWordView();
   }
@@ -137,7 +140,7 @@ class DictionaryContentBloc {
 
   ///Update the word in a folder.
   Future<void> updateWord(FolderWords expandedFolder, Word oldWord, Word newWord) async {
-    await _dictionaryWordsManager.updateWord(expandedFolder.folder, oldWord, newWord);
+    await _dictionaryManager.words.updateWord(expandedFolder.folder, oldWord, newWord);
 
     _updateWordView();
   }
@@ -145,7 +148,7 @@ class DictionaryContentBloc {
 
   ///
   Future<void> deleteWord(FolderWords expandedFolder, Word word) async {
-    await _dictionaryWordsManager.deleteWord(expandedFolder.folder, word);
+    await _dictionaryManager.words.deleteWord(expandedFolder.folder, word);
 
     _updateWordView();
   }
@@ -153,7 +156,7 @@ class DictionaryContentBloc {
 
   ///
   Future<void> deleteFolder(Folder folder) async {
-    await _dictionaryFoldersManager.deleteFolder(folder);
+    await _dictionaryManager.folders.deleteFolder(folder);
 
     _updateWordView();
     _updateFolderView();
@@ -162,7 +165,7 @@ class DictionaryContentBloc {
 
   ///
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
-    await _dictionaryFoldersManager.updateFolder(oldFolder, newFolder);
+    await _dictionaryManager.folders.updateFolder(oldFolder, newFolder);
 
     _updateFolderView();
     _updateWordView();
@@ -171,7 +174,7 @@ class DictionaryContentBloc {
 
   ///
   Future<void> createFolder(Folder? parentFolder, Folder folder) async {
-    await _dictionaryFoldersManager.createFolder(parentFolder, folder);
+    await _dictionaryManager.folders.createFolder(parentFolder, folder);
 
     _updateFolderView();
   }

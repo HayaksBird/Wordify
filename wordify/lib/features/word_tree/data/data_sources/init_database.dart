@@ -38,6 +38,7 @@ class WordifyDatabase {
 
   ///Create the interior of the database if it does not exist.
   Future<void> _createDatabase(Database db, int version) async {
+    //CREATE FOLDERS TABLE
     await db.execute('''
       CREATE TABLE folders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,6 +47,7 @@ class WordifyDatabase {
       )
     ''');
 
+    //CREATE WORDS TABLE
     await db.execute('''
       CREATE TABLE words (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,7 +58,17 @@ class WordifyDatabase {
       )
     ''');
 
-    // Insert sample data into folders table
+    //DELETE WORDS OF A FOLDER WHICH IS DELETED
+    await db.execute('''
+      CREATE TRIGGER delete_words_when_folder_deleted
+      AFTER DELETE ON folders
+      FOR EACH ROW
+      BEGIN
+          DELETE FROM words WHERE folder_id = OLD.id;
+      END;
+    ''');
+
+    //SAMPLE FOLDERS
     await db.execute('''
       INSERT INTO folders (name, parent_id) VALUES 
         ('German', NULL), 
@@ -68,7 +80,7 @@ class WordifyDatabase {
         ('Biology', 3)
     ''');
 
-    // Insert sample data into words table
+    //SAMPLE WORDS
     await db.execute('''
     INSERT INTO words (folder_id, word, translation) VALUES
       ((SELECT id FROM folders WHERE id = 1), 'Kirche', 'Church'),

@@ -94,7 +94,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
       children: [
         GestureDetector(
           onTap: () {
-            _dictionaryStateBloc.updateSubfolders(folder.item);
+            _dictionaryStateBloc.updateSubfolderStatus(folder.item);
           },
 
           onDoubleTap: () {
@@ -134,7 +134,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
           ),
         ),
 
-        if (folder.childrenNodes.isNotEmpty && folder.activity)
+        if (_dictionaryStateBloc.isToExpand(folder))
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: _buildInnerFolderList(folder.childrenNodes),

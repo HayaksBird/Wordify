@@ -22,6 +22,14 @@ class FolderPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.transaction((txn) async {
+      await txn.rawDelete(
+        'DELETE FROM folders WHERE id = ?',
+        [folder.id],
+      );
+    });
+
+    /*
+    await db.transaction((txn) async {
       // Delete all words associated with the folder
       await txn.rawDelete(
         'DELETE FROM words WHERE folder_id = ?',
@@ -33,7 +41,7 @@ class FolderPersistence {
         'DELETE FROM folders WHERE id = ?',
         [folder.id],
       );
-    });
+    });*/
   }
 
 

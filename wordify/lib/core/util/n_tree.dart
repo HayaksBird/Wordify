@@ -26,7 +26,7 @@ class NTree<T> {
 
 
   ///
-  void addChild(T? parent, T child) {
+  void insertOne(T? parent, T child) {
     if (parent == null) { //Insert new root folder
       NTreeNode<T> childNode = NTreeNode<T>(item: child, parent: _root);
 
@@ -70,6 +70,55 @@ class NTree<T> {
     if (node != null) {
       node.item = newItem;
     } else { throw ArgumentError('The item cannot be updated, since it does not exist'); }
+  }
+
+
+  ///Delete an item from the tree, while also deleting its subitems.
+  void delete(T item) {
+    NTreeNode<T>? node = itemInTree[item];
+
+    if (node != null) {
+      _traverseDelete(node);
+
+      NTreeNode<T>? parent = node.parent;
+      parent!.childrenNodes.remove(node);
+    } else { throw ArgumentError('The item cannot be deleted, since it does not exist'); }
+  }
+
+
+  ///Traverse the subtree while deleting the items from the hash map.
+  void _traverseDelete(NTreeNode<T> item) {
+    itemInTree.remove(item.item);
+
+    if (item.childrenNodes.isNotEmpty) {
+      for (NTreeNode<T> subitem in item.childrenNodes) {
+        _traverseDelete(subitem);
+      }
+    }
+  }
+
+
+  ///Get a list of all subitems. Note that the item itself it also present in the list.
+  List<T> getSubitems(T item) {
+    NTreeNode<T>? node = itemInTree[item];
+
+    if (node != null) {
+      return _traverse(node, []);
+    } else { throw ArgumentError('The item\'s subitems could not be accessed, since it does not exist'); }
+  }
+
+
+  ///Traverse.
+  List<T> _traverse(NTreeNode<T> item, List<T> items) {
+    items.add(item.item);
+
+    if (item.childrenNodes.isNotEmpty) {
+      for (NTreeNode<T> subitem in item.childrenNodes) {
+        _traverse(subitem, items);
+      }
+    }
+
+    return items;
   }
 
 
@@ -123,6 +172,7 @@ class NTree<T> {
   }
 
 
+  //GETTERS
   ///
   List<NTreeNode<T>> get getRootFolders => _root?.childrenNodes ?? [];
 }
@@ -133,7 +183,7 @@ class NTreeNode<T> {
   T _item;
   final NTreeNode<T>? _parent;
   List<NTreeNode<T>> _childrenNodes;
-  bool _activity = true;
+  bool _activity = false;
 
 
   NTreeNode({

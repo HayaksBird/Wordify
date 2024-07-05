@@ -18,18 +18,32 @@ String fullPath(Folder folder) {
 }
 
 
-///The class that manages the dictionary of the app.
-class DictionaryStateManager {
-  static final DictionaryStateManager _instance = DictionaryStateManager._internal();
-  final Completer<void> _initializationCompleter = Completer<void>();
+///
+class DictionaryManager {
+  static final DictionaryManager _instance = DictionaryManager._internal();
+  late final DictionaryStateManager state;
+  late final DictionaryWordsManager words;
+  late final DictionaryFoldersManager folders;
 
 
-  factory DictionaryStateManager() {
+  factory DictionaryManager() {
     return _instance;
   }
 
 
-  DictionaryStateManager._internal() { _setRootFolders(); }
+  DictionaryManager._internal() {
+    state = DictionaryStateManager();
+    words = DictionaryWordsManager();
+    folders = DictionaryFoldersManager();
+
+    state._setFolderTree();
+  }
+}
+
+
+///The class that manages the dictionary of the app.
+class DictionaryStateManager {
+  final Completer<void> _initializationCompleter = Completer<void>();
 
 
   ///Update the list of currently active folders.
@@ -88,13 +102,7 @@ class DictionaryStateManager {
 
   ///
   Future<bool> expandFolder(Folder folder) async {
-    if (!_dictionary.foldersInView.containsChildren(folder)) {
-      List<Folder> children = await _folderService.getChildFolders(folder);
-
-      _dictionary.foldersInView.insert(folder, children);
-
-      return true;
-    } else if (!_dictionary.foldersInView.getActivityStatus(folder)) {
+    if (!_dictionary.foldersInView.getActivityStatus(folder)) { //Folder is not expanded
       _dictionary.foldersInView.changeActivityStatus(folder, true);
 
       return true;
@@ -104,7 +112,7 @@ class DictionaryStateManager {
 
   ///
   Future<bool> collapseFolder(Folder folder) async {
-    if (_dictionary.foldersInView.containsChildren(folder)) {
+    if (_dictionary.foldersInView.getActivityStatus(folder)) {  //Folder is expanded
       _dictionary.foldersInView.changeActivityStatus(folder, false);
 
       return true;
@@ -112,12 +120,31 @@ class DictionaryStateManager {
   }
 
 
-  ///Initialize the dictionary with the folder list.
-  Future<void> _setRootFolders() async {
-    List<Folder> folders = await _folderService.getRootFolders();
+  ///Initialize the dictionary with the folder tree.
+  Future<void> _setFolderTree() async {
+    List<Folder> rootFolders = await _folderService.getRootFolders();
 
-    _dictionary.foldersInView = NTree<Folder>()..setRoot(folders);
+    _dictionary.foldersInView = NTree<Folder>()..setRoot(rootFolders);
+
+    for (Folder rootFolder in rootFolders) {
+      await _setFolderSubtree(rootFolder);
+    }
+
     _initializationCompleter.complete();
+  }
+
+
+  ///Set all the subfolders of a certain folder.
+  Future<void> _setFolderSubtree(Folder folder) async {
+    List<Folder> subfolders = await _folderService.getChildFolders(folder);
+
+    if (subfolders.isNotEmpty) {
+      _dictionary.foldersInView.insert(folder, subfolders);
+
+      for (Folder subfolder in subfolders) {
+        _setFolderSubtree(subfolder);
+      }
+    }
   }
   
 
@@ -142,16 +169,6 @@ class DictionaryStateManager {
 
 ///WORDS OPERATION MANAGER FOR DICTIONARY
 class DictionaryWordsManager {
-  static final DictionaryWordsManager _instance = DictionaryWordsManager._internal();
-
-
-  factory DictionaryWordsManager() {
-    return _instance;
-  }
-
-
-  DictionaryWordsManager._internal();
-
 
   ///If the folder of the word you are adding is not in cache, then just add in to db
   ///(we don't want to perform unnecessary caching).
@@ -203,22 +220,12 @@ class DictionaryWordsManager {
 
 ///FOLDERS OPERATION MANAGER FOR DICTIONARY
 class DictionaryFoldersManager {
-  static final DictionaryFoldersManager _instance = DictionaryFoldersManager._internal();
-
-
-  factory DictionaryFoldersManager() {
-    return _instance;
-  }
-
-
-  DictionaryFoldersManager._internal();
-
 
   ///
   Future<void> createFolder(Folder? parentFolder, Folder folder) async {
     Folder newFolder = await _folderService.addFolder(parentFolder, folder);
 
-    _dictionary.foldersInView.addChild(parentFolder, newFolder);
+    _dictionary.foldersInView.insertOne(parentFolder, newFolder);
   }
 
 
@@ -228,8 +235,21 @@ class DictionaryFoldersManager {
   }
 
 
-  ///
+  ///Delete a folder with its subfolders.
+  ///Remove them from the cache and/or active folder list
+  ///if they are present there.
   Future<void> deleteFolder(Folder folder) async {
+    List<Folder> subfolders = _dictionary.foldersInView.getSubitems(folder);
 
+    for (Folder subfolder in subfolders) {
+      String path = fullPath(subfolder);
+
+      await _folderService.deleteFolder(subfolder);
+
+      _dictionary.activeFolders.remove(path);
+      _dictionary.cachedFolders.remove(path);
+    }
+
+    _dictionary.foldersInView.delete(folder);
   }
 }
