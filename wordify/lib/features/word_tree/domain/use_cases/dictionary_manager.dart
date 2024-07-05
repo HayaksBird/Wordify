@@ -231,7 +231,17 @@ class DictionaryFoldersManager {
 
   ///
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
+    Folder updatedFolder = await _folderService.updateFolder(oldFolder, newFolder);
+    List<Folder> subfolders = _dictionary.foldersInView.getSubitems(oldFolder);
 
+    for (Folder subfolder in subfolders) {
+      String path = fullPath(subfolder);
+
+      _dictionary.activeFolders.remove(path);
+      _dictionary.cachedFolders.remove(path);
+    }
+
+    _dictionary.foldersInView.update(oldFolder, updatedFolder);
   }
 
 

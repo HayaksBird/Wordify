@@ -63,12 +63,15 @@ class NTree<T> {
   }
 
 
-  ///
+  ///Update the old item in the tree with its newer version.
   void update(T oldItem, T newItem) {
     NTreeNode<T>? node = itemInTree[oldItem];
 
     if (node != null) {
+      itemInTree.remove(oldItem);
+
       node.item = newItem;
+      itemInTree[newItem] = node;
     } else { throw ArgumentError('The item cannot be updated, since it does not exist'); }
   }
 
