@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/choose_folder_widget.dart';
 
 
 ///Demonstarte the word editing template
@@ -19,8 +22,7 @@ class CreateWordTemplate extends StatefulWidget {
 class _CreateWordTemplateState extends State<CreateWordTemplate> {
   Folder? storageFolder;
   final _formKey = GlobalKey<FormState>();
-  final _dictionaryContentBloc = DictionaryContentBloc();
-  final _dictionaryStateBloc = DictionaryStateBloc();
+  final _dictionaryBloc = DictionaryBloc();
   final _wordValidationBloc = WordValidationBloc();
   final _folderValidationBloc = FolderValidationBloc(); 
   final TextEditingController wordController = TextEditingController();
@@ -31,7 +33,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   void initState() {
     super.initState();
-    _dictionaryStateBloc.loadFolders();
+    _dictionaryBloc.state.loadFolders();
   }
 
 
@@ -56,33 +58,35 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             ),
 
             const Spacer(),
-        
-            StreamBuilder<List<NTreeNode<Folder>>>(
-              stream: _dictionaryStateBloc.foldersInView,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox.shrink();
-                } else {
-                  /*
-                  StatefulBuilder ensures that only the ChooseItemButton widget gets
-                  updated when the button value is changed.
-                  */
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return ChooseItemButton(
-                        validator: (value) => _folderValidationBloc.validateChooseFolder(value),
-                        items: /*snapshot.data!*/ [],
-                        selectedItem: storageFolder,
-                        onChanged: (Folder? newFolder) {
-                          setState(() {
-                            storageFolder = newFolder;
-                          });
+
+            ChosenFolderProvider(
+              notifier: ValueNotifier<NTreeNode<Folder>?>(null),
+              child: FutureBuilder<List<NTreeNode<Folder>>>(
+                future: _dictionaryBloc.state.rootFolders,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    final ValueNotifier<NTreeNode<Folder>?> valueNotifier = ChosenFolderProvider.of(context);
+
+                    return ChooseFolder(
+                      goBack: () { goBack(valueNotifier); },
+                      folders: ValueListenableBuilder<NTreeNode<Folder>?>(
+                        valueListenable: valueNotifier,
+                        builder: (context, folder, child) {
+                          if (folder == null) {
+                            return ChooseFolderWidget(folders: snapshot.data!, valueNotifier: valueNotifier);
+                          } else {
+                            storageFolder = folder.item;
+                            return ChooseFolderWidget(folders: folder.childrenNodes, valueNotifier: valueNotifier);
+                          }
                         },
-                      );
-                    }
-                  );
+                      ),
+                      path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!.item) : ''
+                    );
+                  }
                 }
-              }
+              ),
             ),
         
             ButtonsInRow(
@@ -98,18 +102,26 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   }
 
 
+  ///
+  void goBack(ValueNotifier<NTreeNode<Folder>?> valueNotifier) {
+    if (valueNotifier.value != null) { 
+      valueNotifier.value = _dictionaryBloc.state.getParent(valueNotifier.value!);
+    }
+  }
+
+
   ///Create a new word from the updated fields.
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    //if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text
       );
 
-      _dictionaryContentBloc.createWord(storageFolder!, newWord);
+      _dictionaryBloc.content.createWord(storageFolder!, newWord);
   
       Navigator.pop(context);
-    }
+    //}
   }
 
 
@@ -143,7 +155,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
   late final Word word;
   final _wordValidationBloc = WordValidationBloc();
-  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _dictionaryBloc = DictionaryBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
   late final TextEditingController translationController;
@@ -197,22 +209,22 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
   ///
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    //if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text
       );
 
-      _dictionaryContentBloc.updateWord(expandedFolder, word, newWord);
+      _dictionaryBloc.content.updateWord(expandedFolder, word, newWord);
   
       Navigator.pop(context);
-    }
+    //}
   }
 
 
   ///
   void _delete() {
-    _dictionaryContentBloc.deleteWord(expandedFolder, word);
+    _dictionaryBloc.content.deleteWord(expandedFolder, word);
 
     Navigator.pop(context);
   }

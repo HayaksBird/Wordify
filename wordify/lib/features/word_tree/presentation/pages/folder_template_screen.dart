@@ -22,7 +22,7 @@ class CreateFolderTemplate extends StatefulWidget {
 
 class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   late final Folder? parentFolder;
-  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _dictionaryBloc = DictionaryBloc();
   final _folderValidationBloc = FolderValidationBloc();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -70,7 +70,7 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
         name: nameController.text
       );
 
-      _dictionaryContentBloc.createFolder(parentFolder, newFolder);
+      _dictionaryBloc.content.createFolder(parentFolder, newFolder);
 
       Navigator.pop(context);
     //}
@@ -103,7 +103,7 @@ class UpdateFolderTemplate extends StatefulWidget {
 
 class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   late final Folder folder;
-  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _dictionaryBloc = DictionaryBloc();
   final _folderValidationBloc = FolderValidationBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController nameController;
@@ -152,7 +152,7 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
         name: nameController.text
       );
 
-      _dictionaryContentBloc.updateFolder(folder, newFolder);
+      _dictionaryBloc.content.updateFolder(folder, newFolder);
   
       Navigator.pop(context);
     //}

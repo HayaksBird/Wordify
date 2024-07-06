@@ -13,13 +13,13 @@ class WordViewWidget extends StatefulWidget {
 }
 
 class _WordViewWidgetState extends State<WordViewWidget> {
-  final _dictionaryStateBloc = DictionaryStateBloc();
+  final _dictionaryBloc = DictionaryBloc();
 
   
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<FolderWords>>(
-      stream: _dictionaryStateBloc.activeFolders,
+      stream: _dictionaryBloc.state.activeFolders,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
@@ -52,7 +52,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
 
 //Needs bloc only if adds, updates words
 class FolderContentWidget extends StatelessWidget {
-  final _dictionaryStateBloc = DictionaryStateBloc();
+  final _dictionaryBloc = DictionaryBloc();
   final FolderWords activeFolder;
 
 
@@ -64,8 +64,8 @@ class FolderContentWidget extends StatelessWidget {
     return Column(
       children: [
         FolderHeader(
-          name: _dictionaryStateBloc.getFullPath(activeFolder),
-          closePressed: () { _dictionaryStateBloc.closeFolder(activeFolder); }
+          name: _dictionaryBloc.state.getFullPath(activeFolder.folder),
+          closePressed: () { _dictionaryBloc.state.closeFolder(activeFolder); }
         ),
         Expanded(child: _buildWordList(context))
       ],
@@ -88,7 +88,7 @@ class FolderContentWidget extends StatelessWidget {
       onTap: () { //If clicked, open the corresponding template
         _openWordTemplate(context, word);
       },
-      child: ListTile (
+      child: ListTile(
         title: Text(word.word),
         subtitle: Text(word.translation)
       ),

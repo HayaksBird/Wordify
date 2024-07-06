@@ -45,12 +45,13 @@ class FolderHeader extends StatelessWidget {
 }
 
 
+
 ///Takes the list of words and places it on a container in a such way that
 ///the sides of the container are being exposed. This allows to scroll through the
 ///list of opened folders.
 class FolderContentTemplate extends StatelessWidget {
   final Widget folderContent;
-
+  
 
   const FolderContentTemplate({super.key, required this.folderContent});
 
@@ -77,9 +78,11 @@ class FolderContentTemplate extends StatelessWidget {
 }
 
 
+
 ///
 class FolderList extends StatelessWidget {
   final Widget child;
+
 
 
   const FolderList({
@@ -100,6 +103,54 @@ class FolderList extends StatelessWidget {
         color: const Color.fromARGB(255, 194, 152, 227),
         child: child
       )
+    );
+  }
+}
+
+
+
+///
+class ChooseFolder extends StatelessWidget {
+  final Widget folders;
+  final VoidCallback goBack;
+  final String path;
+
+
+  const ChooseFolder({
+    super.key,
+    required this.folders,
+    required this.goBack,
+    required path
+  }) : path = 'Saving to: $path';
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          color: const Color.fromARGB(255, 0, 0, 0),
+          child: IconButton(
+            onPressed: goBack,
+            icon: const Icon(
+              Icons.arrow_circle_left,
+              color: Color.fromARGB(255, 255, 255, 255),
+              size: 20.0,
+            ), 
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(0), // Optional: adds rounded corners
+          ),
+          child: folders
+        ),
+        Text(path)
+      ]
     );
   }
 }

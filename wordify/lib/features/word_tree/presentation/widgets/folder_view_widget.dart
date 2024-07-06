@@ -18,21 +18,20 @@ class FolderViewWidget extends StatefulWidget {
 
 
 class _FolderViewWidgetState extends State<FolderViewWidget> {
-  final _dictionaryStateBloc = DictionaryStateBloc();
-  final _dictionaryContentBloc = DictionaryContentBloc();
+  final _dictionaryBloc = DictionaryBloc();
 
 
   @override
   void initState() {
     super.initState();
-    _dictionaryStateBloc.loadFolders();
+    _dictionaryBloc.state.loadFolders();
   }
 
 
   @override
   void dispose() {
     super.dispose();
-    _dictionaryStateBloc.dispose();
+    _dictionaryBloc.state.dispose();
   }
 
 
@@ -44,7 +43,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
         child: Stack(
           children: [
             StreamBuilder<List<NTreeNode<Folder>>>(
-              stream: _dictionaryStateBloc.foldersInView,
+              stream: _dictionaryBloc.state.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -94,11 +93,11 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
       children: [
         GestureDetector(
           onTap: () {
-            _dictionaryStateBloc.updateSubfolderStatus(folder.item);
+            _dictionaryBloc.state.updateSubfolderStatus(folder.item);
           },
 
           onDoubleTap: () {
-            _dictionaryStateBloc.accessFolder(folder.item);
+            _dictionaryBloc.state.accessFolder(folder.item);
           },
         
           onSecondaryTapDown: (details) {
@@ -116,7 +115,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
         
                 DoAction(
                   title: 'Delete',
-                  action: () { _dictionaryContentBloc.deleteFolder(folder.item); }
+                  action: () { _dictionaryBloc.content.deleteFolder(folder.item); }
                 )
               ], 
               context,
@@ -128,13 +127,13 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
             title: Text(
               folder.item.name,
               style: TextStyle(
-                color: _dictionaryStateBloc.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+                color: _dictionaryBloc.state.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
               )
             ),
           ),
         ),
 
-        if (_dictionaryStateBloc.isToExpand(folder))
+        if (_dictionaryBloc.state.isToExpand(folder))
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: _buildInnerFolderList(folder.childrenNodes),

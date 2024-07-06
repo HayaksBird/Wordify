@@ -41,6 +41,7 @@ class DictionaryManager {
 }
 
 
+
 ///The class that manages the dictionary of the app.
 class DictionaryStateManager {
   final Completer<void> _initializationCompleter = Completer<void>();

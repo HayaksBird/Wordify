@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 ///
 class WordifyFloatingActionButton extends FloatingActionButton {
@@ -44,27 +43,6 @@ class WordifyTextButton extends TextButton {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         child: Text(text),
-      );
-}
-
-
-///
-class ChooseItemButton extends DropdownButtonFormField<Folder> {
-  ChooseItemButton({
-    super.key,
-    required List<Folder> items,
-    required Folder? selectedItem,
-    required ValueChanged<Folder?> super.onChanged,
-    super.validator,
-  }) : super(
-        hint: const Text("Select a Folder"),
-        value: selectedItem,
-        items: items.map<DropdownMenuItem<Folder>>((Folder folder) {
-          return DropdownMenuItem<Folder>(
-            value: folder,
-            child: Text(folder.name),
-          );
-        }).toList()
       );
 }
 
