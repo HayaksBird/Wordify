@@ -108,6 +108,18 @@ class DictionaryStateManager {
 
 
   ///
+  List<Folder> getChildren(Folder folder) {
+    return _dictionary.foldersInView.getChildren(folder);
+  }
+
+
+  ///
+  List<Folder> getSiblingsInclusive(Folder folder) {
+    return _dictionary.foldersInView.getSiblingsInclusive(folder);
+  }
+
+
+  ///
   Future<bool> expandFolder(Folder folder) async {
     if (!_dictionary.foldersInView.getActivityStatus(folder)) { //Folder is not expanded
       _dictionary.foldersInView.changeActivityStatus(folder, true);

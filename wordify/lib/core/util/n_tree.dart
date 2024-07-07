@@ -180,8 +180,32 @@ class NTree<T> {
     _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
-      return node.childrenNodes.map((folder) => folder.item).toList();
+      return _toListItems(node.childrenNodes);
     } else { throw ArgumentError('Cannot get children of item, since it does not exist'); }
+  }
+
+
+  ///
+  List<T> getSiblingsInclusive(T item) {
+    _NTreeNode<T>? node = _itemInTree[item];
+
+    if (node != null) {
+      _NTreeNode<T> parent = node.parent!;
+
+      return _toListItems(parent.childrenNodes);
+    } else { throw ArgumentError('Cannot get siblings of item, since it does not exist'); }
+  }
+
+
+  ///
+  List<T> getSiblingsExclusive(T item) {
+    _NTreeNode<T>? node = _itemInTree[item];
+
+    if (node != null) {
+      _NTreeNode<T> parent = node.parent!;
+
+      return _toListItems(parent.childrenNodes..remove(node));
+    } else { throw ArgumentError('Cannot get siblings of item, since it does not exist'); }
   }
 
 
@@ -196,9 +220,15 @@ class NTree<T> {
   }
 
 
+  ///
+  List<T> _toListItems(List<_NTreeNode<T>> nodes) {
+    return nodes.map((node) => node.item).toList();
+  }
+
+
   //GETTERS
   ///
-  List<T> get getRootFolders => _root?.childrenNodes.map((rootFolder) => rootFolder.item).toList() ?? [];
+  List<T> get getRootItems => _root?.childrenNodes.map((rootItem) => rootItem.item).toList() ?? [];
 }
 
 

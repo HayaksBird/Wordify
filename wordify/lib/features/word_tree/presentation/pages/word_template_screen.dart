@@ -23,8 +23,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   Folder? storageFolder;
   final _formKey = GlobalKey<FormState>();
   final _dictionaryBloc = DictionaryBloc();
-  final _wordValidationBloc = WordValidationBloc();
-  final _folderValidationBloc = FolderValidationBloc(); 
+  final _validationBloc = ValidationBloc(); 
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
 
@@ -48,13 +47,13 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             TextFormField(
               controller: wordController,
               decoration: const InputDecoration(labelText: "Word"),
-              validator: (value) => _wordValidationBloc.validateWordWord(value!),
+              validator: (value) => _validationBloc.word.validateWordWord(value!),
             ),
 
             TextFormField(
               controller: translationController,
               decoration: const InputDecoration(labelText: "Translation"),
-              validator: (value) => _wordValidationBloc.validateWordTranslation(value!),
+              validator: (value) => _validationBloc.word.validateWordTranslation(value!),
             ),
 
             const Spacer(),
@@ -75,7 +74,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
                         valueListenable: valueNotifier,
                         builder: (context, folder, child) {
                           if (folder == null) {
-                            return ChooseFolderWidget(folders: snapshot.data!.getRootFolders, valueNotifier: valueNotifier);
+                            return ChooseFolderWidget(folders: snapshot.data!.getRootItems, valueNotifier: valueNotifier);
                           } else {
                             storageFolder = folder;
                             return ChooseFolderWidget(folders: snapshot.data!.getChildren(folder), valueNotifier: valueNotifier);
@@ -113,7 +112,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
   ///Create a new word from the updated fields.
   void _submit() {
-    //if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text
@@ -122,7 +121,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
       _dictionaryBloc.content.createWord(storageFolder!, newWord);
   
       Navigator.pop(context);
-    //}
+    }
   }
 
 
@@ -155,7 +154,7 @@ class UpdateWordTemplate extends StatefulWidget {
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
   late final Word word;
-  final _wordValidationBloc = WordValidationBloc();
+  final _validationBloc = ValidationBloc();
   final _dictionaryBloc = DictionaryBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
@@ -183,13 +182,13 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
             TextFormField(
               controller: wordController,
               decoration: const InputDecoration(labelText: "Word"),
-              validator: (value) => _wordValidationBloc.validateWordWord(value!),
+              validator: (value) => _validationBloc.word.validateWordWord(value!),
             ),
 
             TextFormField(
               controller: translationController,
               decoration: const InputDecoration(labelText: "Translation"),
-              validator: (value) => _wordValidationBloc.validateWordTranslation(value!),
+              validator: (value) => _validationBloc.word.validateWordTranslation(value!),
             ),
 
             const Spacer(),
@@ -210,7 +209,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
   ///
   void _submit() {
-    //if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text
@@ -219,7 +218,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
       _dictionaryBloc.content.updateWord(expandedFolder, word, newWord);
   
       Navigator.pop(context);
-    //}
+    }
   }
 
 

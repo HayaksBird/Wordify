@@ -53,7 +53,9 @@ class DictionaryStateBloc {
   }
 
 
+  ///
   Future<void> loadFolders() async {
+    //_foldersInViewController.sink.add(await _dictionaryManager.state.setFolderTree());
     _updateFolderView();
   }
 

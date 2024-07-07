@@ -23,7 +23,7 @@ class CreateFolderTemplate extends StatefulWidget {
 class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   late final Folder? parentFolder;
   final _dictionaryBloc = DictionaryBloc();
-  final _folderValidationBloc = FolderValidationBloc();
+  final _validationBloc = ValidationBloc();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
 
@@ -45,7 +45,7 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
             TextFormField(
               controller: nameController,
               decoration: const InputDecoration(labelText: "Name"),
-              validator: (value) => _folderValidationBloc.validateFolderName(value!),
+              validator: (value) => _validationBloc.folder.validateInsertFolderName(value!, parentFolder),
             ),
 
             const Spacer(),
@@ -65,7 +65,7 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
 
   ///
   void _submit() {
-    //if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final Folder newFolder = Folder(
         name: nameController.text
       );
@@ -73,7 +73,7 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
       _dictionaryBloc.content.createFolder(parentFolder, newFolder);
 
       Navigator.pop(context);
-    //}
+    }
   }
 
 
@@ -104,7 +104,7 @@ class UpdateFolderTemplate extends StatefulWidget {
 class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   late final Folder folder;
   final _dictionaryBloc = DictionaryBloc();
-  final _folderValidationBloc = FolderValidationBloc();
+  final _validationBloc = ValidationBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController nameController;
 
@@ -127,7 +127,7 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
             TextFormField(
               controller: nameController,
               decoration: const InputDecoration(labelText: "Name"),
-              validator: (value) => _folderValidationBloc.validateFolderName(value!, folder.name),
+              validator: (value) => _validationBloc.folder.validateUpdateFolderName(value!, folder, folder.name),
             ),
 
             const Spacer(),
@@ -147,7 +147,7 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
 
   ///
   void _submit() {
-    //if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final Folder newFolder = Folder(
         name: nameController.text
       );
@@ -155,7 +155,7 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
       _dictionaryBloc.content.updateFolder(folder, newFolder);
   
       Navigator.pop(context);
-    //}
+    }
   }
 
 

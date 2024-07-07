@@ -48,7 +48,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  return _buildRootFolderList(snapshot.data!.getRootFolders, snapshot.data!);
+                  return _buildRootFolderList(snapshot.data!.getRootItems, snapshot.data!);
                 }
               },
             )
