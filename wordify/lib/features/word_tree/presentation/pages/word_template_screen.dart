@@ -60,29 +60,29 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             const Spacer(),
 
             ChosenFolderProvider(
-              notifier: ValueNotifier<NTreeNode<Folder>?>(null),
-              child: FutureBuilder<List<NTreeNode<Folder>>>(
-                future: _dictionaryBloc.state.rootFolders,
+              notifier: ValueNotifier<Folder?>(null),
+              child: FutureBuilder<NTree<Folder>>(
+                future: _dictionaryBloc.state.folderTree,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    final ValueNotifier<NTreeNode<Folder>?> valueNotifier = ChosenFolderProvider.of(context);
+                    final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
 
                     return ChooseFolder(
-                      goBack: () { goBack(valueNotifier); },
-                      folders: ValueListenableBuilder<NTreeNode<Folder>?>(
+                      goBack: () { goBack(valueNotifier, snapshot.data!); },
+                      folders: ValueListenableBuilder<Folder?>(
                         valueListenable: valueNotifier,
                         builder: (context, folder, child) {
                           if (folder == null) {
-                            return ChooseFolderWidget(folders: snapshot.data!, valueNotifier: valueNotifier);
+                            return ChooseFolderWidget(folders: snapshot.data!.getRootFolders, valueNotifier: valueNotifier);
                           } else {
-                            storageFolder = folder.item;
-                            return ChooseFolderWidget(folders: folder.childrenNodes, valueNotifier: valueNotifier);
+                            storageFolder = folder;
+                            return ChooseFolderWidget(folders: snapshot.data!.getChildren(folder), valueNotifier: valueNotifier);
                           }
                         },
                       ),
-                      path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!.item) : ''
+                      path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!) : ''
                     );
                   }
                 }
@@ -103,9 +103,10 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
 
   ///
-  void goBack(ValueNotifier<NTreeNode<Folder>?> valueNotifier) {
-    if (valueNotifier.value != null) { 
-      valueNotifier.value = _dictionaryBloc.state.getParent(valueNotifier.value!);
+  void goBack(ValueNotifier<Folder?> valueNotifier, NTree<Folder> folderTree) {
+    if (valueNotifier.value != null) {
+      valueNotifier.value = folderTree.getParent(valueNotifier.value!);
+      storageFolder = valueNotifier.value;
     }
   }
 

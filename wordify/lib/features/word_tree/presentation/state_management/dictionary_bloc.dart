@@ -4,7 +4,7 @@ import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
 
 
-final _foldersInViewController = StreamController<List<NTreeNode<Folder>>>(); //StreamController for output
+final _foldersInViewController = StreamController<NTree<Folder>>(); //StreamController for output
 final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
 final DictionaryManager _dictionaryManager = DictionaryManager();
 
@@ -17,7 +17,7 @@ Future<void> _updateWordView() async {
 
 ///
 Future<void> _updateFolderView() async {
-  _foldersInViewController.sink.add((await _dictionaryManager.state.foldersInView).getRootFolders);
+  _foldersInViewController.sink.add(await _dictionaryManager.state.foldersInView);
 }
 
 
@@ -106,21 +106,17 @@ class DictionaryStateBloc {
 
 
   ///
-  bool isToExpand(NTreeNode<Folder> folder) {
-    return folder.childrenNodes.isNotEmpty && folder.activity;
+  bool isToExpand(Folder folder) {
+    return _dictionaryManager.state.canFolderExpand(folder);
   }
 
 
-  ///
-  NTreeNode<Folder> getParent(NTreeNode<Folder> folder) => folder.parent!;
-
-
   //GETTERS
-  Stream<List<NTreeNode<Folder>>> get foldersInView => _foldersInViewController.stream;
+  Stream<NTree<Folder>> get foldersInView => _foldersInViewController.stream;
 
   Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
 
-  Future<List<NTreeNode<Folder>>> get rootFolders async => (await _dictionaryManager.state.foldersInView).getRootFolders;
+  Future<NTree<Folder>> get folderTree async => (await _dictionaryManager.state.foldersInView);
 }
 
 

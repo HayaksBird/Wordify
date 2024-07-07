@@ -2,8 +2,8 @@ import 'dart:collection';
 
 ///
 class NTree<T> {
-  late final NTreeNode<T>? _root;
-  late final HashMap<T, NTreeNode<T>> itemInTree;
+  late final _NTreeNode<T>? _root;
+  late final HashMap<T, _NTreeNode<T>> _itemInTree;
 
 
   ///Set the outter most layer
@@ -12,15 +12,15 @@ class NTree<T> {
       throw ArgumentError('Items list must not be empty');
     }
 
-    itemInTree = HashMap<T, NTreeNode<T>>();
-    _root = NTreeNode<T>(item: items[0], parent: null); //dummy root
+    _itemInTree = HashMap<T, _NTreeNode<T>>();
+    _root = _NTreeNode<T>(item: items[0], parent: null); //dummy root
 
     for (T item in items) {
-      NTreeNode<T> node = NTreeNode<T>(item: item, parent: _root);
+      _NTreeNode<T> node = _NTreeNode<T>(item: item, parent: _root);
 
       _root!.addChild(node);
 
-      itemInTree[item] = node;
+      _itemInTree[item] = node;
     }
   }
 
@@ -28,20 +28,20 @@ class NTree<T> {
   ///
   void insertOne(T? parent, T child) {
     if (parent == null) { //Insert new root folder
-      NTreeNode<T> childNode = NTreeNode<T>(item: child, parent: _root);
+      _NTreeNode<T> childNode = _NTreeNode<T>(item: child, parent: _root);
 
       _root!.addChild(childNode);
 
-      itemInTree[child] = childNode;
+      _itemInTree[child] = childNode;
     } else {
-      NTreeNode<T>? parentNode = itemInTree[parent];
+      _NTreeNode<T>? parentNode = _itemInTree[parent];
 
       if (parentNode != null) { //Insert new subfolder
-        NTreeNode<T> childNode = NTreeNode<T>(item: child, parent: parentNode);
+        _NTreeNode<T> childNode = _NTreeNode<T>(item: child, parent: parentNode);
 
         parentNode.addChild(childNode);
 
-        itemInTree[child] = childNode;
+        _itemInTree[child] = childNode;
       } else { throw ArgumentError('The parent item does not exist in the tree'); }
     }
   }
@@ -49,15 +49,15 @@ class NTree<T> {
 
   ///
   void insert(T parent, List<T> children) {
-    NTreeNode<T>? parentNode = itemInTree[parent];
+    _NTreeNode<T>? parentNode = _itemInTree[parent];
 
     if (parentNode != null) {
       for (T child in children) {
-        NTreeNode<T> node = NTreeNode<T>(item: child, parent: parentNode);
+        _NTreeNode<T> node = _NTreeNode<T>(item: child, parent: parentNode);
 
         parentNode.addChild(node);
 
-        itemInTree[child] = node;
+        _itemInTree[child] = node;
       }
     } else { throw ArgumentError('The parent item does not exist in the tree'); }
   }
@@ -65,36 +65,36 @@ class NTree<T> {
 
   ///Update the old item in the tree with its newer version.
   void update(T oldItem, T newItem) {
-    NTreeNode<T>? node = itemInTree[oldItem];
+    _NTreeNode<T>? node = _itemInTree[oldItem];
 
     if (node != null) {
-      itemInTree.remove(oldItem);
+      _itemInTree.remove(oldItem);
 
       node.item = newItem;
-      itemInTree[newItem] = node;
+      _itemInTree[newItem] = node;
     } else { throw ArgumentError('The item cannot be updated, since it does not exist'); }
   }
 
 
   ///Delete an item from the tree, while also deleting its subitems.
   void delete(T item) {
-    NTreeNode<T>? node = itemInTree[item];
+    _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
       _traverseDelete(node);
 
-      NTreeNode<T>? parent = node.parent;
+      _NTreeNode<T>? parent = node.parent;
       parent!.childrenNodes.remove(node);
     } else { throw ArgumentError('The item cannot be deleted, since it does not exist'); }
   }
 
 
   ///Traverse the subtree while deleting the items from the hash map.
-  void _traverseDelete(NTreeNode<T> item) {
-    itemInTree.remove(item.item);
+  void _traverseDelete(_NTreeNode<T> item) {
+    _itemInTree.remove(item.item);
 
     if (item.childrenNodes.isNotEmpty) {
-      for (NTreeNode<T> subitem in item.childrenNodes) {
+      for (_NTreeNode<T> subitem in item.childrenNodes) {
         _traverseDelete(subitem);
       }
     }
@@ -103,7 +103,7 @@ class NTree<T> {
 
   ///Get a list of all subitems. Note that the item itself it also present in the list.
   List<T> getSubitems(T item) {
-    NTreeNode<T>? node = itemInTree[item];
+    _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
       return _traverse(node, []);
@@ -112,11 +112,11 @@ class NTree<T> {
 
 
   ///Traverse.
-  List<T> _traverse(NTreeNode<T> item, List<T> items) {
+  List<T> _traverse(_NTreeNode<T> item, List<T> items) {
     items.add(item.item);
 
     if (item.childrenNodes.isNotEmpty) {
-      for (NTreeNode<T> subitem in item.childrenNodes) {
+      for (_NTreeNode<T> subitem in item.childrenNodes) {
         _traverse(subitem, items);
       }
     }
@@ -129,8 +129,8 @@ class NTree<T> {
   bool containsChildren(T item) {
     bool containsChildren = false;
 
-    if (itemInTree.containsKey(item)) {
-      containsChildren = itemInTree[item]!._childrenNodes.isNotEmpty;
+    if (_itemInTree.containsKey(item)) {
+      containsChildren = _itemInTree[item]!._childrenNodes.isNotEmpty;
     }
 
     return containsChildren;
@@ -139,7 +139,7 @@ class NTree<T> {
 
   ///
   String getPathToItem<R>(T item, R Function(T) pathSelector) {
-    NTreeNode<T>? node = itemInTree[item];
+    _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
       String path = '${pathSelector(node.item)}';
@@ -157,7 +157,7 @@ class NTree<T> {
 
   ///
   void changeActivityStatus(T item, bool status) {
-    NTreeNode<T>? node = itemInTree[item];
+    _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
       node.activity = status;
@@ -167,7 +167,7 @@ class NTree<T> {
 
   ///
   bool getActivityStatus(T item) {
-    NTreeNode<T>? node = itemInTree[item];
+    _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
       return node.activity;
@@ -175,31 +175,52 @@ class NTree<T> {
   }
 
 
+  ///
+  List<T> getChildren(T item) {
+    _NTreeNode<T>? node = _itemInTree[item];
+
+    if (node != null) {
+      return node.childrenNodes.map((folder) => folder.item).toList();
+    } else { throw ArgumentError('Cannot get children of item, since it does not exist'); }
+  }
+
+
+  ///
+  T? getParent(T item) {
+    _NTreeNode<T>? node = _itemInTree[item];
+
+    if (node != null) {
+      if (node.parent == _root) { return null; }
+      else { return node.parent!.item; }
+    } else { throw ArgumentError('Cannot get parent of item, since it does not exist'); }
+  }
+
+
   //GETTERS
   ///
-  List<NTreeNode<T>> get getRootFolders => _root?.childrenNodes ?? [];
+  List<T> get getRootFolders => _root?.childrenNodes.map((rootFolder) => rootFolder.item).toList() ?? [];
 }
 
 
 ///
-class NTreeNode<T> {
+class _NTreeNode<T> {
   T _item;
-  final NTreeNode<T>? _parent;
-  List<NTreeNode<T>> _childrenNodes;
+  final _NTreeNode<T>? _parent;
+  List<_NTreeNode<T>> _childrenNodes;
   bool _activity = false;
 
 
-  NTreeNode({
+  _NTreeNode({
     required T item,
-    required NTreeNode<T>? parent,
-    List<NTreeNode<T>>? childrenNodes
+    required _NTreeNode<T>? parent,
+    List<_NTreeNode<T>>? childrenNodes
   })
     : _item = item,
       _parent = parent,
       _childrenNodes = childrenNodes ?? [];
 
 
-  void addChild(NTreeNode<T> child) {
+  void addChild(_NTreeNode<T> child) {
     _childrenNodes.add(child);
   }
 
@@ -209,9 +230,9 @@ class NTreeNode<T> {
 
   bool get activity => _activity;
 
-  NTreeNode<T>? get parent => _parent;
+  _NTreeNode<T>? get parent => _parent;
 
-  List<NTreeNode<T>> get childrenNodes => _childrenNodes;
+  List<_NTreeNode<T>> get childrenNodes => _childrenNodes;
 
 
   //Setters
@@ -219,5 +240,5 @@ class NTreeNode<T> {
 
   set activity(bool value) { _activity = value; }
 
-  set childrenNodes(List<NTreeNode<T>> value) { _childrenNodes = value; }
+  set childrenNodes(List<_NTreeNode<T>> value) { _childrenNodes = value; }
 }

@@ -42,13 +42,13 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
         onSecondaryTap: () => _createFolder(),
         child: Stack(
           children: [
-            StreamBuilder<List<NTreeNode<Folder>>>(
+            StreamBuilder<NTree<Folder>>(
               stream: _dictionaryBloc.state.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  return _buildRootFolderList(snapshot.data!);
+                  return _buildRootFolderList(snapshot.data!.getRootFolders, snapshot.data!);
                 }
               },
             )
@@ -59,15 +59,15 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
   }
 
 
-
-  Widget _buildRootFolderList(List<NTreeNode<Folder>> rootFolders) {
+  ///
+  Widget _buildRootFolderList(List<Folder> rootFolders, NTree<Folder> folderTree) {
     return ListView.builder(
       itemCount: rootFolders.length + 1,
       itemBuilder: (context, index) {
         if (index == rootFolders.length) {
           return const SizedBox(height: 100); //Add extra space at the end of the list
         } else {
-          return _buildFolderTile(rootFolders[index]);
+          return _buildFolderTile(rootFolders[index], folderTree);
         }
       }
     );
@@ -75,29 +75,29 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
 
 
   ///
-  Widget _buildInnerFolderList(List<NTreeNode<Folder>> folders) {
+  Widget _buildInnerFolderList(List<Folder> folders, NTree<Folder> folderTree) {
     return ListView.builder(
       itemCount: folders.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return _buildFolderTile(folders[index]);
+        return _buildFolderTile(folders[index], folderTree);
       }
     );
   }
 
 
   ///
-  Widget _buildFolderTile(NTreeNode<Folder> folder) {
+  Widget _buildFolderTile(Folder folder, NTree<Folder> folderTree) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            _dictionaryBloc.state.updateSubfolderStatus(folder.item);
+            _dictionaryBloc.state.updateSubfolderStatus(folder);
           },
 
           onDoubleTap: () {
-            _dictionaryBloc.state.accessFolder(folder.item);
+            _dictionaryBloc.state.accessFolder(folder);
           },
         
           onSecondaryTapDown: (details) {
@@ -105,17 +105,17 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
               [
                 DoAction(
                   title: 'Create',
-                  action: () { _createFolder(folder.item); }
+                  action: () { _createFolder(folder); }
                 ),
 
                 DoAction(
                   title: 'Update',
-                  action: () { _updateFolder(folder.item); }
+                  action: () { _updateFolder(folder); }
                 ),
         
                 DoAction(
                   title: 'Delete',
-                  action: () { _dictionaryBloc.content.deleteFolder(folder.item); }
+                  action: () { _dictionaryBloc.content.deleteFolder(folder); }
                 )
               ], 
               context,
@@ -125,9 +125,9 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
           
           child: ListTile(
             title: Text(
-              folder.item.name,
+              folder.name,
               style: TextStyle(
-                color: _dictionaryBloc.state.isActivated(folder.item) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+                color: _dictionaryBloc.state.isActivated(folder) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
               )
             ),
           ),
@@ -136,7 +136,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
         if (_dictionaryBloc.state.isToExpand(folder))
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child: _buildInnerFolderList(folder.childrenNodes),
+            child: _buildInnerFolderList(folderTree.getChildren(folder), folderTree),
           )
       ]
     );

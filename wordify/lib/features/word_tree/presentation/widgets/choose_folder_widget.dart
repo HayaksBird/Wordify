@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 ///
 class ChooseFolderWidget extends StatelessWidget {
-  final List<NTreeNode<Folder>> folders;
-  final ValueNotifier<NTreeNode<Folder>?> valueNotifier;
+  final List<Folder> folders;
+  final ValueNotifier<Folder?> valueNotifier;
 
 
   const ChooseFolderWidget({
@@ -38,13 +37,13 @@ class ChooseFolderWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildFolderTile(NTreeNode<Folder> folder) {
+  Widget _buildFolderTile(Folder folder) {
     return InkWell(
       onTap: () {
         valueNotifier.value = folder;
       },
       child: ListTile(
-        title: Text(folder.item.name)
+        title: Text(folder.name)
       )
     );
   }

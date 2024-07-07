@@ -129,12 +129,19 @@ class ChooseFolder extends StatelessWidget {
     return Column(
       children: [
         Container(
-          color: const Color.fromARGB(255, 0, 0, 0),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(0), // Optional: adds rounded corners
+          ),
+          width: double.infinity,
           child: IconButton(
             onPressed: goBack,
             icon: const Icon(
               Icons.arrow_circle_left,
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Color.fromARGB(255, 0, 0, 0), // Changed color to make it visible against white background
               size: 20.0,
             ), 
           ),
