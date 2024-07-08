@@ -14,11 +14,7 @@ class NTree<T> {
   ///Set the outter most layer
   void setRoot(List<T> items) {
     if (_root == null) {
-      if (items.isEmpty) {
-        throw ArgumentError('Items list must not be empty');
-      }
-
-      _root = _NTreeNode<T>(item: items[0], parent: null); //dummy root
+      _root = _NTreeNode<T>(item: null, parent: null); //dummy root
 
       for (T item in items) {
         _NTreeNode<T> node = _NTreeNode<T>(item: item, parent: _root);
@@ -119,7 +115,7 @@ class NTree<T> {
 
   ///Traverse.
   List<T> _traverse(_NTreeNode<T> item, List<T> items) {
-    items.add(item.item);
+    items.add(item.item!);
 
     if (item.childrenNodes.isNotEmpty) {
       for (_NTreeNode<T> subitem in item.childrenNodes) {
@@ -148,12 +144,12 @@ class NTree<T> {
     _NTreeNode<T>? node = _itemInTree[item];
 
     if (node != null) {
-      String path = '${pathSelector(node.item)}';
+      String path = '${pathSelector(node.item!)}';
 
       while (node!.parent != null && node.parent!.parent != null) {
         node = node.parent;
 
-        path = '${pathSelector(node!.item)}/$path';
+        path = '${pathSelector(node!.item!)}/$path';
       }
 
       return path;
@@ -228,26 +224,26 @@ class NTree<T> {
 
   ///
   List<T> _toListItems(List<_NTreeNode<T>> nodes) {
-    return nodes.map((node) => node.item).toList();
+    return nodes.map((node) => node.item!).toList();
   }
 
 
   //GETTERS
   ///
-  List<T> get getRootItems => _root?.childrenNodes.map((rootItem) => rootItem.item).toList() ?? [];
+  List<T> get getRootItems => _root?.childrenNodes.map((rootItem) => rootItem.item!).toList() ?? [];
 }
 
 
 ///
 class _NTreeNode<T> {
-  T _item;
+  T? _item;
   final _NTreeNode<T>? _parent;
   List<_NTreeNode<T>> _childrenNodes;
   bool _activity = false;
 
 
   _NTreeNode({
-    required T item,
+    required T? item,
     required _NTreeNode<T>? parent,
     List<_NTreeNode<T>>? childrenNodes
   })
@@ -262,7 +258,7 @@ class _NTreeNode<T> {
 
 
   //Getters
-  T get item => _item;
+  T? get item => _item;
 
   bool get activity => _activity;
 
@@ -272,7 +268,7 @@ class _NTreeNode<T> {
 
 
   //Setters
-  set item(T value) { _item = value; }
+  set item(T? value) { _item = value; }
 
   set activity(bool value) { _activity = value; }
 
