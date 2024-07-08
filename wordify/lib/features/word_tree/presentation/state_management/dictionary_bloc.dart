@@ -10,14 +10,14 @@ final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
 ///
-Future<void> _updateWordView() async {
-  _activeFoldersController.sink.add(await _dictionaryManager.state.activeFolders);
+void _updateWordView() {
+  _activeFoldersController.sink.add(_dictionaryManager.state.activeFolders);
 }
 
 
 ///
-Future<void> _updateFolderView() async {
-  _foldersInViewController.sink.add(await _dictionaryManager.state.foldersInView);
+void _updateFolderView() {
+  _foldersInViewController.sink.add(_dictionaryManager.state.foldersInView);
 }
 
 
@@ -55,8 +55,7 @@ class DictionaryStateBloc {
 
   ///
   Future<void> loadFolders() async {
-    //_foldersInViewController.sink.add(await _dictionaryManager.state.setFolderTree());
-    _updateFolderView();
+    _foldersInViewController.sink.add(await _dictionaryManager.state.setFolderTree());
   }
 
 
@@ -75,8 +74,8 @@ class DictionaryStateBloc {
 
 
   ///Deactivate the folder that is activated.
-  Future<void> closeFolder(FolderWords expandedFolder) async {
-    bool wasClosed = await _dictionaryManager.state.deactivateFolder(expandedFolder);
+  void closeFolder(FolderWords expandedFolder) {
+    bool wasClosed = _dictionaryManager.state.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
       _updateWordView();
@@ -86,8 +85,8 @@ class DictionaryStateBloc {
 
 
   ///
-  Future<void> updateSubfolderStatus(Folder folder) async {
-    bool didExpand = await _dictionaryManager.state.expandFolder(folder);
+  void toggleFolder(Folder folder) {
+    bool didExpand = _dictionaryManager.state.expandFolder(folder);
 
     if (!didExpand) { _dictionaryManager.state.collapseFolder(folder); }
 
@@ -109,7 +108,23 @@ class DictionaryStateBloc {
 
   ///
   bool isToExpand(Folder folder) {
-    return _dictionaryManager.state.canFolderExpand(folder);
+    NTree<Folder> folderTree = _dictionaryManager.state.foldersInView;
+    
+    return folderTree.getActivityStatus(folder) && folderTree.containsChildren(folder);
+  }
+
+
+  ///
+  List<Folder> getSubfolders(Folder? folder) {
+    if (folder == null) {
+      return folderTree.getRootItems;
+    } else { return folderTree.getChildren(folder); }
+  }
+
+
+  ///
+  Folder? getParentFolder(Folder folder) {
+    return folderTree.getParent(folder);
   }
 
 
@@ -118,7 +133,7 @@ class DictionaryStateBloc {
 
   Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
 
-  Future<NTree<Folder>> get folderTree async => (await _dictionaryManager.state.foldersInView);
+  NTree<Folder> get folderTree => _dictionaryManager.state.foldersInView;
 }
 
 

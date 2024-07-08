@@ -1,12 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
-import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/choose_folder_widget.dart';
+
+final _dictionaryBloc = DictionaryBloc();
+final _validationBloc = ValidationBloc();
+
+
+///
+Form _form({
+  required GlobalKey<FormState> formKey,
+  required TextEditingController wordController,
+  required TextEditingController translationController,
+  required String? Function(String?)? wordValidation,
+  required String? Function(String?)? translationValidation,
+}) {
+  return Form(
+    key: formKey,
+    child: Column(
+      children: [
+        TextFormField(
+          controller: wordController,
+          decoration: const InputDecoration(labelText: "Word"),
+          validator: wordValidation,
+        ),
+
+        TextFormField(
+          controller: translationController,
+          decoration: const InputDecoration(labelText: "Translation"),
+          validator: translationValidation,
+        ),
+      ],
+    )
+  );
+}
+
 
 
 ///Demonstarte the word editing template
@@ -21,9 +53,7 @@ class CreateWordTemplate extends StatefulWidget {
 
 class _CreateWordTemplateState extends State<CreateWordTemplate> {
   Folder? storageFolder;
-  final _formKey = GlobalKey<FormState>();
-  final _dictionaryBloc = DictionaryBloc();
-  final _validationBloc = ValidationBloc(); 
+  final _formKey = GlobalKey<FormState>();  
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
 
@@ -40,79 +70,75 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column (
-          children: [
-            TextFormField(
-              controller: wordController,
-              decoration: const InputDecoration(labelText: "Word"),
-              validator: (value) => _validationBloc.word.validateWordWord(value!),
-            ),
+      body: Column(
+        children: [
+          _form(
+            formKey: _formKey,
+            wordController: wordController,
+            translationController: translationController,
+            wordValidation: (value) => _validationBloc.word.validateWordWord(value!),
+            translationValidation: (value) => _validationBloc.word.validateWordTranslation(value!)
+          ),
 
-            TextFormField(
-              controller: translationController,
-              decoration: const InputDecoration(labelText: "Translation"),
-              validator: (value) => _validationBloc.word.validateWordTranslation(value!),
-            ),
+          const Spacer(),
 
-            const Spacer(),
+          _chooseFolder(),
 
-            ChosenFolderProvider(
-              notifier: ValueNotifier<Folder?>(null),
-              child: FutureBuilder<NTree<Folder>>(
-                future: _dictionaryBloc.state.folderTree,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
-
-                    return ChooseFolder(
-                      goBack: () { goBack(valueNotifier, snapshot.data!); },
-                      folders: ValueListenableBuilder<Folder?>(
-                        valueListenable: valueNotifier,
-                        builder: (context, folder, child) {
-                          if (folder == null) {
-                            return ChooseFolderWidget(folders: snapshot.data!.getRootItems, valueNotifier: valueNotifier);
-                          } else {
-                            storageFolder = folder;
-                            return ChooseFolderWidget(folders: snapshot.data!.getChildren(folder), valueNotifier: valueNotifier);
-                          }
-                        },
-                      ),
-                      path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!) : ''
-                    );
-                  }
-                }
-              ),
-            ),
-        
-            ButtonsInRow(
-              buttons: [
-                WordifyTextButton(onPressed: _return, text: 'Return'),
-                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
-              ]
-            )
-          ]
-        ),
+          ButtonsInRow(
+            buttons: [
+              WordifyTextButton(onPressed: _return, text: 'Return'),
+              WordifyElevatedButton(onPressed: _submit, text: 'Submit')
+            ]
+          )
+        ],
       )
     );
   }
 
 
   ///
-  void goBack(ValueNotifier<Folder?> valueNotifier, NTree<Folder> folderTree) {
+  void goBack(ValueNotifier<Folder?> valueNotifier) {
     if (valueNotifier.value != null) {
-      valueNotifier.value = folderTree.getParent(valueNotifier.value!);
+      valueNotifier.value = _dictionaryBloc.state.getParentFolder(valueNotifier.value!);
       storageFolder = valueNotifier.value;
     }
   }
 
 
+  ///Show the user the list of folders where they can store the word.
+  ///Uses InheritedWidget
+  Widget _chooseFolder() {
+    return ChosenFolderProvider(
+      notifier: ValueNotifier<Folder?>(null),
+      child: Builder(
+        builder: (context) {
+          final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
+
+          return ValueListenableBuilder<Folder?>(
+            valueListenable: valueNotifier,
+            builder: (context, folder, child) {
+              return ChooseFolder(
+                goBack: () { goBack(valueNotifier); },
+                folders: ValueListenableBuilder<Folder?>(
+                  valueListenable: valueNotifier,
+                  builder: (context, folder, child) {
+                    storageFolder = folder;
+                    return ChooseFolderWidget(folders: _dictionaryBloc.state.getSubfolders(folder), valueNotifier: valueNotifier);
+                  },
+                ),
+                path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!) : ''
+              );
+            }
+          );
+        },
+      )
+    );
+  }
+
+
   ///Create a new word from the updated fields.
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && storageFolder != null) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text
@@ -154,8 +180,6 @@ class UpdateWordTemplate extends StatefulWidget {
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
   late final Word word;
-  final _validationBloc = ValidationBloc();
-  final _dictionaryBloc = DictionaryBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
   late final TextEditingController translationController;
@@ -175,33 +199,26 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: wordController,
-              decoration: const InputDecoration(labelText: "Word"),
-              validator: (value) => _validationBloc.word.validateWordWord(value!),
-            ),
-
-            TextFormField(
-              controller: translationController,
-              decoration: const InputDecoration(labelText: "Translation"),
-              validator: (value) => _validationBloc.word.validateWordTranslation(value!),
-            ),
-
-            const Spacer(),
-
-            ButtonsInRow(
-              buttons: [
-                WordifyTextButton(onPressed: _return, text: 'Return'),
-                WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
-                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
-              ]
-            )
-          ]
-        ),
+      body: Column(
+        children: [
+          _form(
+            formKey: _formKey,
+            wordController: wordController,
+            translationController: translationController,
+            wordValidation: (value) => _validationBloc.word.validateWordWord(value!),
+            translationValidation: (value) => _validationBloc.word.validateWordTranslation(value!)
+          ),
+      
+          const Spacer(),
+      
+          ButtonsInRow(
+            buttons: [
+              WordifyTextButton(onPressed: _return, text: 'Return'),
+              WordifyElevatedButton(onPressed: _delete, text: 'Delete'),
+              WordifyElevatedButton(onPressed: _submit, text: 'Submit')
+            ]
+          )
+        ]
       )
     );
   }

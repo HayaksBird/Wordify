@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 ///the directory.
 class FolderHeader extends StatelessWidget {
   final String name;
-  final VoidCallback closePressed;
+  final void Function() closePressed;
 
 
   const FolderHeader({
@@ -120,7 +120,7 @@ class ChooseFolder extends StatelessWidget {
     super.key,
     required this.folders,
     required this.goBack,
-    required path
+    required path 
   }) : path = 'Saving to: $path';
 
 
@@ -130,9 +130,12 @@ class ChooseFolder extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              color: const Color.fromARGB(255, 0, 0, 0),
-              width: 2.0,
+            border: const Border(
+              top: BorderSide(
+                color: Color.fromARGB(255, 0, 0, 0),
+                width: 2.0,
+              ),
+              // No bottom border
             ),
             borderRadius: BorderRadius.circular(0), // Optional: adds rounded corners
           ),
@@ -143,21 +146,81 @@ class ChooseFolder extends StatelessWidget {
               Icons.arrow_circle_left,
               color: Color.fromARGB(255, 0, 0, 0), // Changed color to make it visible against white background
               size: 20.0,
-            ), 
+            ),
           ),
         ),
+
         Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              color: const Color.fromARGB(255, 0, 0, 0),
-              width: 2.0,
+            border: const Border(
+              top: BorderSide(
+                color: Color.fromARGB(255, 0, 0, 0),
+                width: 2.0,
+              ),
+              bottom: BorderSide(
+                color: Color.fromARGB(255, 0, 0, 0),
+                width: 2.0,
+              ),
             ),
-            borderRadius: BorderRadius.circular(0), // Optional: adds rounded corners
+            borderRadius: BorderRadius.circular(0),
           ),
-          child: folders
+          child: folders,
         ),
+
         Text(path)
       ]
+    );
+  }
+}
+
+
+
+///
+class FolderTile extends StatelessWidget {
+  final bool isExpanded;
+  final ListTile listTile;
+  final void Function() toggleFolder;
+  final void Function() expandFolder;
+  final void Function(TapDownDetails) folderOperations;
+
+
+  const FolderTile({
+    super.key,
+    required this.isExpanded,
+    required this.listTile,
+    required this.toggleFolder,
+    required this.expandFolder,
+    required this.folderOperations
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: toggleFolder,
+          icon: isExpanded ?
+          const Icon(
+            Icons.keyboard_arrow_down_sharp,
+            color: Colors.black,
+            size: 20.0,
+          ) :
+          const Icon(
+            Icons.keyboard_arrow_right_sharp,
+            color: Colors.black,
+            size: 20.0,
+          ),
+        ),
+
+        Expanded(
+          child: GestureDetector(
+            onDoubleTap: expandFolder,
+            onSecondaryTapDown: folderOperations,
+            child: listTile
+          )
+        )
+      ],
     );
   }
 }

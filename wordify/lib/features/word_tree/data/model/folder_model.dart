@@ -37,4 +37,17 @@ class FolderModel extends Folder {
       name: name ?? this.name
     );
   }
+
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
+    if (other is! FolderModel) return false;
+    return id == other.id;
+  }
+
+
+  @override
+  int get hashCode => id.hashCode;
 }

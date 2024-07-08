@@ -18,7 +18,9 @@ String fullPath(Folder folder) {
 }
 
 
-///
+///Manages the dictionary of the app. The management is split between state management of the
+///dictionary (how is the dictionary presented) and content management (what exists within the
+///dictionary).
 class DictionaryManager {
   static final DictionaryManager _instance = DictionaryManager._internal();
   late final DictionaryStateManager state;
@@ -35,8 +37,6 @@ class DictionaryManager {
     state = DictionaryStateManager();
     words = DictionaryWordsManager();
     folders = DictionaryFoldersManager();
-
-    state._setFolderTree();
   }
 }
 
@@ -44,8 +44,6 @@ class DictionaryManager {
 
 ///The class that manages the dictionary of the app.
 class DictionaryStateManager {
-  final Completer<void> _initializationCompleter = Completer<void>();
-
 
   ///Update the list of currently active folders.
   ///If the folder is present in cache (has been activated before)
@@ -55,8 +53,6 @@ class DictionaryStateManager {
   ///
   ///If the folder has been activated return true; else false.
   Future<bool> activateFolder(Folder folder) async {
-    await _initializationDone;
-
     String path = fullPath(folder);
     
     if (!_dictionary.activeFolders.containsKey(path)) {
@@ -79,9 +75,7 @@ class DictionaryStateManager {
   ///Remove the folder from the active folder list.
   ///
   ///If the folder has been deactivated return true; else false.
-  Future<bool> deactivateFolder(FolderWords expandedFolder) async {
-    await _initializationDone;
-
+  bool deactivateFolder(FolderWords expandedFolder) {
     String path = fullPath(expandedFolder.folder);
     
     if (_dictionary.activeFolders.containsKey(path)) { //If the folder is active
@@ -102,25 +96,7 @@ class DictionaryStateManager {
 
 
   ///
-  bool canFolderExpand(Folder folder) {
-    return _dictionary.foldersInView.getActivityStatus(folder) && _dictionary.foldersInView.containsChildren(folder);
-  }
-
-
-  ///
-  List<Folder> getChildren(Folder folder) {
-    return _dictionary.foldersInView.getChildren(folder);
-  }
-
-
-  ///
-  List<Folder> getSiblingsInclusive(Folder folder) {
-    return _dictionary.foldersInView.getSiblingsInclusive(folder);
-  }
-
-
-  ///
-  Future<bool> expandFolder(Folder folder) async {
+  bool expandFolder(Folder folder) {
     if (!_dictionary.foldersInView.getActivityStatus(folder)) { //Folder is not expanded
       _dictionary.foldersInView.changeActivityStatus(folder, true);
 
@@ -130,7 +106,7 @@ class DictionaryStateManager {
 
 
   ///
-  Future<bool> collapseFolder(Folder folder) async {
+  bool collapseFolder(Folder folder) {
     if (_dictionary.foldersInView.getActivityStatus(folder)) {  //Folder is expanded
       _dictionary.foldersInView.changeActivityStatus(folder, false);
 
@@ -140,7 +116,7 @@ class DictionaryStateManager {
 
 
   ///Initialize the dictionary with the folder tree.
-  Future<void> _setFolderTree() async {
+  Future<NTree<Folder>> setFolderTree() async {
     List<Folder> rootFolders = await _folderService.getRootFolders();
 
     _dictionary.foldersInView = NTree<Folder>()..setRoot(rootFolders);
@@ -149,7 +125,7 @@ class DictionaryStateManager {
       await _setFolderSubtree(rootFolder);
     }
 
-    _initializationCompleter.complete();
+    return _dictionary.foldersInView;
   }
 
 
@@ -169,19 +145,10 @@ class DictionaryStateManager {
 
   //GETTERS
   ///
-  Future<NTree<Folder>> get foldersInView async { 
-    await _initializationDone;
-    return _dictionary.foldersInView; 
-  }
+  NTree<Folder> get foldersInView => _dictionary.foldersInView; 
 
   ///
-  Future<List<FolderWords>> get activeFolders async {
-    await _initializationDone;
-    return _dictionary.activeFolders.getList(); 
-  }
-
-  ///Wait until the folder list is initialized
-  Future<void> get _initializationDone => _initializationCompleter.future;
+  List<FolderWords> get activeFolders => _dictionary.activeFolders.getList(); 
 }
 
 
@@ -199,9 +166,6 @@ class DictionaryWordsManager {
     if (_dictionary.cachedFolders.containsKey(path)) {
       FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
       expandedFolder.words.add(await _wordService.addWord(folder, word));
-
-      //_dictionary.cachedFolders[path] = expandedFolder;
-      //_dictionary.activeFolders.update(path, expandedFolder);
     } else {
       _wordService.addWord(folder, word);
     }
@@ -216,9 +180,6 @@ class DictionaryWordsManager {
     FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
 
     expandedFolder.updateWord(oldWord, updatedWord);
-
-    //_dictionary.cachedFolders[path] = expandedFolder;
-    //_dictionary.activeFolders.update(path, expandedFolder);
   }
 
 
@@ -228,10 +189,7 @@ class DictionaryWordsManager {
     FolderWords expandedFolder = _dictionary.cachedFolders[path]!;
 
     expandedFolder.words.remove(word);
-    _wordService.deleteWord(word);
-
-    //_dictionary.cachedFolders[path] = expandedFolder;
-    //_dictionary.activeFolders.update(path, expandedFolder);
+    await _wordService.deleteWord(word);
   }
 }
 

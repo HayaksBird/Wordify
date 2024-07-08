@@ -45,4 +45,17 @@ class WordModel extends Word {
       translation: translation ?? this.translation,
     );
   }
+
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
+    if (other is! WordModel) return false;
+    return id == other.id;
+  }
+  
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -4,6 +4,43 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
 
+
+final _dictionaryBloc = DictionaryBloc();
+final _validationBloc = ValidationBloc();
+
+
+///
+Form _form({
+  required GlobalKey<FormState> formKey,
+  required TextEditingController nameController,
+  required String? Function(String?)? validation
+}) {
+  return Form(
+    key: formKey,
+    child: TextFormField(
+      controller: nameController,
+      decoration: const InputDecoration(labelText: "Name"),
+      validator: validation,
+    ),
+  );
+}
+
+
+///
+ButtonsInRow _buttonsInRow({
+  required void Function() returnBack,
+  required void Function() submit
+}) {
+  return  ButtonsInRow(
+    buttons: [
+      WordifyTextButton(onPressed: returnBack, text: 'Return'),
+      WordifyElevatedButton(onPressed: submit, text: 'Submit')
+    ]
+  );
+}
+
+
+
 ///
 class CreateFolderTemplate extends StatefulWidget {
   final Folder? parentFolder;
@@ -22,8 +59,6 @@ class CreateFolderTemplate extends StatefulWidget {
 
 class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   late final Folder? parentFolder;
-  final _dictionaryBloc = DictionaryBloc();
-  final _validationBloc = ValidationBloc();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
 
@@ -38,26 +73,21 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
-              validator: (value) => _validationBloc.folder.validateInsertFolderName(value!, parentFolder),
-            ),
-
-            const Spacer(),
-
-            ButtonsInRow(
-              buttons: [
-                WordifyTextButton(onPressed: _return, text: 'Return'),
-                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
-              ]
-            )
-          ]
-        ),
+      body: Column(
+        children: [
+          _form(
+            formKey: _formKey,
+            nameController: nameController,
+            validation: (value) => _validationBloc.folder.validateInsertFolderName(value!, parentFolder)
+          ),
+      
+          const Spacer(),
+      
+          _buttonsInRow(
+            returnBack: _return,
+            submit: _submit
+          )
+        ]
       )
     );
   }
@@ -103,8 +133,6 @@ class UpdateFolderTemplate extends StatefulWidget {
 
 class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   late final Folder folder;
-  final _dictionaryBloc = DictionaryBloc();
-  final _validationBloc = ValidationBloc();
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController nameController;
 
@@ -120,26 +148,21 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
-              validator: (value) => _validationBloc.folder.validateUpdateFolderName(value!, folder, folder.name),
-            ),
+      body: Column(
+        children: [
+          _form(
+            formKey: _formKey,
+            nameController: nameController,
+            validation: (value) => _validationBloc.folder.validateUpdateFolderName(value!, folder, folder.name)
+          ),
 
-            const Spacer(),
-        
-            ButtonsInRow(
-              buttons: [
-                WordifyTextButton(onPressed: _return, text: 'Return'),
-                WordifyElevatedButton(onPressed: _submit, text: 'Submit')
-              ]
-            )
-          ]
-        ),
+          const Spacer(),
+      
+          _buttonsInRow(
+            returnBack: _return,
+            submit: _submit
+          )
+        ]
       )
     );
   }

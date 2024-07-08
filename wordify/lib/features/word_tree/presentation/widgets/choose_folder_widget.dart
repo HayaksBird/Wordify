@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
-///
+///Shows the list of folders where the user can save the newly typed
+///word.
 class ChooseFolderWidget extends StatelessWidget {
   final List<Folder> folders;
   final ValueNotifier<Folder?> valueNotifier;

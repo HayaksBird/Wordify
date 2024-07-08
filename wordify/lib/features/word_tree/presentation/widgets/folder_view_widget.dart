@@ -91,23 +91,26 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
   Widget _buildFolderTile(Folder folder, NTree<Folder> folderTree) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            _dictionaryBloc.state.updateSubfolderStatus(folder);
-          },
-
-          onDoubleTap: () {
-            _dictionaryBloc.state.accessFolder(folder);
-          },
-        
-          onSecondaryTapDown: (details) {
+        FolderTile(
+          isExpanded: _dictionaryBloc.state.isToExpand(folder),
+          toggleFolder: () { _dictionaryBloc.state.toggleFolder(folder); },
+          expandFolder: () { _dictionaryBloc.state.accessFolder(folder); },
+          listTile: ListTile(
+            title: Text(
+              folder.name,
+              style: TextStyle(
+                color: _dictionaryBloc.state.isActivated(folder) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
+              )
+            ),
+          ),
+          folderOperations: (details) {
             WordifyOverlayEntry.showOverlay(
               [
                 DoAction(
                   title: 'Create',
                   action: () { _createFolder(folder); }
                 ),
-
+        
                 DoAction(
                   title: 'Update',
                   action: () { _updateFolder(folder); }
@@ -122,15 +125,6 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
               details.globalPosition
             );
           },
-          
-          child: ListTile(
-            title: Text(
-              folder.name,
-              style: TextStyle(
-                color: _dictionaryBloc.state.isActivated(folder) ? const Color.fromARGB(255, 114, 114, 114) : Colors.black
-              )
-            ),
-          ),
         ),
 
         if (_dictionaryBloc.state.isToExpand(folder))
@@ -141,7 +135,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
       ]
     );
   }
-
+  
 
   void _updateFolder(Folder folder) {
     Navigator.of(context).push(

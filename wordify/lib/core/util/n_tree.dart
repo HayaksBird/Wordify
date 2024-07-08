@@ -2,26 +2,32 @@ import 'dart:collection';
 
 ///
 class NTree<T> {
-  late final _NTreeNode<T>? _root;
-  late final HashMap<T, _NTreeNode<T>> _itemInTree;
+  _NTreeNode<T>? _root;
+  final HashMap<T, _NTreeNode<T>> _itemInTree;
+
+
+  ///
+  NTree()
+    : _itemInTree = HashMap<T, _NTreeNode<T>>();
 
 
   ///Set the outter most layer
   void setRoot(List<T> items) {
-    if (items.isEmpty) {
-      throw ArgumentError('Items list must not be empty');
-    }
+    if (_root == null) {
+      if (items.isEmpty) {
+        throw ArgumentError('Items list must not be empty');
+      }
 
-    _itemInTree = HashMap<T, _NTreeNode<T>>();
-    _root = _NTreeNode<T>(item: items[0], parent: null); //dummy root
+      _root = _NTreeNode<T>(item: items[0], parent: null); //dummy root
 
-    for (T item in items) {
-      _NTreeNode<T> node = _NTreeNode<T>(item: item, parent: _root);
+      for (T item in items) {
+        _NTreeNode<T> node = _NTreeNode<T>(item: item, parent: _root);
 
-      _root!.addChild(node);
+        _root!.addChild(node);
 
-      _itemInTree[item] = node;
-    }
+        _itemInTree[item] = node;
+      }
+    } else { throw ArgumentError('The root is already set'); }
   }
 
 
