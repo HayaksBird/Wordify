@@ -6,8 +6,8 @@ class FolderService {
   final FolderRepository folderRepo = FolderRepositoryImpl();
 
 
-  Future<Folder> addFolder(Folder folder) async {
-    return folderRepo.addFolder(folder);
+  Future<Folder> addFolder(Folder? parentFolder, Folder folder) async {
+    return folderRepo.addFolder(parentFolder, folder);
   }
 
 
@@ -21,27 +21,12 @@ class FolderService {
   }
 
 
-  Future<List<Folder>> getAllFolders() async {
-    return folderRepo.getAllFolders();
+  Future<List<Folder>> getRootFolders() async {
+    return folderRepo.getRootFolders();
   }
 
 
-  Future<Folder> getAllWords(Folder folder) async {
-    return folderRepo.getAllWords(folder);
-  }
-
-
-  Future<Folder> addToFolder(Folder folder, Word word) async {
-    return folderRepo.addToFolder(folder, word);
-  }
-
-
-  Future<Folder> updateInFolder(Folder folder, Word oldWord, Word newWord) async {
-    return folderRepo.updateInFolder(folder, oldWord, newWord);
-  }
-
-
-  Future<Folder> deleteFromFolder(Folder folder, Word word) async {
-    return folderRepo.deleteFromFolder(folder, word);
+  Future<List<Folder>> getChildFolders(Folder folder) async {
+    return folderRepo.getChildFolders(folder);
   }
 }

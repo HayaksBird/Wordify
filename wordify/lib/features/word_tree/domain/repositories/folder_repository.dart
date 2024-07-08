@@ -1,15 +1,15 @@
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 ///A source-ambiguous storage access point interface.
 abstract class FolderRepository {
-  Future<Folder> addFolder(Folder folder);
+  ///Create a new folder.
+  Future<Folder> addFolder(Folder? parentFolder, Folder folder);
+  ///Update a folder.
   Future<Folder> updateFolder(Folder oldFolder, Folder newFolder);
+  ///Delete a folder.
   Future<void> deleteFolder(Folder folder);
-  Future<List<Folder>> getAllFolders();
-  
-  Future<Folder> getAllWords(Folder folder);
-  Future<Folder> addToFolder(Folder folder, Word word);
-  Future<Folder> deleteFromFolder(Folder folder, Word word);
-  Future<Folder> updateInFolder(Folder folder, Word oldWord, Word newWord);
+  ///Get a list of root folders in the system.
+  Future<List<Folder>> getRootFolders();
+  ///Get a list of all child folders of a certain folder.
+  Future<List<Folder>> getChildFolders(Folder folder);
 }

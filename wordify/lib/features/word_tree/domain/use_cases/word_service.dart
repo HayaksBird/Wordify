@@ -6,7 +6,22 @@ class WordService {
   final WordRepository wordRepo = WordRepositoryImpl();
 
 
-  Future<void> addWord(Folder folder, Word word) async {
+  Future<Word> addWord(Folder folder, Word word) async {
     return wordRepo.addWord(folder, word);
+  }
+
+
+  Future<Word> updateWord(Folder folder, Word oldWord, Word newWord) async {
+    return wordRepo.updateWord(folder, oldWord, newWord);
+  }
+
+
+  Future<void> deleteWord(Word word) async {
+    return wordRepo.deleteWord(word);
+  }
+
+
+  Future<List<Word>> getWordsOfFolder(Folder folder) async {
+    return wordRepo.getWordsOfFolder(folder);
   }
 }

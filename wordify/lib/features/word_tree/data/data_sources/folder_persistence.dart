@@ -8,8 +8,8 @@ class FolderPersistence {
     final db = await WordifyDatabase.instance.database;
 
     final int id = await db.rawInsert(
-      'INSERT INTO folders (name) VALUES (?)',
-      [folder.name]
+      'INSERT INTO folders (name, parent_id) VALUES (?, ?)',
+      [folder.name, folder.parentId]
     );
 
     return folder.copyWith(id: id);
@@ -22,6 +22,14 @@ class FolderPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.transaction((txn) async {
+      await txn.rawDelete(
+        'DELETE FROM folders WHERE id = ?',
+        [folder.id],
+      );
+    });
+
+    /*
+    await db.transaction((txn) async {
       // Delete all words associated with the folder
       await txn.rawDelete(
         'DELETE FROM words WHERE folder_id = ?',
@@ -33,7 +41,7 @@ class FolderPersistence {
         'DELETE FROM folders WHERE id = ?',
         [folder.id],
       );
-    });
+    });*/
   }
 
 
@@ -49,10 +57,30 @@ class FolderPersistence {
 
 
   ///
-  static Future<List<FolderModel>> getAll() async {
+  static Future<List<FolderModel>> getRootFolders() async {
     final db = await WordifyDatabase.instance.database;
-    
-    final List<Map<String, dynamic>> maps = await db.query('folders');
+
+    //Corrected query to select folders where parent_id is NULL
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM folders WHERE parent_id IS NULL'
+    );
+
+    List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
+
+    return folders;
+  }
+
+
+  ///
+  static Future<List<FolderModel>> getFolders(int parentId) async {
+    final db = await WordifyDatabase.instance.database;
+
+    //Query to select folders with the given parent_id
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM folders WHERE parent_id = ?',
+      [parentId]
+    );
+
     List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
 
     return folders;

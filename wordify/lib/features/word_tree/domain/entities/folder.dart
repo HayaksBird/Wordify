@@ -2,29 +2,29 @@ import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 
 ///Represents a folder.
-///
-///Not mutable (const) -> a new intance will be requested, when a word in the folder
-///is created/updated/deleted.
 class Folder {
   final String name;
-  final List<Word> words;
 
 
   const Folder({
     required this.name,
-    this.words = const []
-  });
+  }); 
+}
 
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+///
+class FolderWords {
+  Folder folder;
+  List<Word> words;
 
-    return other is Folder &&
-        other.name == name;
+
+  FolderWords(this.folder, this.words);
+
+
+  ///
+  void updateWord(Word oldWord, Word newWord) {
+    int index = words.indexOf(oldWord);
+
+    words[index] = newWord;
   }
-
-
-  @override
-  int get hashCode => name.hashCode;  
 }

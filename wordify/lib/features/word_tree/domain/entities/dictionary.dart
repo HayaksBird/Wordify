@@ -1,28 +1,27 @@
-import 'package:wordify/core/util/wordify_data_structures.dart';
+import 'package:wordify/core/util/n_tree.dart';
+import 'package:wordify/core/util/stack_linked_hash_map.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
-///Contains all words
+///A dictionary of the app. It contains a:
+///tree folders that are in view (could be/are opened)
+///list of active folders (the folders that have been opened and are in view)
+///set of all folders which have ever been opened (a caching mechanism)
 class Dictionary {
-  List<Folder> foldersInView;
-  StackLinkedHashMap<String, Folder> activeFolders; //Folders that are currently active
-  Map<String, Folder> cachedFolders;
+  static final Dictionary _instance = Dictionary._internal();
+
+  late NTree<Folder> foldersInView;
+  late StackLinkedHashMap<String, FolderWords> activeFolders; //Folders that are currently active
+  late Map<String, FolderWords> cachedFolders;
 
 
-  Dictionary({
-    List<Folder>? foldersInView,
-    StackLinkedHashMap<String, Folder>? activeFolders,
-    Map<String, Folder>? cachedFolders,
-  })  : foldersInView = foldersInView ?? [],
-        activeFolders = activeFolders ??  StackLinkedHashMap<String, Folder>(),
-        cachedFolders = cachedFolders ?? <String, Folder>{};
+  factory Dictionary() {
+    return _instance;
+  }
 
 
-  ///
-  void updateFolderInView(String name, Folder newFolder) {
-    for (int i = 0; i < foldersInView.length; i++) {
-      if (foldersInView[i].name == name) {
-        foldersInView[i] = newFolder;
-      }
-    }
+  Dictionary._internal() {
+    foldersInView = NTree<Folder>();
+    activeFolders = StackLinkedHashMap<String, FolderWords>();
+    cachedFolders = <String, FolderWords>{};
   }
 }
