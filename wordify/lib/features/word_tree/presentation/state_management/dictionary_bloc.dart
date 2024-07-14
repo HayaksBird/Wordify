@@ -4,7 +4,7 @@ import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
 
 
-final _foldersInViewController = StreamController<NTree<Folder>>(); //StreamController for output
+final _foldersInViewController = StreamController<List<Folder>>(); //StreamController for output
 final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
 final DictionaryManager _dictionaryManager = DictionaryManager();
 
@@ -17,7 +17,7 @@ void _updateWordView() {
 
 ///
 void _updateFolderView() {
-  _foldersInViewController.sink.add(_dictionaryManager.state.foldersInView);
+  _foldersInViewController.sink.add(_dictionaryManager.state.foldersInView.getRootItems);
 }
 
 
@@ -55,7 +55,8 @@ class DictionaryStateBloc {
 
   ///
   Future<void> loadFolders() async {
-    _foldersInViewController.sink.add(await _dictionaryManager.state.setFolderTree());
+    await _dictionaryManager.state.setFolderTree();
+    _updateFolderView();
   }
 
 
@@ -117,23 +118,23 @@ class DictionaryStateBloc {
   ///
   List<Folder> getSubfolders(Folder? folder) {
     if (folder == null) {
-      return folderTree.getRootItems;
-    } else { return folderTree.getChildren(folder); }
+      return _folderTree.getRootItems;
+    } else { return _folderTree.getChildren(folder); }
   }
 
 
   ///
   Folder? getParentFolder(Folder folder) {
-    return folderTree.getParent(folder);
+    return _folderTree.getParent(folder);
   }
 
 
   //GETTERS
-  Stream<NTree<Folder>> get foldersInView => _foldersInViewController.stream;
+  Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
   Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
 
-  NTree<Folder> get folderTree => _dictionaryManager.state.foldersInView;
+  NTree<Folder> get _folderTree => _dictionaryManager.state.foldersInView;
 }
 
 

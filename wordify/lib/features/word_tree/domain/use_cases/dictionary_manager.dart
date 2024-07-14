@@ -116,7 +116,7 @@ class DictionaryStateManager {
 
 
   ///Initialize the dictionary with the folder tree.
-  Future<NTree<Folder>> setFolderTree() async {
+  Future<void> setFolderTree() async {
     List<Folder> rootFolders = await _folderService.getRootFolders();
 
     _dictionary.foldersInView = NTree<Folder>()..setRoot(rootFolders);
@@ -124,8 +124,6 @@ class DictionaryStateManager {
     for (Folder rootFolder in rootFolders) {
       await _setFolderSubtree(rootFolder);
     }
-
-    return _dictionary.foldersInView;
   }
 
 

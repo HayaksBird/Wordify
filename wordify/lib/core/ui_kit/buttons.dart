@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/colors.dart';
 
 ///
 class WordifyFloatingActionButton extends FloatingActionButton {
   const WordifyFloatingActionButton({
     super.key,
     required VoidCallback super.onPressed,
-    required String tooltip
+    required String tooltip,
   }) : super(
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: AppColors.text),
         tooltip: tooltip,
+        backgroundColor: AppColors.navigation,
+        shape: const CircleBorder(),
       );
 }
+
 
 
 ///
@@ -45,6 +49,7 @@ class WordifyTextButton extends TextButton {
         child: Text(text),
       );
 }
+
 
 
 ///

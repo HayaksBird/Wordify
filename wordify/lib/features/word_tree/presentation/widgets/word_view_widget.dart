@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
+import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
@@ -21,11 +22,9 @@ class _WordViewWidgetState extends State<WordViewWidget> {
     return StreamBuilder<List<FolderWords>>(
       stream: _dictionaryBloc.state.activeFolders,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
-        } else {
-          return _buildAccessedFoldersTiles(snapshot.data!);
-        }
+        return Background(
+          wordView: snapshot.connectionState != ConnectionState.waiting ? _buildAccessedFoldersTiles(snapshot.data!) : const SizedBox.shrink()
+        );
       }
     );
   }
