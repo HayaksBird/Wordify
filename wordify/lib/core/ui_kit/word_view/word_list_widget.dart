@@ -26,7 +26,7 @@ class WordListWidget extends StatelessWidget {
       itemBuilder: (context, index) => index.isEven ? 
       _buildFolderTile(context, words[index ~/ 2]) : 
       const Padding(
-        padding: EdgeInsets.symmetric(vertical: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: 15.0),
         child: Divider(
           color: AppColors.text,
           height: 0,

@@ -10,8 +10,8 @@ class Dictionary {
   static final Dictionary _instance = Dictionary._internal();
 
   late NTree<Folder> foldersInView;
-  late StackLinkedHashMap<String, FolderWords> activeFolders; //Folders that are currently active
-  late Map<String, FolderWords> cachedFolders;
+  late StackLinkedHashMap<Folder, FolderWords> activeFolders; //Folders that are currently active
+  late Map<Folder, FolderWords> cachedFolders;
 
 
   factory Dictionary() {
@@ -21,7 +21,7 @@ class Dictionary {
 
   Dictionary._internal() {
     foldersInView = NTree<Folder>();
-    activeFolders = StackLinkedHashMap<String, FolderWords>();
-    cachedFolders = <String, FolderWords>{};
+    activeFolders = StackLinkedHashMap<Folder, FolderWords>();
+    cachedFolders = <Folder, FolderWords>{};
   }
 }

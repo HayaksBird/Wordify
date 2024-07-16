@@ -43,7 +43,10 @@ Form _form({
 
 ///Demonstarte the word editing template
 class CreateWordTemplate extends StatefulWidget {
-  const CreateWordTemplate({super.key});
+  final Folder? storageFolder;
+
+
+  const CreateWordTemplate({super.key, this.storageFolder});
 
 
   @override
@@ -62,7 +65,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   void initState() {
     super.initState();
-    _dictionaryBloc.state.loadFolders();
+    storageFolder = widget.storageFolder;
   }
 
 
@@ -109,7 +112,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   ///Uses InheritedWidget
   Widget _chooseFolder() {
     return ChosenFolderProvider(
-      notifier: ValueNotifier<Folder?>(null),
+      notifier: ValueNotifier<Folder?>(storageFolder),
       child: Builder(
         builder: (context) {
           final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);

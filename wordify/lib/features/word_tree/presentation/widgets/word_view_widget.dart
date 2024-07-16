@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/folder_presentation.dart';
 import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
+import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
+import 'package:wordify/core/ui_kit/word_view/word_list_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
@@ -19,11 +21,13 @@ class _WordViewWidgetState extends State<WordViewWidget> {
   
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<FolderWords>>(
+    return StreamBuilder<FolderWords?>(
       stream: _dictionaryBloc.state.activeFolders,
       builder: (context, snapshot) {
         return Background(
-          wordView: snapshot.connectionState != ConnectionState.waiting ? _buildAccessedFoldersTiles(snapshot.data!) : const SizedBox.shrink()
+          wordView: snapshot.connectionState != ConnectionState.waiting && snapshot.data != null ?
+          _buildFolderWordsView(snapshot.data!) :
+          const SizedBox.shrink()
         );
       }
     );
@@ -31,18 +35,45 @@ class _WordViewWidgetState extends State<WordViewWidget> {
 
 
   ///
-  Widget _buildAccessedFoldersTiles(List<FolderWords> activeFolders) {
-    return ListView.builder(
-      itemCount: activeFolders.length,
-      itemBuilder: (context, index) => _buildWordsTile(activeFolders[index])
+  Widget _buildFolderWordsView(FolderWords activeFolder) {
+    return Stack(
+      children: [
+        GestureDetector(
+          onPanEnd: (details) {
+            final velocity = details.velocity.pixelsPerSecond;
+
+            //Swipe down (go up).
+            if (velocity.dy > 0) {
+              _dictionaryBloc.state.showActiveFolderAbove(activeFolder);
+            }
+          
+            //Swipe up (go down).
+            if (velocity.dy < 0) {
+              _dictionaryBloc.state.showActiveFolderBelow(activeFolder);
+            }
+          },
+        ),
+
+        WordListTemplateWidget(
+          path: _dictionaryBloc.state.getFullPath(activeFolder.folder),
+          delimiter: '/',
+          list: WordListWidget(
+            words: activeFolder.words
+          ),
+          closePressed: () { _dictionaryBloc.state.closeFolder(activeFolder); },
+          addWordPressed: () { _openWordTemplate(activeFolder.folder); },
+        )
+      ],
     );
   }
 
 
   ///
-  Widget _buildWordsTile(FolderWords activeFolder) {
-    return FolderContentTemplate(
-      folderContent: FolderContentWidget(activeFolder: activeFolder)
+  void _openWordTemplate(Folder folder) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CreateWordTemplate(storageFolder: folder)
+      ),
     );
   }
 }

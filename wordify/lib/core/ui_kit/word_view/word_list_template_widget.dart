@@ -5,13 +5,17 @@ import 'package:wordify/core/ui_kit/word_view/stripe_list_widget.dart';
 class WordListTemplateWidget extends StatelessWidget {
   final String path, delimiter;
   final Widget list;
+  final void Function() closePressed;
+  final void Function() addWordPressed;
 
 
   const WordListTemplateWidget({
     super.key,
     required this.path,
     required this.delimiter,
-    required this.list
+    required this.list,
+    required this.closePressed,
+    required this.addWordPressed
   });
 
 
@@ -74,7 +78,7 @@ class WordListTemplateWidget extends StatelessWidget {
               Icons.add_circle,
               color: AppColors.navigation,
             ),
-            onPressed: () {},
+            onPressed: addWordPressed,
           ),
         ),
     
@@ -83,7 +87,7 @@ class WordListTemplateWidget extends StatelessWidget {
             Icons.close_rounded,
             color: AppColors.navigation,
           ),
-          onPressed: () {},
+          onPressed: closePressed,
         )
       ]
     );

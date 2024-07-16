@@ -2,37 +2,36 @@ import 'dart:collection';
 
 ///A LinkedHashMap data structure with the ability to add to the head of the list.
 class StackLinkedHashMap<K, T> {
-  final HashMap<K, T> _table;
-  final List<T> _list;
+  final HashMap<K, _Node<T>> _table;
+  final _LinkedList<T> _list;
 
 
   StackLinkedHashMap() 
-    : _table = HashMap<K, T>(),
-      _list = [];
+    : _table = HashMap<K, _Node<T>>(),
+      _list = _LinkedList<T>();
 
 
   ///
   void insert(K key, T value) {
-    _list.insert(0, value);
-    _table[key] = value;
+    _table[key] = _list.add(value);
   }
 
 
   ///
   void update(K key, T value) {
     if (_table.containsKey(key) && _table[key] != null) {
-      int index = _list.indexOf(_table[key]!);
+      _Node<T> node = _table[key]!;
 
-      _table[key] = value;
-      _list[index] = value;
+      node.data = value;
     }
   }
 
 
   ///
   void remove(K key) {
-    T? value = _table[key];
-    _list.remove(value);
+    _Node<T>? node = _table[key];
+
+    _list.remove(node);
     _table.remove(key);
   }
 
@@ -44,7 +43,74 @@ class StackLinkedHashMap<K, T> {
 
 
   ///
-  List<T> getList() {
-    return _list;
+  T? getBelow(K key) {
+    _Node<T>? node = _table[key];
+
+    return node?.below?.data;
   }
+
+
+  ///
+  T? getAbove(K key) {
+    _Node<T>? node = _table[key];
+    
+    return node?.above?.data;
+  }
+
+
+  ///
+  T? get getFirst => _list.rootItem;
+}
+
+
+
+///
+class _LinkedList<T> {
+  _Node<T>? _root;
+
+
+  ///
+  _Node<T> add(T data) {
+    if (_root == null) {
+      _root = _Node<T>(data);
+    } else {
+      _Node<T> current = _Node<T>(data);
+
+      current.below = _root;
+      _root!.above = current;
+      _root = current;
+    }
+
+    return _root!;
+  }
+
+
+  ///
+  void remove(_Node<T>? node) {
+    if (node != null) {
+      if (node == _root) {
+        _root = node.below;
+        _root?.above = null;
+      } else {
+        node.above?.below = node.below;
+        node.below?.above = node.above;
+        node.below = null;
+        node.above = null;
+      }
+    }
+  }
+
+
+  ///
+  T? get rootItem => _root?.data;
+}
+
+
+
+///
+class _Node<T> {
+  T data;
+  _Node<T>? above, below;  
+
+  _Node(this.data);
 }

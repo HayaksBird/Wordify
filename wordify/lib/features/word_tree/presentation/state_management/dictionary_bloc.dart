@@ -5,19 +5,19 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 
 
 final _foldersInViewController = StreamController<List<Folder>>(); //StreamController for output
-final _activeFoldersController = StreamController<List<FolderWords>>(); //StreamController for output 
+final _activeFoldersController = StreamController<FolderWords?>(); //StreamController for output 
 final DictionaryManager _dictionaryManager = DictionaryManager();
 
 
 ///
-void _updateWordView() {
-  _activeFoldersController.sink.add(_dictionaryManager.state.activeFolders);
+void _updateWordView(FolderWords? activeFolder) {
+  _activeFoldersController.sink.add(activeFolder);
 }
 
 
 ///
 void _updateFolderView() {
-  _foldersInViewController.sink.add(_dictionaryManager.state.foldersInView.getRootItems);
+  _foldersInViewController.sink.add(_dictionaryManager.foldersInViewState.foldersInView.getRootItems);
 }
 
 
@@ -55,7 +55,7 @@ class DictionaryStateBloc {
 
   ///
   Future<void> loadFolders() async {
-    await _dictionaryManager.state.setFolderTree();
+    await _dictionaryManager.foldersInViewState.setFolderTree();
     _updateFolderView();
   }
 
@@ -65,10 +65,10 @@ class DictionaryStateBloc {
   ///The state for folders list must also be updated since the
   ///array itlsef is updated.
   Future<void> accessFolder(Folder folder) async {
-    bool wasActivated = await _dictionaryManager.state.activateFolder(folder);
+    bool wasActivated = await _dictionaryManager.activeFolderState.activateFolder(folder);
 
     if (wasActivated) {
-      _updateWordView();
+      _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
       _updateFolderView();
     }
   }
@@ -76,20 +76,34 @@ class DictionaryStateBloc {
 
   ///Deactivate the folder that is activated.
   void closeFolder(FolderWords expandedFolder) {
-    bool wasClosed = _dictionaryManager.state.deactivateFolder(expandedFolder);
+    bool wasClosed = _dictionaryManager.activeFolderState.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
-      _updateWordView();
+      _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
       _updateFolderView();
     }
   }
 
 
   ///
-  void toggleFolder(Folder folder) {
-    bool didExpand = _dictionaryManager.state.expandFolder(folder);
+  void showActiveFolderBelow(FolderWords expandedFolder) {
+    bool didGoBelow = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderDown(expandedFolder.folder);
+    if (didGoBelow) _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+  }
 
-    if (!didExpand) { _dictionaryManager.state.collapseFolder(folder); }
+
+  ///
+  void showActiveFolderAbove(FolderWords expandedFolder) {
+    bool didGoUp = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderUp(expandedFolder.folder);
+    if (didGoUp) _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+  }
+
+
+  ///
+  void toggleFolder(Folder folder) {
+    bool didExpand = _dictionaryManager.foldersInViewState.expandFolder(folder);
+
+    if (!didExpand) { _dictionaryManager.foldersInViewState.collapseFolder(folder); }
 
     _updateFolderView();
   }
@@ -97,19 +111,19 @@ class DictionaryStateBloc {
 
   //
   String getFullPath(Folder folder) {
-    return fullPath(folder);
+    return _dictionaryManager.foldersInViewState.fullPath(folder);
   }
 
 
   ///
   bool isActivated(Folder folder) {
-    return _dictionaryManager.state.isFolderActive(folder);
+    return _dictionaryManager.activeFolderState.isFolderActive(folder);
   }
 
 
   ///
   bool isToExpand(Folder folder) {
-    NTree<Folder> folderTree = _dictionaryManager.state.foldersInView;
+    NTree<Folder> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
     
     return folderTree.getActivityStatus(folder) && folderTree.containsChildren(folder);
   }
@@ -132,9 +146,9 @@ class DictionaryStateBloc {
   //GETTERS
   Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
-  Stream<List<FolderWords>> get activeFolders => _activeFoldersController.stream;
+  Stream<FolderWords?> get activeFolders => _activeFoldersController.stream;
 
-  NTree<Folder> get _folderTree => _dictionaryManager.state.foldersInView;
+  NTree<Folder> get _folderTree => _dictionaryManager.foldersInViewState.foldersInView;
 }
 
 
@@ -145,8 +159,11 @@ class DictionaryContentBloc {
   ///Add new word to a folder.
   Future<void> createWord(Folder folder, Word word) async {
     await _dictionaryManager.words.addNewWord(folder, word);
+    FolderWords? currentActiveFolder = _dictionaryManager.activeFolderState.currentActiveFolder;
 
-    _updateWordView();
+    if (folder == currentActiveFolder?.folder) { 
+      _updateWordView(currentActiveFolder); 
+    }
   }
 
 
@@ -154,7 +171,7 @@ class DictionaryContentBloc {
   Future<void> updateWord(FolderWords expandedFolder, Word oldWord, Word newWord) async {
     await _dictionaryManager.words.updateWord(expandedFolder.folder, oldWord, newWord);
 
-    _updateWordView();
+    _updateWordView(expandedFolder);
   }
 
 
@@ -162,7 +179,7 @@ class DictionaryContentBloc {
   Future<void> deleteWord(FolderWords expandedFolder, Word word) async {
     await _dictionaryManager.words.deleteWord(expandedFolder.folder, word);
 
-    _updateWordView();
+    _updateWordView(expandedFolder);
   }
 
 
@@ -170,7 +187,7 @@ class DictionaryContentBloc {
   Future<void> deleteFolder(Folder folder) async {
     await _dictionaryManager.folders.deleteFolder(folder);
 
-    _updateWordView();
+    _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
     _updateFolderView();
   }
 
@@ -179,8 +196,8 @@ class DictionaryContentBloc {
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
     await _dictionaryManager.folders.updateFolder(oldFolder, newFolder);
 
+    _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder); 
     _updateFolderView();
-    _updateWordView();
   }
 
 
