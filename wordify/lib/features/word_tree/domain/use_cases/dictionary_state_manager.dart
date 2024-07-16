@@ -133,7 +133,8 @@ class DictionaryActiveFolderStateManager {
   }
 
 
-  ///
+  ///Try to shift the view to the active folder above.
+  ///Shift only if there is a folder above.
   bool shiftCurrentActiveFolderUp(Folder folder) {
     FolderWords? above = _dictionary.activeFolders.getAbove(folder);
 
@@ -146,7 +147,8 @@ class DictionaryActiveFolderStateManager {
   }
 
 
-  ///
+  ///Try to shift the view to the active folder below.
+  ///Shift only if there is a folder below.
   bool shiftCurrentActiveFolderDown(Folder folder) {
     FolderWords? below = _dictionary.activeFolders.getBelow(folder);
     

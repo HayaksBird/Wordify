@@ -34,6 +34,7 @@ class WordifyElevatedButton extends ElevatedButton {
 }
 
 
+
 ///
 class WordifyTextButton extends TextButton {
   WordifyTextButton({
@@ -73,4 +74,36 @@ class ButtonsInRow extends StatelessWidget {
       )
     );
   }
+}
+
+
+
+///
+class ArrowUpButton extends IconButton {
+  const ArrowUpButton({
+    super.key,
+    required VoidCallback super.onPressed,
+  }) : super(
+          icon: const Icon(
+            Icons.keyboard_arrow_up_sharp,
+            color: AppColors.navigationSecondary,
+            size: 25
+          )
+        );
+}
+
+
+
+///
+class ArrowDownButton extends IconButton {
+  const ArrowDownButton({
+    super.key,
+    required VoidCallback super.onPressed,
+  }) : super(
+          icon: const Icon(
+            Icons.keyboard_arrow_down_sharp,
+            color: AppColors.navigationSecondary,
+            size: 25
+          )
+        );
 }
