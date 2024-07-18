@@ -5,6 +5,7 @@ class WordifyOverlayEntry extends StatelessWidget {
   final List<DoAction> inputs;
   final Offset position;
   final OverlayEntry overlayEntry;
+  final VoidCallback? onOverlayClosed;
 
 
   const WordifyOverlayEntry({
@@ -12,6 +13,7 @@ class WordifyOverlayEntry extends StatelessWidget {
     required this.inputs,
     required this.position,
     required this.overlayEntry,
+    this.onOverlayClosed
   });
 
 
@@ -23,12 +25,15 @@ class WordifyOverlayEntry extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         overlayEntry.remove();
+        onOverlayClosed?.call();
       },
       onSecondaryTap: () {
         overlayEntry.remove();
+        onOverlayClosed?.call();
       },
       onLongPress: () {
         overlayEntry.remove();
+        onOverlayClosed?.call();
       },
       behavior: HitTestBehavior.translucent,
       ///Use stack, so that the Positioned widget does not occupy the whole space of
@@ -49,6 +54,7 @@ class WordifyOverlayEntry extends StatelessWidget {
                       onTap: () {
                         overlayEntry.remove();
                         input.action();
+                        onOverlayClosed?.call();
                       },
                     );
                   }).toList(),
@@ -61,7 +67,12 @@ class WordifyOverlayEntry extends StatelessWidget {
     );
   }
 
-  static void showOverlay(List<DoAction> inputs, BuildContext context, Offset tapPosition) {
+  static void showOverlay({
+    required List<DoAction> inputs,
+    required BuildContext context,
+    required Offset tapPosition,
+    VoidCallback? onOverlayClosed
+  }) {
     late final OverlayEntry overlayEntry; // Use late to declare first
 
     overlayEntry = OverlayEntry(
@@ -69,6 +80,7 @@ class WordifyOverlayEntry extends StatelessWidget {
         inputs: inputs,
         position: tapPosition,
         overlayEntry: overlayEntry,
+        onOverlayClosed: onOverlayClosed
       ),
     );
 

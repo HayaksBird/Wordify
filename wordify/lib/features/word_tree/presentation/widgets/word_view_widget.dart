@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
 import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
-import 'package:wordify/core/ui_kit/word_view/word_list_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
 
 class WordViewWidget extends StatefulWidget {
   const WordViewWidget({super.key});
@@ -17,7 +17,7 @@ class WordViewWidget extends StatefulWidget {
 class _WordViewWidgetState extends State<WordViewWidget> {
   final _dictionaryBloc = DictionaryBloc();
 
-  
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FolderWords?>(
@@ -37,7 +37,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
   Widget _buildFolderWordsView(FolderWords activeFolder) {
     return Stack(
       children: [
-        GestureDetector(
+        GestureDetector(  //Background gesture detector to switch between active folders
           onPanEnd: (details) {
             final velocity = details.velocity.pixelsPerSecond;
 
@@ -53,17 +53,18 @@ class _WordViewWidgetState extends State<WordViewWidget> {
           },
         ),
 
-        WordListTemplateWidget(
+        WordListTemplateWidget( //The template witht the folder content
           path: _dictionaryBloc.state.getFullPath(activeFolder.folder),
           delimiter: '/',
           list: WordListWidget(
-            words: activeFolder.words
+            words: activeFolder.words,
+            activeFolder: activeFolder,
           ),
           closePressed: () { _dictionaryBloc.state.closeFolder(activeFolder); },
           addWordPressed: () { _openWordTemplate(activeFolder.folder); },
         ),
 
-        Positioned(
+        Positioned( //Add the buttons for the navigation between the active folders
           top: 10.0,
           right: 0.0,
           child: Column(

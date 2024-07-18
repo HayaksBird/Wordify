@@ -104,7 +104,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
           ),
           folderOperations: (details) {
             WordifyOverlayEntry.showOverlay(
-              [
+              inputs: [
                 DoAction(
                   title: 'Create',
                   action: () { _createFolder(folder); }
@@ -120,8 +120,8 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
                   action: () { _dictionaryBloc.content.deleteFolder(folder); }
                 )
               ], 
-              context,
-              details.globalPosition
+              context: context,
+              tapPosition: details.globalPosition
             );
           },
         ),
