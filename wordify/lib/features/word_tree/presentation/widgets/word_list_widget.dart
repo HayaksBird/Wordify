@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/components.dart';
-import 'package:wordify/core/ui_kit/word_view/word_list_tile_widget.dart';
+import 'package:wordify/core/ui_kit/word_view/word_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
@@ -58,7 +58,7 @@ class _WordListWidgetState extends State<WordListWidget> {
         });
         _showOverlay(context, details, word);
       },
-      child: WordListTileWidget(
+      child: WordTileWidget(
         word: word.word,
         translation: word.translation,
         isSelected: selectedWord == word ? true : false,

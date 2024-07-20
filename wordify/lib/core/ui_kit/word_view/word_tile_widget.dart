@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
 
-class WordListTileWidget extends StatelessWidget {
+class WordTileWidget extends StatelessWidget {
   final String word, translation;
   final bool isSelected;
 
 
-  const WordListTileWidget({
+  const WordTileWidget({
     super.key,
     required this.word,
     required this.translation,
