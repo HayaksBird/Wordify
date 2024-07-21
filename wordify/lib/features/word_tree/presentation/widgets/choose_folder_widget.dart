@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/word_template/choose_folder_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+
+
+
+
 
 ///Shows the list of folders where the user can save the newly typed
 ///word.
@@ -17,12 +22,7 @@ class ChooseFolderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxHeight: 200.0,
-      ),
-      child: _buildFolderList()
-    );
+    return _buildFolderList();
   }
 
 
@@ -43,8 +43,8 @@ class ChooseFolderWidget extends StatelessWidget {
       onTap: () {
         valueNotifier.value = folder;
       },
-      child: ListTile(
-        title: Text(folder.name)
+      child: ChooseFolderTileWidget(
+        name: folder.name
       )
     );
   }

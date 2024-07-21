@@ -18,19 +18,74 @@ class WordifyFloatingActionButton extends FloatingActionButton {
 
 
 ///
-class WordifyElevatedButton extends ElevatedButton {
-  WordifyElevatedButton({
+class WordifyElevatedButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+
+
+  const WordifyElevatedButton({
     super.key,
-    required VoidCallback super.onPressed,
-    required String text,
-  }) : super(
-        style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    required this.onPressed,
+    required this.text,
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.pressed)) {
+              return AppColors.navigation; // Change this to your desired pressed color
+            }
+
+            return AppColors.primary; // Default color
+          },
         ),
-        child: Text(text),
-      );
+
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.pressed)) {
+              return AppColors.primary; // Change this to your desired pressed color
+            }
+
+            return AppColors.navigation;
+          },
+        ),
+
+        textStyle: WidgetStateProperty.resolveWith<TextStyle>(
+          (Set<WidgetState> states) {
+            return const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+            );
+          },
+        ),
+
+        side: WidgetStateProperty.resolveWith<BorderSide>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.hovered)) {
+              return const BorderSide(color: AppColors.navigation, width: 1.0); // Change this to your desired hover border
+            }
+            return BorderSide.none; // Default border
+          },
+        ),
+
+        padding: WidgetStateProperty.all<EdgeInsets>(
+          const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        ),
+
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ),
+      child: Text(text),
+    );
+  }
 }
 
 
@@ -43,9 +98,14 @@ class WordifyTextButton extends TextButton {
     required String text,
   }) : super(
         style: TextButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.navigation,
+          textStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.normal
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
         child: Text(text),
       );
@@ -67,7 +127,7 @@ class ButtonsInRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: buttons

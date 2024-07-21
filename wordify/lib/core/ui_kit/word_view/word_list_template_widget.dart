@@ -42,7 +42,7 @@ class WordListTemplateWidget extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 4.0),
                 child: Divider(
-                  color: AppColors.text,
+                  color: AppColors.navigationSecondary,
                   height: 0,
                   thickness: 0.2,
                 ),

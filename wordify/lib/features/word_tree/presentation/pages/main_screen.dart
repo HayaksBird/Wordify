@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/folder_view_widget.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/word_view_widget.dart';
 

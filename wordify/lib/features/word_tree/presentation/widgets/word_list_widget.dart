@@ -3,7 +3,7 @@ import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/core/ui_kit/word_view/word_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
 

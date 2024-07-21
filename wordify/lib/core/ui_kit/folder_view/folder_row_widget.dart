@@ -90,7 +90,7 @@ class FolderTileWidget extends StatelessWidget {
         name,
         style: TextStyle(
           fontSize: 14.0,
-          color: isActivated ? const Color.fromARGB(255, 114, 114, 114) : AppColors.text,
+          color: isActivated ? AppColors.textClicked : AppColors.text,
         ),
       ),
     );
