@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
 
 ///The main (root) frame for the word template screen (both create & update).
-class WordTemplateFrame extends StatelessWidget {
+class TemplateFrame extends StatelessWidget {
   final Widget child;
 
 
-  const WordTemplateFrame({
+  const TemplateFrame({
     super.key,
     required this.child
   });

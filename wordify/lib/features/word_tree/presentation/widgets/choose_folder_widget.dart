@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/word_template/choose_folder_tile_widget.dart';
+import 'package:wordify/core/ui_kit/template_view/choose_folder_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 

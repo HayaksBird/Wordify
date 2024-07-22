@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/word_template/choose_word_template_widget.dart';
-import 'package:wordify/core/ui_kit/word_template/word_template_frame.dart';
+import 'package:wordify/core/ui_kit/template_view/choose_word_template_widget.dart';
+import 'package:wordify/core/ui_kit/template_view/template_frame.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/choose_folder_widget.dart';
-import 'package:wordify/features/word_tree/presentation/widgets/word_form_widget.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart';
 
 
 ///Demonstarte the word editing template
@@ -44,15 +44,23 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WordTemplateFrame(
+      body: TemplateFrame(
         child: Column(
           children: [
-            WordFormWidget(
+            FormWidget(
               formKey: _formKey,
-              wordController: wordController,
-              translationController: translationController,
-              wordValidation: (value) => _validationBloc.word.validateWordWord(value!),
-              translationValidation: (value) => _validationBloc.word.validateWordTranslation(value!)
+              fields: [
+                FormFieldInput(
+                  controller: wordController,
+                  validation: (value) => _validationBloc.word.validateWordWord(value!),
+                  fieldName: 'Word'
+                ),
+                FormFieldInput(
+                  controller: translationController,
+                  validation: (value) => _validationBloc.word.validateWordTranslation(value!),
+                  fieldName: 'Translation'
+                )
+              ],
             ),
         
             const Spacer(),

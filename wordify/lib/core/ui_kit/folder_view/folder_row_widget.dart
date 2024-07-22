@@ -40,20 +40,23 @@ class FolderRowWidget extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IconButton(
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(4.0),
-              onPressed: toggleFolder,
-              icon: isExpanded ?
-              const Icon(
-                Icons.keyboard_arrow_down_sharp,
-                color: AppColors.text,
-                size: 20.0,
-              ) :
-              const Icon(
-                Icons.keyboard_arrow_right_sharp,
-                color: AppColors.text,
-                size: 20.0,
+            IgnorePointer(
+              ignoring: false,
+              child: IconButton(
+                constraints: const BoxConstraints(),
+                padding: const EdgeInsets.all(4.0),
+                onPressed: toggleFolder,
+                icon: isExpanded ?
+                const Icon(
+                  Icons.keyboard_arrow_down_sharp,
+                  color: AppColors.text,
+                  size: 20.0,
+                ) :
+                const Icon(
+                  Icons.keyboard_arrow_right_sharp,
+                  color: AppColors.text,
+                  size: 20.0,
+                ),
               ),
             ),
         

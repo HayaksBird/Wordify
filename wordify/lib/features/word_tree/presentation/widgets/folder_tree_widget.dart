@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/components.dart';
 import 'package:wordify/core/ui_kit/folder_view/folder_row_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
-import 'package:wordify/features/word_tree/presentation/pages/folder_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
-class FolderListWidget extends StatelessWidget {
+///Presents the folder tree in the folder view.
+///Responsible for creating the and styling the tree.
+///In addition, handles the add/update/delete operations within the tree.
+class FolderTreetWidget extends StatelessWidget {
   final List<Folder> rootFolders;
   final _dictionaryBloc = DictionaryBloc();
 
 
-  FolderListWidget({
+  FolderTreetWidget({
     super.key,
     required this.rootFolders
   });
@@ -49,18 +53,20 @@ class FolderListWidget extends StatelessWidget {
   Widget _buildFolderTile(BuildContext context, Folder folder, int layer) {
     return Column(
       children: [
-        FolderRowWidget(
-          isExpanded: _dictionaryBloc.state.isToExpand(folder),
-          toggleFolder: () { _dictionaryBloc.state.toggleFolder(folder); },
-          layer: layer,
-          isFirstFolder: folder == rootFolders[0],
-          listTile: GestureDetector(
-            onDoubleTap: () { _dictionaryBloc.state.accessFolder(folder); },
-            onSecondaryTapDown: (details) { _showOverlay(context, details, folder); },
-            child: FolderTileWidget(
-              name: folder.name,
-              isActivated: _dictionaryBloc.state.isActivated(folder)
-            )
+        GestureDetector(
+          onSecondaryTapDown: (details) { _showOverlay(context, details, folder); },
+          child: FolderRowWidget(
+            isExpanded: _dictionaryBloc.state.isToExpand(folder),
+            toggleFolder: () { _dictionaryBloc.state.toggleFolder(folder); },
+            layer: layer,
+            isFirstFolder: folder == rootFolders[0],
+            listTile: GestureDetector(
+              onDoubleTap: () { _dictionaryBloc.state.accessFolder(folder); },
+              child: FolderTileWidget(
+                name: folder.name,
+                isActivated: _dictionaryBloc.state.isActivated(folder)
+              ),
+            ),
           ),
         ),
 

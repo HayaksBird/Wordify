@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/folder_view/folder_list_template_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/presentation/pages/folder_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
-import 'package:wordify/features/word_tree/presentation/widgets/folder_list_widget.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/folder_tree_widget.dart';
 
 
 ///Present the list of type FolderContentWidget,
@@ -47,7 +47,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  return FolderListWidget(rootFolders: snapshot.data!);
+                  return FolderTreetWidget(rootFolders: snapshot.data!);
                 }
               },
             )

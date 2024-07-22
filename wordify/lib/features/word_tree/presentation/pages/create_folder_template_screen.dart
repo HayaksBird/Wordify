@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/template_view/template_frame.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart';
 
-///
-class UpdateWordTemplate extends StatefulWidget {
-  final FolderWords expandedFolder;
-  final Word word;
+class CreateFolderTemplate extends StatefulWidget {
+  final Folder? parentFolder;
 
 
-  const UpdateWordTemplate({
+  const CreateFolderTemplate({
     super.key,
-    required this.word,
-    required this.expandedFolder
+    this.parentFolder
   });
 
 
   @override
-  State<UpdateWordTemplate> createState() => _UpdateWordTemplateState();
+  State<CreateFolderTemplate> createState() => _CreateFolderTemplateState();
 }
 
-class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
-  late final FolderWords expandedFolder;
-  late final Word word;
+class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
+  late final Folder? parentFolder;
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController wordController;
-  late final TextEditingController translationController;
+  final TextEditingController nameController = TextEditingController();
   final _dictionaryBloc = DictionaryBloc();
   final _validationBloc = ValidationBloc();
 
@@ -36,10 +31,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   @override
   void initState() {
     super.initState();
-    expandedFolder = widget.expandedFolder;
-    word = widget.word;
-    wordController = TextEditingController(text: word.word);
-    translationController = TextEditingController(text: word.translation);
+    parentFolder = widget.parentFolder;
   }
 
 
@@ -53,16 +45,11 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
               formKey: _formKey,
               fields: [
                 FormFieldInput(
-                  controller: wordController,
-                  validation: (value) => _validationBloc.word.validateWordWord(value!),
-                  fieldName: 'Word'
+                  controller: nameController,
+                  validation: (value) => _validationBloc.folder.validateInsertFolderName(value!, parentFolder),
+                  fieldName: 'Name'
                 ),
-                FormFieldInput(
-                  controller: translationController,
-                  validation: (value) => _validationBloc.word.validateWordTranslation(value!),
-                  fieldName: 'Translation'
-                )
-              ]
+              ],
             ),
         
             const Spacer(),
@@ -83,13 +70,12 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   ///
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final Word newWord = Word(
-        word: wordController.text, 
-        translation: translationController.text
+      final Folder newFolder = Folder(
+        name: nameController.text
       );
 
-      _dictionaryBloc.content.updateWord(expandedFolder, word, newWord);
-  
+      _dictionaryBloc.content.createFolder(parentFolder, newFolder);
+
       Navigator.pop(context);
     }
   }
