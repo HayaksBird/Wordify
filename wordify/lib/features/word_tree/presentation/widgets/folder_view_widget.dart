@@ -23,14 +23,14 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
   @override
   void initState() {
     super.initState();
-    _dictionaryBloc.state.loadFolders();
+    _dictionaryBloc.folderView.loadFolders();
   }
 
 
   @override
   void dispose() {
     super.dispose();
-    _dictionaryBloc.state.dispose();
+    _dictionaryBloc.dispose();
   }
 
 
@@ -42,7 +42,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
         child: Stack(
           children: [
             StreamBuilder<List<Folder>>(
-              stream: _dictionaryBloc.state.foldersInView,
+              stream: _dictionaryBloc.folderView.foldersInView,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

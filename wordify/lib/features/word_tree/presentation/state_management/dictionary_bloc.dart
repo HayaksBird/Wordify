@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
@@ -25,9 +26,15 @@ void _updateFolderView() {
 ///
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
-  late final DictionaryStateBloc state;
+  late final DictionaryWordViewStateBloc wordView;
+  late final DictionaryFolderViewStateBloc folderView;
   late final DictionaryContentBloc content;
 
+
+  void dispose() {
+    _foldersInViewController.close();
+    _activeFoldersController.close();
+  }
 
 
   factory DictionaryBloc() {
@@ -36,7 +43,8 @@ class DictionaryBloc {
 
 
   DictionaryBloc._internal() {
-    state = DictionaryStateBloc();
+    wordView = DictionaryWordViewStateBloc();
+    folderView = DictionaryFolderViewStateBloc();
     content = DictionaryContentBloc();
   }
 }
@@ -45,19 +53,62 @@ class DictionaryBloc {
 
 ///BLoC class to work with the dictionary. It serves as an intermediary between
 ///the domain and the UI.
-class DictionaryStateBloc {
-
-  void dispose() {
-    _foldersInViewController.close();
-    _activeFoldersController.close();
-  }
-
+class DictionaryFolderViewStateBloc {
 
   ///
   Future<void> loadFolders() async {
     await _dictionaryManager.foldersInViewState.setFolderTree();
     _updateFolderView();
   }
+
+
+  ///
+  void toggleFolder(Folder folder) {
+    bool didExpand = _dictionaryManager.foldersInViewState.expandFolder(folder);
+
+    if (!didExpand) { _dictionaryManager.foldersInViewState.collapseFolder(folder); }
+
+    _updateFolderView();
+  }
+
+
+  //
+  String getFullPath(Folder folder) {
+    return _dictionaryManager.foldersInViewState.fullPath(folder);
+  }
+
+
+  ///
+  bool isToExpand(Folder folder) {
+    return _folderTree.getActivityStatus(folder) && _folderTree.containsChildren(folder);
+  }
+
+
+  ///
+  List<Folder> getSubfolders(Folder? folder) {
+    if (folder == null) {
+      return _folderTree.getRootItems;
+    } else { return _folderTree.getChildren(folder); }
+  }
+
+
+  ///
+  Folder? getParentFolder(Folder folder) {
+    return _folderTree.getParent(folder);
+  }
+
+
+  //GETTERS
+  Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
+
+  NTree<Folder> get _folderTree => _dictionaryManager.foldersInViewState.foldersInView;
+}
+
+
+
+///
+class DictionaryWordViewStateBloc {
+  final HashSet<Word> activeSentences = HashSet<Word>();
 
 
   ///If the folder is not activated, activate it; else ignore.
@@ -79,6 +130,7 @@ class DictionaryStateBloc {
     bool wasClosed = _dictionaryManager.activeFolderState.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
+      activeSentences.clear();
       _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
       _updateFolderView();
     }
@@ -88,30 +140,34 @@ class DictionaryStateBloc {
   ///
   void showActiveFolderBelow(FolderWords expandedFolder) {
     bool didGoBelow = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderDown(expandedFolder.folder);
-    if (didGoBelow) _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+    if (didGoBelow) {
+      activeSentences.clear();
+      _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+    }
   }
 
 
   ///
   void showActiveFolderAbove(FolderWords expandedFolder) {
     bool didGoUp = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderUp(expandedFolder.folder);
-    if (didGoUp) _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+    if (didGoUp) {
+      activeSentences.clear();
+      _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+    }
   }
 
 
-  ///
-  void toggleFolder(Folder folder) {
-    bool didExpand = _dictionaryManager.foldersInViewState.expandFolder(folder);
-
-    if (!didExpand) { _dictionaryManager.foldersInViewState.collapseFolder(folder); }
-
-    _updateFolderView();
+  ///Either show or hide the sentence.
+  void toggleSentence(Word word) {
+    if (!activeSentences.contains(word)) { activeSentences.add(word); }
+    else { activeSentences.remove(word); }
+    _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
   }
 
 
-  //
-  String getFullPath(Folder folder) {
-    return _dictionaryManager.foldersInViewState.fullPath(folder);
+  ///Is the word expanded?
+  bool doShowSentence(Word word) {
+    return activeSentences.contains(word);
   }
 
 
@@ -121,35 +177,9 @@ class DictionaryStateBloc {
   }
 
 
-  ///
-  bool isToExpand(Folder folder) {
-    NTree<Folder> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
-    
-    return folderTree.getActivityStatus(folder) && folderTree.containsChildren(folder);
-  }
-
-
-  ///
-  List<Folder> getSubfolders(Folder? folder) {
-    if (folder == null) {
-      return _folderTree.getRootItems;
-    } else { return _folderTree.getChildren(folder); }
-  }
-
-
-  ///
-  Folder? getParentFolder(Folder folder) {
-    return _folderTree.getParent(folder);
-  }
-
-
-  //GETTERS
-  Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
-
   Stream<FolderWords?> get activeFolders => _activeFoldersController.stream;
-
-  NTree<Folder> get _folderTree => _dictionaryManager.foldersInViewState.foldersInView;
 }
+
 
 
 

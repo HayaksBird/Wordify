@@ -83,7 +83,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   ///
   void goBack(ValueNotifier<Folder?> valueNotifier) {
     if (valueNotifier.value != null) {
-      valueNotifier.value = _dictionaryBloc.state.getParentFolder(valueNotifier.value!);
+      valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
       storageFolder = valueNotifier.value;
     }
   }
@@ -107,10 +107,10 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
                   valueListenable: valueNotifier,
                   builder: (context, folder, child) {
                     storageFolder = folder;
-                    return ChooseFolderWidget(folders: _dictionaryBloc.state.getSubfolders(folder), valueNotifier: valueNotifier);
+                    return ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier);
                   },
                 ),
-                path: valueNotifier.value != null ? _dictionaryBloc.state.getFullPath(valueNotifier.value!) : ''
+                path: valueNotifier.value != null ? _dictionaryBloc.folderView.getFullPath(valueNotifier.value!) : ''
               );
             }
           );

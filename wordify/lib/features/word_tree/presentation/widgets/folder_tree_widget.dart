@@ -56,22 +56,22 @@ class FolderTreetWidget extends StatelessWidget {
         GestureDetector(
           onSecondaryTapDown: (details) { _showOverlay(context, details, folder); },
           child: FolderRowWidget(
-            isExpanded: _dictionaryBloc.state.isToExpand(folder),
-            toggleFolder: () { _dictionaryBloc.state.toggleFolder(folder); },
+            isExpanded: _dictionaryBloc.folderView.isToExpand(folder),
+            toggleFolder: () { _dictionaryBloc.folderView.toggleFolder(folder); },
             layer: layer,
             isFirstFolder: folder == rootFolders[0],
             listTile: GestureDetector(
-              onDoubleTap: () { _dictionaryBloc.state.accessFolder(folder); },
+              onDoubleTap: () { _dictionaryBloc.wordView.accessFolder(folder); },
               child: FolderTileWidget(
                 name: folder.name,
-                isActivated: _dictionaryBloc.state.isActivated(folder)
+                isActivated: _dictionaryBloc.wordView.isActivated(folder)
               ),
             ),
           ),
         ),
 
-        if (_dictionaryBloc.state.isToExpand(folder))
-          _buildInnerFolderList(context, _dictionaryBloc.state.getSubfolders(folder), layer + 1)
+        if (_dictionaryBloc.folderView.isToExpand(folder))
+          _buildInnerFolderList(context, _dictionaryBloc.folderView.getSubfolders(folder), layer + 1)
       ]
     );
   }

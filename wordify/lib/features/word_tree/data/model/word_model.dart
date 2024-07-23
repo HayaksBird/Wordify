@@ -11,13 +11,17 @@ class WordModel extends Word {
     required this.id,
     required this.folderId,
     required super.word,
-    required super.translation
+    required super.translation,
+    required super.sentence
   });
 
 
   ///
   WordModel.fromWord(Word word, {this.id = -1, this.folderId = -1})
-      : super(word: word.word, translation: word.translation);
+      : super(word: word.word,
+              translation: word.translation,
+              sentence: word.sentence
+        );
 
 
   // Create a Word from a Map
@@ -27,6 +31,7 @@ class WordModel extends Word {
       folderId: map['folder_id'] as int,
       word: map['word'] as String,
       translation: map['translation'] as String,
+      sentence: map['sentence'] as String?
     );
   }
 
@@ -37,12 +42,14 @@ class WordModel extends Word {
     int? folderId,
     String? word,
     String? translation,
+    String? sentence
   }) {
     return WordModel(
       id: id ?? this.id,
       folderId: this.folderId,
       word: word ?? this.word,
       translation: translation ?? this.translation,
+      sentence: sentence ?? this.sentence
     );
   }
 

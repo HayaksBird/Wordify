@@ -52,6 +52,9 @@ class _WordListWidgetState extends State<WordListWidget> {
   ///
   Widget _buildFolderTile(BuildContext context, Word word) {
     return GestureDetector(
+      onTap: () {
+        _dictionaryBloc.wordView.toggleSentence(word);
+      },
       onSecondaryTapDown: (details) {
         setState(() {
           selectedWord = word;
@@ -59,9 +62,9 @@ class _WordListWidgetState extends State<WordListWidget> {
         _showOverlay(context, details, word);
       },
       child: WordTileWidget(
-        word: word.word,
-        translation: word.translation,
+        word: word,
         isSelected: selectedWord == word ? true : false,
+        showSentence: _dictionaryBloc.wordView.doShowSentence(word),
       ),
     );
   }

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 class WordTileWidget extends StatelessWidget {
-  final String word, translation;
+  final Word word;
   final bool isSelected;
+  final bool showSentence;
 
 
   const WordTileWidget({
     super.key,
     required this.word,
-    required this.translation,
-    this.isSelected = false
+    this.isSelected = false,
+    this.showSentence = false
   });
 
 
@@ -21,17 +23,42 @@ class WordTileWidget extends StatelessWidget {
         Container(
           color: isSelected ? AppColors.backgroundMain : null,
           child: ListTile(
-            title: Text(
-              word,
-              style: const TextStyle(
-                color: AppColors.text,
-              ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (showSentence && word.sentence != null)...[
+                  const SizedBox(height: 3.5)
+                ],
+
+                Text( //Show the word itself
+                  word.word,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                  ),
+                ),
+              ]
             ),
-            subtitle: Text(
-              translation,
-              style: const TextStyle(
-                color: AppColors.text,
-              ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text( //Show word's translation
+                  word.translation,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                  ),
+                ),
+                
+                if (showSentence && word.sentence != null)...[
+                  const SizedBox(height: 15.0),
+          
+                  Text( //Show word's corresponding sentence
+                    word.sentence!,
+                    style: const TextStyle(
+                      color: AppColors.text,
+                    ),
+                  ),
+                ]
+              ]
             ),
           ),
         ),
@@ -42,7 +69,7 @@ class WordTileWidget extends StatelessWidget {
             child: Divider(
               color: AppColors.navigationSecondary,
               height: 0,
-              thickness: 0.1,
+              thickness: 0.15,
             ),
           )
       ],

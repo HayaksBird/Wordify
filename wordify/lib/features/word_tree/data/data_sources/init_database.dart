@@ -54,6 +54,7 @@ class WordifyDatabase {
         folder_id INTEGER NOT NULL,
         word TEXT NOT NULL,
         translation TEXT NOT NULL,
+        sentence TEXT,
         FOREIGN KEY (folder_id) REFERENCES folders (id)
       )
     ''');
@@ -82,42 +83,42 @@ class WordifyDatabase {
 
     //SAMPLE WORDS
     await db.execute('''
-    INSERT INTO words (folder_id, word, translation) VALUES
-      ((SELECT id FROM folders WHERE id = 1), 'Kirche', 'Church'),
-      ((SELECT id FROM folders WHERE id = 1), 'Stadt', 'City'),
-      ((SELECT id FROM folders WHERE id = 1), 'Essen', 'To eat'),
-      ((SELECT id FROM folders WHERE id = 1), 'Trinken', 'To drink'),
-      ((SELECT id FROM folders WHERE id = 1), 'Schlafen', 'To sleep'),
-      ((SELECT id FROM folders WHERE id = 1), 'Laufen', 'To run'),
-      ((SELECT id FROM folders WHERE id = 1), 'Lesen', 'To read'),
+    INSERT INTO words (folder_id, word, translation, sentence) VALUES
+      ((SELECT id FROM folders WHERE id = 1), 'Kirche', 'Church', 'Die Kirche ist sehr alt.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Stadt', 'City', 'Die Stadt ist sehr groß.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Essen', 'To eat', 'Wir gehen jetzt essen.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Trinken', 'To drink', 'Ich möchte etwas trinken.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Schlafen', 'To sleep', 'Ich gehe um 10 Uhr schlafen.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Laufen', 'To run', 'Ich laufe jeden Morgen.'),
+      ((SELECT id FROM folders WHERE id = 1), 'Lesen', 'To read', 'Ich lese gerne Bücher.'),
 
-      ((SELECT id FROM folders WHERE id = 2), 'Da liegt der Hund begraben', 'Thats the crux of the matter'),
-      ((SELECT id FROM folders WHERE id = 2), 'Ich verstehe nur Bahnhof', 'I dont understand a thing'),
-      ((SELECT id FROM folders WHERE id = 2), 'Die Katze im Sack kaufen', 'To buy a pig in a poke'),
+      ((SELECT id FROM folders WHERE id = 2), 'Da liegt der Hund begraben', 'Thats the crux of the matter', 'Jetzt weiß ich, wo der Hund begraben liegt.'),
+      ((SELECT id FROM folders WHERE id = 2), 'Ich verstehe nur Bahnhof', 'I dont understand a thing', 'Bei dieser Erklärung verstehe ich nur Bahnhof.'),
+      ((SELECT id FROM folders WHERE id = 2), 'Die Katze im Sack kaufen', 'To buy a pig in a poke', 'Du solltest die Katze nicht im Sack kaufen.'),
 
-      ((SELECT id FROM folders WHERE id = 3), 'Schwerkraft', 'Gravity'),
-      ((SELECT id FROM folders WHERE id = 3), 'Evolution', 'Evolution'),
-      ((SELECT id FROM folders WHERE id = 3), 'Photosynthese', 'Photosynthesis'),
+      ((SELECT id FROM folders WHERE id = 3), 'Schwerkraft', 'Gravity', 'Die Schwerkraft zieht uns zur Erde.'),
+      ((SELECT id FROM folders WHERE id = 3), 'Evolution', 'Evolution', 'Die Evolution erklärt die Vielfalt des Lebens.'),
+      ((SELECT id FROM folders WHERE id = 3), 'Photosynthese', 'Photosynthesis', 'Pflanzen betreiben Photosynthese zur Energiegewinnung.'),
 
-      ((SELECT id FROM folders WHERE id = 4), 'Algorithmus', 'Algorithm'),
-      ((SELECT id FROM folders WHERE id = 4), 'Datenbank', 'Database'),
-      ((SELECT id FROM folders WHERE id = 4), 'Netzwerk', 'Network'),
+      ((SELECT id FROM folders WHERE id = 4), 'Algorithmus', 'Algorithm', 'Ein Algorithmus löst ein Problem Schritt für Schritt.'),
+      ((SELECT id FROM folders WHERE id = 4), 'Datenbank', 'Database', 'Die Daten werden in einer Datenbank gespeichert.'),
+      ((SELECT id FROM folders WHERE id = 4), 'Netzwerk', 'Network', 'Ein Netzwerk verbindet mehrere Computer.'),
 
-      ((SELECT id FROM folders WHERE id = 5), '愛 (あい)', 'Love'),
-      ((SELECT id FROM folders WHERE id = 5), '友達 (ともだち)', 'Friend'),
-      ((SELECT id FROM folders WHERE id = 5), '学校 (がっこう)', 'School'),
-      ((SELECT id FROM folders WHERE id = 5), '食べ物 (たべもの)', 'Food'),
-      ((SELECT id FROM folders WHERE id = 5), '本 (ほん)', 'Book'),
-      ((SELECT id FROM folders WHERE id = 5), '車 (くるま)', 'Car'),
-      ((SELECT id FROM folders WHERE id = 5), '先生 (せんせい)', 'Teacher'),
+      ((SELECT id FROM folders WHERE id = 5), '愛 (あい)', 'Love', '愛は世界を動かす力です。'),
+      ((SELECT id FROM folders WHERE id = 5), '友達 (ともだち)', 'Friend', '友達と一緒に遊びました。'),
+      ((SELECT id FROM folders WHERE id = 5), '学校 (がっこう)', 'School', '学校へ行く時間です。'),
+      ((SELECT id FROM folders WHERE id = 5), '食べ物 (たべもの)', 'Food', 'おいしい食べ物がたくさんあります。'),
+      ((SELECT id FROM folders WHERE id = 5), '本 (ほん)', 'Book', '面白い本を読んでいます。'),
+      ((SELECT id FROM folders WHERE id = 5), '車 (くるま)', 'Car', '新しい車を買いました。'),
+      ((SELECT id FROM folders WHERE id = 5), '先生 (せんせい)', 'Teacher', '先生はとても親切です。'),
 
-      ((SELECT id FROM folders WHERE id = 6), '花より団子 (はなよりだんご)', 'Substance over style'),
-      ((SELECT id FROM folders WHERE id = 6), '猿も木から落ちる (さるもきからおちる)', 'Even monkeys fall from trees'),
-      ((SELECT id FROM folders WHERE id = 6), '案ずるより産むが易し (あんずるよりうむがやすし)', 'Giving birth to a baby is easier than worrying about it'),
+      ((SELECT id FROM folders WHERE id = 6), '花より団子 (はなよりだんご)', 'Substance over style', '彼は花より団子だ。'),
+      ((SELECT id FROM folders WHERE id = 6), '猿も木から落ちる (さるもきからおちる)', 'Even monkeys fall from trees', '猿も木から落ちることがある。'),
+      ((SELECT id FROM folders WHERE id = 6), '案ずるより産むが易し (あんずるよりうむがやすし)', 'Giving birth to a baby is easier than worrying about it', '案ずるより産むが易しということわざがあります。'),
 
-      ((SELECT id FROM folders WHERE id = 7), 'Zelle', 'Cell'),
-      ((SELECT id FROM folders WHERE id = 7), 'Genom', 'Genome'),
-      ((SELECT id FROM folders WHERE id = 7), 'Ökosystem', 'Ecosystem');
+      ((SELECT id FROM folders WHERE id = 7), 'Zelle', 'Cell', 'Eine Zelle ist die kleinste Einheit des Lebens.'),
+      ((SELECT id FROM folders WHERE id = 7), 'Genom', 'Genome', 'Das Genom enthält alle genetischen Informationen.'),
+      ((SELECT id FROM folders WHERE id = 7), 'Ökosystem', 'Ecosystem', 'Ein Ökosystem besteht aus vielen verschiedenen Organismen.');
     ''');
   }
 }

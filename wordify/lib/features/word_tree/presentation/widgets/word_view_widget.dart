@@ -21,7 +21,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FolderWords?>(
-      stream: _dictionaryBloc.state.activeFolders,
+      stream: _dictionaryBloc.wordView.activeFolders,
       builder: (context, snapshot) {
         return Background(
           wordView: snapshot.connectionState != ConnectionState.waiting && snapshot.data != null ?
@@ -43,24 +43,24 @@ class _WordViewWidgetState extends State<WordViewWidget> {
 
             //Swipe down (go up).
             if (velocity.dy > 0) {
-              _dictionaryBloc.state.showActiveFolderAbove(activeFolder);
+              _dictionaryBloc.wordView.showActiveFolderAbove(activeFolder);
             }
           
             //Swipe up (go down).
             if (velocity.dy < 0) {
-              _dictionaryBloc.state.showActiveFolderBelow(activeFolder);
+              _dictionaryBloc.wordView.showActiveFolderBelow(activeFolder);
             }
           },
         ),
 
         WordListTemplateWidget( //The template witht the folder content
-          path: _dictionaryBloc.state.getFullPath(activeFolder.folder),
+          path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
           delimiter: '/',
           list: WordListWidget(
             words: activeFolder.words,
             activeFolder: activeFolder,
           ),
-          closePressed: () { _dictionaryBloc.state.closeFolder(activeFolder); },
+          closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
           addWordPressed: () { _openWordTemplate(activeFolder.folder); },
         ),
 
@@ -69,8 +69,8 @@ class _WordViewWidgetState extends State<WordViewWidget> {
           right: 0.0,
           child: Column(
             children: [
-              ArrowUpButton(onPressed: () { _dictionaryBloc.state.showActiveFolderAbove(activeFolder); }),
-              ArrowDownButton(onPressed: () { _dictionaryBloc.state.showActiveFolderBelow(activeFolder); })
+              ArrowUpButton(onPressed: () { _dictionaryBloc.wordView.showActiveFolderAbove(activeFolder); }),
+              ArrowDownButton(onPressed: () { _dictionaryBloc.wordView.showActiveFolderBelow(activeFolder); })
             ]
           )
         )
