@@ -23,7 +23,7 @@ class WordListTemplateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-      child: Container(
+      child: Container( //Outter frame with the list of words
         constraints: const BoxConstraints.expand(),
         decoration: BoxDecoration(
           color: const Color(0xFF352839),

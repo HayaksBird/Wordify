@@ -14,27 +14,6 @@ final FolderRepository _folderRepo = FolderRepositoryImpl();
 
 ///The class that manages the dictionary of the app.
 class DictionaryFoldersInViewStateManager {
-  
-  ///
-  bool expandFolder(Folder folder) {
-    if (!_dictionary.foldersInView.getActivityStatus(folder)) { //Folder is not expanded
-      _dictionary.foldersInView.changeActivityStatus(folder, true);
-
-      return true;
-    } else { return false; }
-  }
-
-
-  ///
-  bool collapseFolder(Folder folder) {
-    if (_dictionary.foldersInView.getActivityStatus(folder)) {  //Folder is expanded
-      _dictionary.foldersInView.changeActivityStatus(folder, false);
-
-      return true;
-    } else { return false; }
-  }
-
-
   ///Initialize the dictionary with the folder tree.
   Future<void> setFolderTree() async {
     List<Folder> rootFolders = await _folderRepo.getRootFolders();

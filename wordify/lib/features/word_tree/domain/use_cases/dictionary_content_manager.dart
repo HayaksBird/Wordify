@@ -30,11 +30,13 @@ class DictionaryWordsManager {
 
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
-  Future<void> updateWord(Folder folder, Word oldWord, Word newWord) async {
+  Future<Word> updateWord(Folder folder, Word oldWord, Word newWord) async {
     Word updatedWord = await _wordRepo.updateWord(folder, oldWord, newWord);
     FolderWords expandedFolder = _dictionary.cachedFolders[folder]!;
 
     expandedFolder.updateWord(oldWord, updatedWord);
+
+    return updatedWord;
   }
 
 
@@ -60,7 +62,7 @@ class DictionaryFoldersManager {
 
 
   ///
-  Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
+  Future<Folder> updateFolder(Folder oldFolder, Folder newFolder) async {
     Folder updatedFolder = await _folderRepo.updateFolder(oldFolder, newFolder);
     List<Folder> subfolders = _dictionary.foldersInView.getSubitems(oldFolder);
 
@@ -70,13 +72,14 @@ class DictionaryFoldersManager {
     }
 
     _dictionary.foldersInView.update(oldFolder, updatedFolder);
+    return updatedFolder;
   }
 
 
   ///Delete a folder with its subfolders.
   ///Remove them from the cache and/or active folder list
   ///if they are present there.
-  Future<void> deleteFolder(Folder folder) async {
+  Future<List<Folder>> deleteFolder(Folder folder) async {
     List<Folder> subfolders = _dictionary.foldersInView.getSubitems(folder);
 
     for (Folder subfolder in subfolders) {
@@ -87,5 +90,7 @@ class DictionaryFoldersManager {
     }
 
     _dictionary.foldersInView.delete(folder);
+
+    return subfolders;
   }
 }

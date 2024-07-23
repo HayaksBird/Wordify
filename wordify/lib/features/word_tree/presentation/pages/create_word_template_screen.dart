@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/template_view/choose_word_template_widget.dart';
 import 'package:wordify/core/ui_kit/template_view/template_frame.dart';
+import 'package:wordify/core/ui_kit/template_view/word_form_decoration.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
@@ -28,6 +29,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   final _formKey = GlobalKey<FormState>();  
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
+  final TextEditingController sentenceController = TextEditingController();
   final _dictionaryBloc = DictionaryBloc();
   final _validationBloc = ValidationBloc();
 
@@ -37,6 +39,15 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   void initState() {
     super.initState();
     storageFolder = widget.storageFolder;
+  }
+
+
+  @override
+  void dispose() {
+    wordController.dispose();
+    translationController.dispose();
+    sentenceController.dispose();
+    super.dispose();
   }
 
 
@@ -62,7 +73,14 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
                 )
               ],
             ),
-        
+
+            const Spacer(),
+
+            SentenceFieldBox(
+              controller: sentenceController,
+              labelText: 'Example...',
+            ),
+
             const Spacer(),
         
             _chooseFolder(),
@@ -81,7 +99,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
 
   ///
-  void goBack(ValueNotifier<Folder?> valueNotifier) {
+  void _goBack(ValueNotifier<Folder?> valueNotifier) {
     if (valueNotifier.value != null) {
       valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
       storageFolder = valueNotifier.value;
@@ -102,7 +120,7 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
               return ChooseWordTemplateWidget(
-                goBack: () { goBack(valueNotifier); },
+                goBack: () { _goBack(valueNotifier); },
                 folders: ValueListenableBuilder<Folder?>(
                   valueListenable: valueNotifier,
                   builder: (context, folder, child) {
@@ -125,7 +143,8 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
     if (_formKey.currentState!.validate() && storageFolder != null) {
       final Word newWord = Word(
         word: wordController.text, 
-        translation: translationController.text
+        translation: translationController.text,
+        sentence: sentenceController.text
       );
 
       _dictionaryBloc.content.createWord(storageFolder!, newWord);

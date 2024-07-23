@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/ui_kit/template_view/choose_word_template_widget.dart';
 import 'package:wordify/core/ui_kit/template_view/template_frame.dart';
+import 'package:wordify/core/ui_kit/template_view/word_form_decoration.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/choose_folder_widget.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart';
 
 ///
@@ -25,10 +29,12 @@ class UpdateWordTemplate extends StatefulWidget {
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
+  Folder? newStorageFolder;
   late final Word word;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
   late final TextEditingController translationController;
+  late final TextEditingController sentenceController;
   final _dictionaryBloc = DictionaryBloc();
   final _validationBloc = ValidationBloc();
 
@@ -37,9 +43,19 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   void initState() {
     super.initState();
     expandedFolder = widget.expandedFolder;
+    newStorageFolder = expandedFolder.folder;
     word = widget.word;
     wordController = TextEditingController(text: word.word);
     translationController = TextEditingController(text: word.translation);
+    sentenceController = TextEditingController(text: word.sentence);
+  }
+
+
+  @override
+  void dispose() {
+    wordController.dispose();
+    translationController.dispose();
+    super.dispose();
   }
 
 
@@ -64,8 +80,17 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
                 )
               ]
             ),
+
+            const Spacer(),
+
+            SentenceFieldBox(
+              controller: sentenceController,
+              labelText: 'Example...',
+            ),
         
             const Spacer(),
+
+            _chooseFolder(),
         
             ButtonsInRow(
               buttons: [
@@ -81,14 +106,55 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
 
   ///
+  void _goBack(ValueNotifier<Folder?> valueNotifier) {
+    if (valueNotifier.value != null) {
+      valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
+      newStorageFolder = valueNotifier.value;
+    }
+  }
+
+
+  ///Show the user the list of folders where they can store the word.
+  ///Uses InheritedWidget
+  Widget _chooseFolder() {
+    return ChosenFolderProvider(
+      notifier: ValueNotifier<Folder?>(newStorageFolder),
+      child: Builder(
+        builder: (context) {
+          final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
+
+          return ValueListenableBuilder<Folder?>(
+            valueListenable: valueNotifier,
+            builder: (context, folder, child) {
+              return ChooseWordTemplateWidget(
+                goBack: () { _goBack(valueNotifier); },
+                folders: ValueListenableBuilder<Folder?>(
+                  valueListenable: valueNotifier,
+                  builder: (context, folder, child) {
+                    newStorageFolder = folder;
+                    return ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier);
+                  },
+                ),
+                path: valueNotifier.value != null ? _dictionaryBloc.folderView.getFullPath(valueNotifier.value!) : ''
+              );
+            }
+          );
+        },
+      )
+    );
+  }
+
+
+  ///
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && newStorageFolder != null) {
       final Word newWord = Word(
         word: wordController.text, 
-        translation: translationController.text
+        translation: translationController.text,
+        sentence: sentenceController.text
       );
 
-      _dictionaryBloc.content.updateWord(expandedFolder, word, newWord);
+      _dictionaryBloc.content.updateWord(expandedFolder, newStorageFolder!, word, newWord);
   
       Navigator.pop(context);
     }

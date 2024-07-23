@@ -56,3 +56,50 @@ class WordInputDecoration extends InputDecoration {
           ),
         );
 }
+
+
+
+///
+class SentenceFieldBox extends StatelessWidget {
+  final TextEditingController controller;
+  final String labelText;
+
+
+  const SentenceFieldBox({
+    super.key,
+    required this.controller,
+    required this.labelText
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 100,
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        border: Border.all(color: AppColors.text),
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        child: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: labelText,
+            hintStyle: const TextStyle(
+              color: AppColors.text, // Color of the labelText (hintText)
+            ),
+          ),
+          style: const TextStyle(
+            color: AppColors.text, // Color of the input text
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: null, // Allows unlimited lines
+        ),
+      ),
+    );
+  }
+}

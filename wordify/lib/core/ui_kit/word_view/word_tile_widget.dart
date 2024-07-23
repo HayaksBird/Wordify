@@ -49,7 +49,7 @@ class WordTileWidget extends StatelessWidget {
                 ),
                 
                 if (showSentence && word.sentence != null)...[
-                  const SizedBox(height: 15.0),
+                  const SizedBox(height: 20.0),
           
                   Text( //Show word's corresponding sentence
                     word.sentence!,

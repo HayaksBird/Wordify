@@ -8,6 +8,8 @@ import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.d
 final _foldersInViewController = StreamController<List<Folder>>(); //StreamController for output
 final _activeFoldersController = StreamController<FolderWords?>(); //StreamController for output 
 final DictionaryManager _dictionaryManager = DictionaryManager();
+final HashSet<Folder> _expandedFolders = HashSet<Folder>();
+final HashSet<Word> _activeSentences = HashSet<Word>();
 
 
 ///
@@ -54,7 +56,7 @@ class DictionaryBloc {
 ///BLoC class to work with the dictionary. It serves as an intermediary between
 ///the domain and the UI.
 class DictionaryFolderViewStateBloc {
-
+  
   ///
   Future<void> loadFolders() async {
     await _dictionaryManager.foldersInViewState.setFolderTree();
@@ -64,11 +66,13 @@ class DictionaryFolderViewStateBloc {
 
   ///
   void toggleFolder(Folder folder) {
-    bool didExpand = _dictionaryManager.foldersInViewState.expandFolder(folder);
+    if (_folderTree.containsChildren(folder)) {
+      if (!_expandedFolders.contains(folder)) {
+        _expandedFolders.add(folder);
+      } else { _expandedFolders.remove(folder); }
 
-    if (!didExpand) { _dictionaryManager.foldersInViewState.collapseFolder(folder); }
-
-    _updateFolderView();
+      _updateFolderView();
+    }
   }
 
 
@@ -80,7 +84,7 @@ class DictionaryFolderViewStateBloc {
 
   ///
   bool isToExpand(Folder folder) {
-    return _folderTree.getActivityStatus(folder) && _folderTree.containsChildren(folder);
+    return _expandedFolders.contains(folder) && _folderTree.containsChildren(folder);
   }
 
 
@@ -108,8 +112,6 @@ class DictionaryFolderViewStateBloc {
 
 ///
 class DictionaryWordViewStateBloc {
-  final HashSet<Word> activeSentences = HashSet<Word>();
-
 
   ///If the folder is not activated, activate it; else ignore.
   ///Activate the state of words list and folders list.
@@ -130,7 +132,7 @@ class DictionaryWordViewStateBloc {
     bool wasClosed = _dictionaryManager.activeFolderState.deactivateFolder(expandedFolder);
 
     if (wasClosed) {
-      activeSentences.clear();
+      _activeSentences.clear();
       _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
       _updateFolderView();
     }
@@ -141,7 +143,7 @@ class DictionaryWordViewStateBloc {
   void showActiveFolderBelow(FolderWords expandedFolder) {
     bool didGoBelow = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderDown(expandedFolder.folder);
     if (didGoBelow) {
-      activeSentences.clear();
+      _activeSentences.clear();
       _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
     }
   }
@@ -151,7 +153,7 @@ class DictionaryWordViewStateBloc {
   void showActiveFolderAbove(FolderWords expandedFolder) {
     bool didGoUp = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderUp(expandedFolder.folder);
     if (didGoUp) {
-      activeSentences.clear();
+      _activeSentences.clear();
       _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
     }
   }
@@ -159,15 +161,15 @@ class DictionaryWordViewStateBloc {
 
   ///Either show or hide the sentence.
   void toggleSentence(Word word) {
-    if (!activeSentences.contains(word)) { activeSentences.add(word); }
-    else { activeSentences.remove(word); }
+    if (!_activeSentences.contains(word)) { _activeSentences.add(word); }
+    else { _activeSentences.remove(word); }
     _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
   }
 
 
   ///Is the word expanded?
   bool doShowSentence(Word word) {
-    return activeSentences.contains(word);
+    return _activeSentences.contains(word);
   }
 
 
@@ -179,7 +181,6 @@ class DictionaryWordViewStateBloc {
 
   Stream<FolderWords?> get activeFolders => _activeFoldersController.stream;
 }
-
 
 
 
@@ -198,8 +199,20 @@ class DictionaryContentBloc {
 
 
   ///Update the word in a folder.
-  Future<void> updateWord(FolderWords expandedFolder, Word oldWord, Word newWord) async {
-    await _dictionaryManager.words.updateWord(expandedFolder.folder, oldWord, newWord);
+  Future<void> updateWord(FolderWords expandedFolder, Folder newStorage, Word oldWord, Word newWord) async {
+    if (expandedFolder.folder != newStorage) {
+      createWord(newStorage, newWord);
+      deleteWord(expandedFolder, oldWord);
+      _activeSentences.remove(oldWord);
+    } else {
+      Word updatedWord = await _dictionaryManager.words.updateWord(expandedFolder.folder, oldWord, newWord);
+      
+      if (_activeSentences.contains(oldWord)) {
+        _activeSentences.remove(oldWord);
+
+        if (expandedFolder.folder == newStorage) { _activeSentences.add(updatedWord); }
+      }
+    }
 
     _updateWordView(expandedFolder);
   }
@@ -208,6 +221,7 @@ class DictionaryContentBloc {
   ///
   Future<void> deleteWord(FolderWords expandedFolder, Word word) async {
     await _dictionaryManager.words.deleteWord(expandedFolder.folder, word);
+    _activeSentences.remove(word);
 
     _updateWordView(expandedFolder);
   }
@@ -215,7 +229,11 @@ class DictionaryContentBloc {
 
   ///
   Future<void> deleteFolder(Folder folder) async {
-    await _dictionaryManager.folders.deleteFolder(folder);
+    List<Folder> subfolders = await _dictionaryManager.folders.deleteFolder(folder);
+
+    for (var subfolder in subfolders) {
+      _expandedFolders.remove(subfolder);
+    }
 
     _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
     _updateFolderView();
@@ -224,7 +242,10 @@ class DictionaryContentBloc {
 
   ///
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
-    await _dictionaryManager.folders.updateFolder(oldFolder, newFolder);
+    Folder updatedFolder = await _dictionaryManager.folders.updateFolder(oldFolder, newFolder);
+
+    _expandedFolders.remove(oldFolder);
+    _expandedFolders.add(updatedFolder);
 
     _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder); 
     _updateFolderView();
