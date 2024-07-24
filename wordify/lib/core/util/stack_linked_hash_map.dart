@@ -51,6 +51,12 @@ class StackLinkedHashMap<K, T> {
 
 
   ///
+  T? get(K key) {
+    return _table[key]?.data;
+  }
+
+
+  ///
   T? getAbove(K key) {
     _Node<T>? node = _table[key];
     

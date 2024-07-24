@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/folder_view/folder_actions_overlay.dart';
 import 'package:wordify/core/ui_kit/folder_view/folder_row_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
@@ -79,25 +79,12 @@ class FolderTreetWidget extends StatelessWidget {
 
   ///
   void _showOverlay(BuildContext context, TapDownDetails details, Folder folder) {
-    WordifyOverlayEntry.showOverlay(
-      inputs: [
-        DoAction(
-          title: 'Create',
-          action: () { _createFolder(context, folder); }
-        ),
-
-        DoAction(
-          title: 'Update',
-          action: () { _updateFolder(context, folder); }
-        ),
-
-        DoAction(
-          title: 'Delete',
-          action: () { _dictionaryBloc.content.deleteFolder(folder); }
-        )
-      ], 
-      context: context,
-      tapPosition: details.globalPosition
+    FolderActionsOverlay.showOverlay(
+      create: () { _createFolder(context, folder); },
+      update: () { _updateFolder(context, folder); },
+      delete: () { _dictionaryBloc.content.deleteFolder(folder); },
+      position: details.globalPosition,
+      context: context
     );
   }
 

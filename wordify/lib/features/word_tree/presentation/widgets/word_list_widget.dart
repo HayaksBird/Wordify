@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/word_view/word_actions_overlay.dart';
 import 'package:wordify/core/ui_kit/word_view/word_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
@@ -72,21 +72,12 @@ class _WordListWidgetState extends State<WordListWidget> {
 
   ///Show the overlay for the right click
   void _showOverlay(BuildContext context, TapDownDetails details, Word word) {
-    WordifyOverlayEntry.showOverlay(
-      inputs: [
-        DoAction(
-          title: 'Update',
-          action: () { _openWordTemplate(context, word); }
-        ),
-
-        DoAction(
-          title: 'Delete',
-          action: () { _dictionaryBloc.content.deleteWord(activeFolder, word); }
-        )
-      ], 
-      context:  context,
-      tapPosition:  details.globalPosition,
-      onOverlayClosed: _overlayClosed
+    WordActionsOverlay.showOverlay(
+      update: () { _openWordTemplate(context, word); },
+      delete: () { _dictionaryBloc.content.deleteWord(activeFolder, word); },
+      position: details.globalPosition,
+      onOverlayClosed: _overlayClosed,
+      context: context
     );
   }
 

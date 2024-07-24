@@ -19,8 +19,11 @@ class DictionaryWordsManager {
   ///If the folder is in cache, then update the folder of the new word and store it in cache.
   ///If necessary, then also update the active folder list.
   Future<void> addNewWord(Folder folder, Word word) async {
-    if (_dictionary.cachedFolders.containsKey(folder)) {
-      FolderWords expandedFolder = _dictionary.cachedFolders[folder]!;
+    FolderWords? fromCache = _dictionary.cachedFolders.get(folder);
+    FolderWords? activeFolder = _dictionary.activeFolders.get(folder);
+
+    if (fromCache != null || activeFolder != null) {
+      FolderWords expandedFolder = fromCache ?? activeFolder!;
       expandedFolder.words.add(await _wordRepo.addWord(folder, word));
     } else {
       _wordRepo.addWord(folder, word);
@@ -31,8 +34,10 @@ class DictionaryWordsManager {
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
   Future<Word> updateWord(Folder folder, Word oldWord, Word newWord) async {
+    FolderWords activeFolder = _dictionary.activeFolders.get(folder)!;
+
     Word updatedWord = await _wordRepo.updateWord(folder, oldWord, newWord);
-    FolderWords expandedFolder = _dictionary.cachedFolders[folder]!;
+    FolderWords expandedFolder = activeFolder;
 
     expandedFolder.updateWord(oldWord, updatedWord);
 
@@ -42,9 +47,9 @@ class DictionaryWordsManager {
 
   ///
   Future<void> deleteWord(Folder folder, Word word) async {
-    FolderWords expandedFolder = _dictionary.cachedFolders[folder]!;
+    FolderWords activeFolder = _dictionary.activeFolders.get(folder)!;
 
-    expandedFolder.words.remove(word);
+    activeFolder.words.remove(word);
     await _wordRepo.deleteWord(word);
   }
 }

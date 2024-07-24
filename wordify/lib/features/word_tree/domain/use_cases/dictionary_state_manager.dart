@@ -67,15 +67,16 @@ class DictionaryActiveFolderStateManager {
   ///If the folder has been activated return true; else false.
   Future<bool> activateFolder(Folder folder) async {
     FolderWords expandedFolder;
+    FolderWords? fromCache = _dictionary.cachedFolders.get(folder);
     
     if (!_dictionary.activeFolders.containsKey(folder)) {
-      if (!_dictionary.cachedFolders.containsKey(folder)) { //If the folder is first clicked
+      if (fromCache == null) { //If the folder is first clicked
         expandedFolder = FolderWords(folder, await _wordRepo.getWordsOfFolder(folder));
         
         _dictionary.activeFolders.insert(folder, expandedFolder);
-        _dictionary.cachedFolders[folder] = expandedFolder;
+        _dictionary.cachedFolders.add(folder, expandedFolder);
       } else {  //If it has been clicked before
-        expandedFolder = _dictionary.cachedFolders[folder]!;
+        expandedFolder = fromCache;
 
         _dictionary.activeFolders.insert(folder, expandedFolder);
       }

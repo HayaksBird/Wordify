@@ -1,3 +1,4 @@
+import 'package:wordify/core/util/cache_list.dart';
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/core/util/stack_linked_hash_map.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
@@ -11,7 +12,7 @@ class Dictionary {
 
   late NTree<Folder> foldersInView;
   late StackLinkedHashMap<Folder, FolderWords> activeFolders; //Folders that are currently active
-  late Map<Folder, FolderWords> cachedFolders;
+  late CacheList<Folder, FolderWords> cachedFolders;
 
 
   factory Dictionary() {
@@ -22,6 +23,6 @@ class Dictionary {
   Dictionary._internal() {
     foldersInView = NTree<Folder>();
     activeFolders = StackLinkedHashMap<Folder, FolderWords>();
-    cachedFolders = <Folder, FolderWords>{};
+    cachedFolders = CacheList(5); //give cache list size
   }
 }
