@@ -34,19 +34,24 @@ class FolderTreetWidget extends StatelessWidget {
         if (index == rootFolders.length) {
           return const SizedBox(height: 100); //Add extra space at the end of the list
         } else {
-          return _buildFolderTile(context, rootFolders[index], 0);
+          //Nullify the effect of the parent GestureDetector
+          return MouseRegion(
+            onEnter: (enter) { _dictionaryBloc.folderView.allowBufferView(false); },
+            onExit: (exit) { _dictionaryBloc.folderView.allowBufferView(true); },
+            child: _buildFolderTile(context, rootFolders[index], 0)
+          );
         }
       }
     );
   }
 
 
+  ///
   Widget _buildInnerFolderList(BuildContext context, List<Folder> folders, int layer) {
     return Column(
       children: folders.map((folder) => _buildFolderTile(context, folder, layer)).toList(),
     );
   }
-
 
 
   ///

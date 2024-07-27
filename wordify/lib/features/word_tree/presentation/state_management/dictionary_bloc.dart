@@ -56,7 +56,9 @@ class DictionaryBloc {
 ///BLoC class to work with the dictionary. It serves as an intermediary between
 ///the domain and the UI.
 class DictionaryFolderViewStateBloc {
+  bool showBuffer = true;
   
+
   ///
   Future<void> loadFolders() async {
     await _dictionaryManager.foldersInViewState.setFolderTree();
@@ -113,12 +115,23 @@ class DictionaryFolderViewStateBloc {
   }
 
 
+  ///To prevent the slowdown of onTap due to GestureDetector's onDoubleTap
+  ///we nullify the onDoubleTap when the IconButton of the folder tile
+  ///is hovered.
+  void allowBufferView(bool permission) {
+    showBuffer = permission;
+    _updateFolderView();
+  }
+
+
   //GETTERS
   Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
   NTree<Folder> get _folderTree => _dictionaryManager.foldersInViewState.foldersInView;
 
   Folder get bufferFolder => _dictionaryManager.foldersInViewState.bufferFolder!;
+
+  bool get canShowBuffer => showBuffer;
 }
 
 
