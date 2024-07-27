@@ -39,6 +39,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
     return FolderListTemplateWidget(
       child: GestureDetector(
         onSecondaryTap: () => _createFolder(),
+        onDoubleTap: () { _dictionaryBloc.wordView.accessBufferFolder(); },
         child: Stack(
           children: [
             StreamBuilder<List<Folder>>(
@@ -47,7 +48,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  return FolderTreetWidget(rootFolders: snapshot.data!);
+                  return FolderTreetWidget(rootFolders: (snapshot.data!));
                 }
               },
             )

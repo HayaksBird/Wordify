@@ -13,10 +13,13 @@ import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart
 
 ///Demonstarte the word editing template
 class CreateWordTemplate extends StatefulWidget {
-  final Folder? storageFolder;
+  final Folder storageFolder;
 
 
-  const CreateWordTemplate({super.key, this.storageFolder});
+  const CreateWordTemplate({
+    super.key,
+    required this.storageFolder
+  });
 
 
   @override
@@ -25,7 +28,7 @@ class CreateWordTemplate extends StatefulWidget {
 
 
 class _CreateWordTemplateState extends State<CreateWordTemplate> {
-  Folder? storageFolder;
+  late Folder storageFolder;
   final _formKey = GlobalKey<FormState>();  
   final TextEditingController wordController = TextEditingController();
   final TextEditingController translationController = TextEditingController();
@@ -99,11 +102,9 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
 
   ///
-  void _goBack(ValueNotifier<Folder?> valueNotifier) {
-    if (valueNotifier.value != null) {
-      valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
-      storageFolder = valueNotifier.value;
-    }
+  void _goBack(ValueNotifier<Folder> valueNotifier) {
+    valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value);
+    storageFolder = valueNotifier.value;
   }
 
 
@@ -111,24 +112,24 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
   ///Uses InheritedWidget
   Widget _chooseFolder() {
     return ChosenFolderProvider(
-      notifier: ValueNotifier<Folder?>(storageFolder),
+      notifier: ValueNotifier<Folder>(storageFolder),
       child: Builder(
         builder: (context) {
-          final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
+          final ValueNotifier<Folder> valueNotifier = ChosenFolderProvider.of(context);
 
-          return ValueListenableBuilder<Folder?>(
+          return ValueListenableBuilder<Folder>(
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
               return ChooseWordTemplateWidget(
                 goBack: () { _goBack(valueNotifier); },
-                folders: ValueListenableBuilder<Folder?>(
+                folders: ValueListenableBuilder<Folder>(
                   valueListenable: valueNotifier,
                   builder: (context, folder, child) {
                     storageFolder = folder;
                     return ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier);
                   },
                 ),
-                path: valueNotifier.value != null ? _dictionaryBloc.folderView.getFullPath(valueNotifier.value!) : ''
+                path: _dictionaryBloc.folderView.getFullPath(valueNotifier.value)
               );
             }
           );
@@ -140,14 +141,14 @@ class _CreateWordTemplateState extends State<CreateWordTemplate> {
 
   ///Create a new word from the updated fields.
   void _submit() {
-    if (_formKey.currentState!.validate() && storageFolder != null) {
+    if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text,
         sentence: sentenceController.text
       );
 
-      _dictionaryBloc.content.createWord(storageFolder!, newWord);
+      _dictionaryBloc.content.createWord(storageFolder, newWord);
   
       Navigator.pop(context);
     }

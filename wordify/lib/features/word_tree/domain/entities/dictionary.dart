@@ -13,6 +13,7 @@ class Dictionary {
   late NTree<Folder> foldersInView;
   late StackLinkedHashMap<Folder, FolderWords> activeFolders; //Folders that are currently active
   late CacheList<Folder, FolderWords> cachedFolders;
+  FolderWords? buffer;
 
 
   factory Dictionary() {

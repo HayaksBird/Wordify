@@ -60,6 +60,7 @@ class DictionaryFolderViewStateBloc {
   ///
   Future<void> loadFolders() async {
     await _dictionaryManager.foldersInViewState.setFolderTree();
+    await _dictionaryManager.activeFolderState.setBufferFolder();
     _updateFolderView();
   }
 
@@ -78,7 +79,9 @@ class DictionaryFolderViewStateBloc {
 
   //
   String getFullPath(Folder folder) {
-    return _dictionaryManager.foldersInViewState.fullPath(folder);
+    if (folder.name != bufferFolder.name) {
+      return _dictionaryManager.foldersInViewState.fullPath(folder);
+    } else { return ''; } //buffer folder
   }
 
 
@@ -89,16 +92,24 @@ class DictionaryFolderViewStateBloc {
 
 
   ///
-  List<Folder> getSubfolders(Folder? folder) {
-    if (folder == null) {
+  List<Folder> getSubfolders(Folder folder) {
+    if (folder.name == bufferFolder.name) {  //if buffer folder then show the root folders
       return _folderTree.getRootItems;
     } else { return _folderTree.getChildren(folder); }
   }
 
 
-  ///
-  Folder? getParentFolder(Folder folder) {
-    return _folderTree.getParent(folder);
+  ///Get's the parent folder of the given folder.
+  ///If the folder is one of the root folders or if it's a buffer
+  ///folder then the buffer folder is returned.
+  Folder getParentFolder(Folder folder) {
+    if (folder == bufferFolder) { return bufferFolder; }
+    else {
+      Folder? parentFolder = _folderTree.getParent(folder);
+
+      if (parentFolder == null) { return bufferFolder; }
+      else { return parentFolder; }
+    }
   }
 
 
@@ -106,6 +117,8 @@ class DictionaryFolderViewStateBloc {
   Stream<List<Folder>> get foldersInView => _foldersInViewController.stream;
 
   NTree<Folder> get _folderTree => _dictionaryManager.foldersInViewState.foldersInView;
+
+  Folder get bufferFolder => _dictionaryManager.foldersInViewState.bufferFolder!;
 }
 
 
@@ -119,6 +132,17 @@ class DictionaryWordViewStateBloc {
   ///array itlsef is updated.
   Future<void> accessFolder(Folder folder) async {
     bool wasActivated = await _dictionaryManager.activeFolderState.activateFolder(folder);
+
+    if (wasActivated) {
+      _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+      _updateFolderView();
+    }
+  }
+
+
+  ///
+  Future<void> accessBufferFolder() async {
+    bool wasActivated = await _dictionaryManager.activeFolderState.activateBufferFolder();
 
     if (wasActivated) {
       _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);

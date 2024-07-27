@@ -49,6 +49,8 @@ class DictionaryFoldersInViewStateManager {
   //GETTERS
   ///
   NTree<Folder> get foldersInView => _dictionary.foldersInView; 
+
+  Folder? get bufferFolder => _dictionary.buffer?.folder;
 }
 
 
@@ -88,6 +90,12 @@ class DictionaryActiveFolderStateManager {
   }
 
 
+  ///
+  Future<bool> activateBufferFolder() async {
+    return await activateFolder(_dictionary.buffer!.folder);
+  }
+
+
   ///Remove the folder from the active folder list.
   ///
   ///If the folder has been deactivated return true; else false.
@@ -102,6 +110,13 @@ class DictionaryActiveFolderStateManager {
 
       return true;
     } else { return false; }
+  }
+
+
+  ///
+  Future<void> setBufferFolder() async {
+    Folder bufferFolder = await _folderRepo.getBuffer();
+    _dictionary.buffer = FolderWords(bufferFolder, await _wordRepo.getWordsOfFolder(bufferFolder));
   }
 
 

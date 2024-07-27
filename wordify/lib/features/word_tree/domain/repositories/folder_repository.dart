@@ -12,4 +12,5 @@ abstract class FolderRepository {
   Future<List<Folder>> getRootFolders();
   ///Get a list of all child folders of a certain folder.
   Future<List<Folder>> getChildFolders(Folder folder);
+  Future<Folder> getBuffer();
 }

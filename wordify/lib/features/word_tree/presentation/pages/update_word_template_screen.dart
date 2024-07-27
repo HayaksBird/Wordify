@@ -29,7 +29,7 @@ class UpdateWordTemplate extends StatefulWidget {
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
-  Folder? newStorageFolder;
+  late Folder newStorageFolder;
   late final Word word;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
@@ -106,11 +106,9 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
 
   ///
-  void _goBack(ValueNotifier<Folder?> valueNotifier) {
-    if (valueNotifier.value != null) {
-      valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
-      newStorageFolder = valueNotifier.value;
-    }
+  void _goBack(ValueNotifier<Folder> valueNotifier) {
+    valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value);
+    newStorageFolder = valueNotifier.value;
   }
 
 
@@ -118,24 +116,24 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   ///Uses InheritedWidget
   Widget _chooseFolder() {
     return ChosenFolderProvider(
-      notifier: ValueNotifier<Folder?>(newStorageFolder),
+      notifier: ValueNotifier<Folder>(newStorageFolder),
       child: Builder(
         builder: (context) {
-          final ValueNotifier<Folder?> valueNotifier = ChosenFolderProvider.of(context);
+          final ValueNotifier<Folder> valueNotifier = ChosenFolderProvider.of(context);
 
-          return ValueListenableBuilder<Folder?>(
+          return ValueListenableBuilder<Folder>(
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
               return ChooseWordTemplateWidget(
                 goBack: () { _goBack(valueNotifier); },
-                folders: ValueListenableBuilder<Folder?>(
+                folders: ValueListenableBuilder<Folder>(
                   valueListenable: valueNotifier,
                   builder: (context, folder, child) {
                     newStorageFolder = folder;
                     return ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier);
                   },
                 ),
-                path: valueNotifier.value != null ? _dictionaryBloc.folderView.getFullPath(valueNotifier.value!) : ''
+                path: _dictionaryBloc.folderView.getFullPath(valueNotifier.value)
               );
             }
           );
@@ -147,14 +145,14 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
   ///
   void _submit() {
-    if (_formKey.currentState!.validate() && newStorageFolder != null) {
+    if (_formKey.currentState!.validate()) {
       final Word newWord = Word(
         word: wordController.text, 
         translation: translationController.text,
         sentence: sentenceController.text
       );
 
-      _dictionaryBloc.content.updateWord(expandedFolder, newStorageFolder!, word, newWord);
+      _dictionaryBloc.content.updateWord(expandedFolder, newStorageFolder, word, newWord);
   
       Navigator.pop(context);
     }

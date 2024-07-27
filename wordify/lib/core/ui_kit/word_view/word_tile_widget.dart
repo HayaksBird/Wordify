@@ -34,11 +34,12 @@ class WordTileWidget extends StatelessWidget {
                   word.word,
                   style: const TextStyle(
                     color: AppColors.text,
-                  ),
-                ),
+                  )
+                )
               ]
             ),
             subtitle: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text( //Show word's translation
@@ -47,20 +48,20 @@ class WordTileWidget extends StatelessWidget {
                     color: AppColors.text,
                   ),
                 ),
-                
-                if (showSentence && word.sentence != null)...[
+
+                if (showSentence && word.sentence != null && word.sentence != '')...[
                   const SizedBox(height: 20.0),
           
                   Text( //Show word's corresponding sentence
                     word.sentence!,
                     style: const TextStyle(
                       color: AppColors.text,
-                    ),
-                  ),
+                    )
+                  )
                 ]
               ]
-            ),
-          ),
+            )
+          )
         ),
 
         if (!isSelected)
@@ -70,9 +71,9 @@ class WordTileWidget extends StatelessWidget {
               color: AppColors.navigationSecondary,
               height: 0,
               thickness: 0.15,
-            ),
+            )
           )
-      ],
+      ]
     );
   }
 }
