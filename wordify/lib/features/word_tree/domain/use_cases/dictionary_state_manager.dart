@@ -90,9 +90,18 @@ class DictionaryActiveFolderStateManager {
   }
 
 
-  ///
+  ///Activate the buffer folder for its content view.
   Future<bool> activateBufferFolder() async {
-    return await activateFolder(_dictionary.buffer!.folder);
+    if (_dictionary.buffer != null) {
+      FolderWords expandedFolder = _dictionary.buffer!;
+
+      if (!_dictionary.activeFolders.containsKey(expandedFolder.folder)) {
+        _dictionary.activeFolders.insert(expandedFolder.folder, expandedFolder);
+        _currentInView = expandedFolder;
+
+        return true;
+      } else { return false; }
+    } else { return false; }
   }
 
 
@@ -113,14 +122,14 @@ class DictionaryActiveFolderStateManager {
   }
 
 
-  ///
+  ///Extarct the buffer folder from the DB.
   Future<void> setBufferFolder() async {
     Folder bufferFolder = await _folderRepo.getBuffer();
     _dictionary.buffer = FolderWords(bufferFolder, await _wordRepo.getWordsOfFolder(bufferFolder));
   }
 
 
-  ///
+  ///Is folder in the active folders list?
   bool isFolderActive(Folder folder) {
     bool val = _dictionary.activeFolders.containsKey(folder);
 

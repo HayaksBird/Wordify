@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/folder_view/expand_view_widget.dart';
 import 'package:wordify/core/ui_kit/folder_view/folder_list_template_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
@@ -36,29 +37,42 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Folder>>(
-      stream: _dictionaryBloc.folderView.foldersInView,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          return FolderListTemplateWidget(
-            child: GestureDetector(
-              onSecondaryTap: () =>  _dictionaryBloc.folderView.canShowBuffer ?
-              _createFolder() :
-              null,
-              onDoubleTap: _dictionaryBloc.folderView.canShowBuffer ?
-              () { _dictionaryBloc.wordView.accessBufferFolder(); } :
-              null,
-              child: Stack(
-                children: [
-                  FolderTreetWidget(rootFolders: (snapshot.data!))
-                ]
-              )
-            )
-          );
-        }
-      }
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          top: 0,
+          right: -(ExpandViewWidget.diameter / 2),
+          child: ExpandViewWidget(
+            expand: () {},
+          ),
+        ),
+
+        StreamBuilder<List<Folder>>(
+          stream: _dictionaryBloc.folderView.foldersInView,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return FolderListTemplateWidget(
+                child: GestureDetector(
+                  onSecondaryTap: () =>  _dictionaryBloc.folderView.canShowBuffer ?
+                  _createFolder() :
+                  null,
+                  onDoubleTap: _dictionaryBloc.folderView.canShowBuffer ?
+                  () { _dictionaryBloc.wordView.accessBufferFolder(); } :
+                  null,
+                  child: Stack(
+                    children: [
+                      FolderTreetWidget(rootFolders: (snapshot.data!))
+                    ]
+                  )
+                )
+              );
+            }
+          }
+        )
+      ],
     );
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
-import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/wordify_overlay_entry.dart';
 
 class FolderActionsOverlay {
   
@@ -10,6 +10,7 @@ class FolderActionsOverlay {
     required VoidCallback update,
     required VoidCallback delete,
     required Offset position,
+    VoidCallback? onOverlayClosed,
     required BuildContext context
   }) {
     late final OverlayEntry overlayEntry;
@@ -19,6 +20,7 @@ class FolderActionsOverlay {
         inputs: _toDoAction(create, update, delete),
         position: position,
         overlayEntry: overlayEntry,
+        onOverlayClosed: onOverlayClosed,
       ),
     );
 

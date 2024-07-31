@@ -23,46 +23,39 @@ class WordTileWidget extends StatelessWidget {
         Container(
           color: isSelected ? AppColors.backgroundMain : null,
           child: ListTile(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (showSentence && word.sentence != null)...[
-                  const SizedBox(height: 3.5)
-                ],
-
-                Text( //Show the word itself
-                  word.word,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                  )
-                )
-              ]
+            title: Text( //Show the word itself
+              word.word,
+              style: const TextStyle(
+                color: AppColors.text,
+              )
             ),
-            subtitle: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text( //Show word's translation
-                  word.translation,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                  ),
-                ),
-
-                if (showSentence && word.sentence != null && word.sentence != '')...[
-                  const SizedBox(height: 20.0),
-          
-                  Text( //Show word's corresponding sentence
-                    word.sentence!,
-                    style: const TextStyle(
-                      color: AppColors.text,
-                    )
-                  )
-                ]
-              ]
+            subtitle: Text( //Show word's translation
+              word.translation,
+              style: const TextStyle(
+                color: AppColors.text,
+              ),
             )
           )
         ),
+
+        if (showSentence && word.sentence != null && word.sentence != '')...[
+          const SizedBox(height: 0.0),
+
+          Container(
+            color: isSelected ? AppColors.backgroundMain : null,
+            child: ListTile(
+              title: Align(
+                alignment: Alignment.centerLeft,
+                child: Text( //Show word's corresponding sentence
+                  word.sentence!,
+                  style: const TextStyle(
+                    color: AppColors.text
+                  )
+                ),
+              )
+            ),
+          )
+        ],
 
         if (!isSelected)
           const Padding(

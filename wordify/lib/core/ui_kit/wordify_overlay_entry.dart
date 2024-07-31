@@ -51,12 +51,13 @@ class WordifyOverlayEntry extends StatelessWidget {
                 child: Material(
                   type: MaterialType.transparency, // Ensure the material itself doesn't interfere
                   child: IntrinsicWidth(
-                    child: Container( //Vertical space between overlay elements and the frame
+                    child: Container( //Vertical padding between overlay elements and the frame
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: inputs.map((input) {
                           return Container( //Overlay entry
+                            //Horizontal padding between each overlay element and the overlay frame
                             padding: const EdgeInsets.symmetric(horizontal: 4.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
@@ -88,7 +89,7 @@ class WordifyOverlayEntry extends StatelessWidget {
   Widget _row(DoAction input) {
     return Row(
       children: [                  
-        Padding(
+        Padding(  //Overlay entry icon
           padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Icon(
             input.icon,
@@ -97,7 +98,7 @@ class WordifyOverlayEntry extends StatelessWidget {
           ),
         ),
     
-        Expanded(
+        Expanded( //Overlay entry text
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6.0),
             child: Text(

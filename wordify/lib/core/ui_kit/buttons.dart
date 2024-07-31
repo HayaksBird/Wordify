@@ -167,3 +167,20 @@ class ArrowDownButton extends IconButton {
           )
         );
 }
+
+
+
+///
+class ExpandButton extends IconButton{
+  const ExpandButton({
+    super.key,
+    required VoidCallback super.onPressed,
+  }) : super(
+          icon: const Icon(
+            Icons.keyboard_double_arrow_right_rounded,
+            color: AppColors.navigationSecondary,
+            size: 25
+          ),
+          padding: EdgeInsets.zero,
+        );
+}

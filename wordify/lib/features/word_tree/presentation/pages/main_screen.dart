@@ -11,24 +11,53 @@ class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
 
+  ///The WordViewWidget and the FolderViewWidget visually are placed next to each other,
+  ///but in actuality the FolderViewWidget will be place above to allow the overflow.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Row(
+      body: Stack(
         children: [
-          Expanded( //Folders column
-            flex: 25,
-            child: FolderViewWidget()
+          Row(  //WordViewWidget placed below
+            children: [
+              Expanded(
+                flex: 25,
+                child: _voidContainer,
+              ),
+              const Expanded(
+                flex: 75,
+                child: WordViewWidget(),
+              )
+            ],
           ),
-          Expanded( //Words column
-            flex: 75,
-            child: WordViewWidget()
+
+          Row(  //FolderViewWidget placed above
+            children: [
+              const Expanded(
+                flex: 25,
+                child: FolderViewWidget(),
+              ),
+              Expanded(
+                flex: 75,
+                child: _voidContainer,
+              ),
+            ],
           )
-        ]
+        ],
       ),
       floatingActionButton: WordifyFloatingActionButton(
         onPressed: () => _openWordTemplate(context),
         tooltip: 'Add a word',
+      ),
+    );
+  }
+
+
+  Widget get _voidContainer {
+    return IgnorePointer(
+      ignoring: true,
+      child: Container(
+        color: Colors.transparent,
       ),
     );
   }

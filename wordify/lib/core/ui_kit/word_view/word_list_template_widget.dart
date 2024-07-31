@@ -4,6 +4,7 @@ import 'package:wordify/core/ui_kit/word_view/stripe_list_widget.dart';
 
 class WordListTemplateWidget extends StatelessWidget {
   final String path, delimiter;
+  final bool isBuffer;
   final Widget list;
   final void Function() closePressed;
   final void Function() addWordPressed;
@@ -15,6 +16,7 @@ class WordListTemplateWidget extends StatelessWidget {
     required this.delimiter,
     required this.list,
     required this.closePressed,
+    this.isBuffer = false,
     required this.addWordPressed
   });
 
@@ -36,7 +38,7 @@ class WordListTemplateWidget extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: _heading()
+                child: isBuffer ? _bufferHeading() : _heading()
               ),
 
               const Padding(
@@ -73,23 +75,63 @@ class WordListTemplateWidget extends StatelessWidget {
     
         Padding(
           padding: const EdgeInsets.only(left: 5.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.add_circle,
-              color: AppColors.navigation,
-            ),
-            onPressed: addWordPressed,
-          ),
+          child: _addWordButton()
         ),
     
-        IconButton(
-          icon: const Icon(
-            Icons.close_rounded,
-            color: AppColors.navigation,
-          ),
-          onPressed: closePressed,
-        )
+        _closeButton()
       ]
+    );
+  }
+
+
+  ///
+  Widget _bufferHeading() {
+    return Row(
+      children: [
+        const Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(left: 5.0),
+            child: Text(
+              'Buffer',
+              style: TextStyle(
+                color: AppColors.navigation,
+                fontSize: 18.0,
+              ),
+            ),
+          )
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 5.0),
+          child: _addWordButton()
+        ),
+    
+        _closeButton()
+      ],
+    );
+  }
+
+
+  ///
+  Widget _addWordButton() {
+    return IconButton(
+      icon: const Icon(
+        Icons.add_circle,
+        color: AppColors.navigation,
+      ),
+      onPressed: addWordPressed,
+    );
+  }
+
+
+  ///
+  Widget _closeButton() {
+    return IconButton(
+      icon: const Icon(
+        Icons.close_rounded,
+        color: AppColors.navigation,
+      ),
+      onPressed: closePressed,
     );
   }
 }

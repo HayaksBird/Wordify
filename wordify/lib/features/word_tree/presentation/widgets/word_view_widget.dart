@@ -56,6 +56,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
         WordListTemplateWidget( //The template witht the folder content
           path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
           delimiter: '/',
+          isBuffer: activeFolder.folder == _dictionaryBloc.folderView.bufferFolder,
           list: WordListWidget(
             words: activeFolder.words,
             activeFolder: activeFolder,

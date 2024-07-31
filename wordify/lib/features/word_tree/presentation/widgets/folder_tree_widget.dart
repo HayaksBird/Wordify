@@ -59,12 +59,16 @@ class FolderTreetWidget extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onSecondaryTapDown: (details) { _showOverlay(context, details, folder); },
+          onSecondaryTapDown: (details) {
+            _dictionaryBloc.folderView.setSelectedFolder(folder);
+            _showOverlay(context, details, folder); 
+          },
           child: FolderRowWidget(
             isExpanded: _dictionaryBloc.folderView.isToExpand(folder),
             toggleFolder: () { _dictionaryBloc.folderView.toggleFolder(folder); },
             layer: layer,
             isFirstFolder: folder == rootFolders[0],
+            isSelected: folder == _dictionaryBloc.folderView.getSelectedFolder,
             listTile: GestureDetector(
               onDoubleTap: () { _dictionaryBloc.wordView.accessFolder(folder); },
               child: FolderTileWidget(
@@ -88,6 +92,7 @@ class FolderTreetWidget extends StatelessWidget {
       create: () { _createFolder(context, folder); },
       update: () { _updateFolder(context, folder); },
       delete: () { _dictionaryBloc.content.deleteFolder(folder); },
+      onOverlayClosed: _overlayClosed,
       position: details.globalPosition,
       context: context
     );
@@ -115,5 +120,11 @@ class FolderTreetWidget extends StatelessWidget {
         )
       ),
     );
+  }
+
+
+  ///Unselect the word
+  void _overlayClosed() {
+    _dictionaryBloc.folderView.setSelectedFolder(null);
   }
 }

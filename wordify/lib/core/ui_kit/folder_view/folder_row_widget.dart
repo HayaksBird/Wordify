@@ -7,6 +7,7 @@ class FolderRowWidget extends StatelessWidget {
   final void Function() toggleFolder;
   final int layer;
   final bool isFirstFolder;
+  final bool isSelected;
   static bool drawStripe = true;
 
 
@@ -16,6 +17,7 @@ class FolderRowWidget extends StatelessWidget {
     required this.listTile,
     required this.toggleFolder,
     required this.layer,
+    this.isSelected = false,
     this.isFirstFolder = false
   });
 
@@ -31,10 +33,19 @@ class FolderRowWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: drawStripe ? AppColors.primaryDarkerVariant : null,
-          borderRadius: BorderRadius.circular(10.0) // Adjust the radius as needed
+          borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+          border: isSelected
+              ? Border.all(
+                  color: AppColors.navigation, // Replace with your desired color
+                  width: 1.0, // Adjust the width as needed
+                )
+              : Border.all(
+                color: Colors.transparent,
+                  width: 1.0, // Adjust the width as needed
+                )
         ),
 
-        //Depending on the layer in the tree provide an offset
+        //Depending on the layer in the tree pryovide an offset
         padding: EdgeInsets.only(left: 22.0 * layer),
 
         child: Row(

@@ -56,10 +56,11 @@ class DictionaryBloc {
 ///BLoC class to work with the dictionary. It serves as an intermediary between
 ///the domain and the UI.
 class DictionaryFolderViewStateBloc {
-  bool showBuffer = true;
+  bool _showBuffer = true;
+  Folder? _selectedFolder;
   
 
-  ///
+  ///Set the folder tree and the buffer folder.
   Future<void> loadFolders() async {
     await _dictionaryManager.foldersInViewState.setFolderTree();
     await _dictionaryManager.activeFolderState.setBufferFolder();
@@ -67,7 +68,7 @@ class DictionaryFolderViewStateBloc {
   }
 
 
-  ///
+  ///Expand the folder if it is not expanded, or shrink it if it is expanded.
   void toggleFolder(Folder folder) {
     if (_folderTree.containsChildren(folder)) {
       if (!_expandedFolders.contains(folder)) {
@@ -79,7 +80,7 @@ class DictionaryFolderViewStateBloc {
   }
 
 
-  //
+  ///Get full path of the folder from root
   String getFullPath(Folder folder) {
     if (folder.name != bufferFolder.name) {
       return _dictionaryManager.foldersInViewState.fullPath(folder);
@@ -87,13 +88,15 @@ class DictionaryFolderViewStateBloc {
   }
 
 
-  ///
+  ///Can show child folders?
   bool isToExpand(Folder folder) {
     return _expandedFolders.contains(folder) && _folderTree.containsChildren(folder);
   }
 
 
-  ///
+  ///Show the subfolders of the given folder.
+  ///Note that if passed the buffer folder will return the root folders, since it is
+  ///not part of the tree.
   List<Folder> getSubfolders(Folder folder) {
     if (folder.name == bufferFolder.name) {  //if buffer folder then show the root folders
       return _folderTree.getRootItems;
@@ -119,7 +122,15 @@ class DictionaryFolderViewStateBloc {
   ///we nullify the onDoubleTap when the IconButton of the folder tile
   ///is hovered.
   void allowBufferView(bool permission) {
-    showBuffer = permission;
+    _showBuffer = permission;
+    _updateFolderView();
+  }
+
+
+  ///The folder that is currently selected with the right click of the
+  ///mouse.
+  void setSelectedFolder(Folder? folder) {
+    _selectedFolder = folder;
     _updateFolderView();
   }
 
@@ -131,13 +142,16 @@ class DictionaryFolderViewStateBloc {
 
   Folder get bufferFolder => _dictionaryManager.foldersInViewState.bufferFolder!;
 
-  bool get canShowBuffer => showBuffer;
+  bool get canShowBuffer => _showBuffer;
+
+  Folder? get getSelectedFolder => _selectedFolder;
 }
 
 
 
 ///
 class DictionaryWordViewStateBloc {
+  Word? _selectedWord;
 
   ///If the folder is not activated, activate it; else ignore.
   ///Activate the state of words list and folders list.
@@ -153,7 +167,7 @@ class DictionaryWordViewStateBloc {
   }
 
 
-  ///
+  ///Show the content of the buffer folder.
   Future<void> accessBufferFolder() async {
     bool wasActivated = await _dictionaryManager.activeFolderState.activateBufferFolder();
 
@@ -176,7 +190,8 @@ class DictionaryWordViewStateBloc {
   }
 
 
-  ///
+  ///Attempt to scroll down to see the active folder below. If there is no folder bellow
+  ///then the view does not get updated.
   void showActiveFolderBelow(FolderWords expandedFolder) {
     bool didGoBelow = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderDown(expandedFolder.folder);
     if (didGoBelow) {
@@ -186,7 +201,8 @@ class DictionaryWordViewStateBloc {
   }
 
 
-  ///
+  ///Attempt to scroll up to see the active folder above. If there is no folder above
+  ///then the view does not get updated.
   void showActiveFolderAbove(FolderWords expandedFolder) {
     bool didGoUp = _dictionaryManager.activeFolderState.shiftCurrentActiveFolderUp(expandedFolder.folder);
     if (didGoUp) {
@@ -210,13 +226,24 @@ class DictionaryWordViewStateBloc {
   }
 
 
-  ///
+  ///The word that is currently selected with the right click of the
+  ///mouse.
+  void setSelectedWord(Word? word) {
+    _selectedWord = word;
+    _updateWordView(_dictionaryManager.activeFolderState.currentActiveFolder);
+  }
+
+
+  ///Is the folder double clicked to show its content?
   bool isActivated(Folder folder) {
     return _dictionaryManager.activeFolderState.isFolderActive(folder);
   }
 
 
+  //GETTERS
   Stream<FolderWords?> get activeFolders => _activeFoldersController.stream;
+
+  Word? get getSelectedWord => _selectedWord;
 }
 
 

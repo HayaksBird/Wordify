@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
-import 'package:wordify/core/ui_kit/components.dart';
+import 'package:wordify/core/ui_kit/wordify_overlay_entry.dart';
 
 class WordActionsOverlay {
   ///

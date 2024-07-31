@@ -8,34 +8,21 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 
 
 ///Create the list of words presented in the word view.
-class WordListWidget extends StatefulWidget {
+class WordListWidget extends StatelessWidget {
   final List<Word> words;
   final FolderWords activeFolder;
+  final _dictionaryBloc = DictionaryBloc();
 
 
-  const WordListWidget({ 
+  WordListWidget({
     super.key,
     required this.words,
-    required this.activeFolder
+    required this.activeFolder,
   });
 
 
   @override
-  State<WordListWidget> createState() => _WordListWidgetState();
-}
-
-class _WordListWidgetState extends State<WordListWidget> {
-  late List<Word> words;
-  late FolderWords activeFolder;
-  Word? selectedWord;
-  final _dictionaryBloc = DictionaryBloc();
-
-
-  @override
   Widget build(BuildContext context) {
-    words = widget.words;
-    activeFolder = widget.activeFolder;
-
     return _buildList();
   }
 
@@ -56,14 +43,12 @@ class _WordListWidgetState extends State<WordListWidget> {
         _dictionaryBloc.wordView.toggleSentence(word);
       },
       onSecondaryTapDown: (details) {
-        setState(() {
-          selectedWord = word;
-        });
+        _dictionaryBloc.wordView.setSelectedWord(word);
         _showOverlay(context, details, word);
       },
       child: WordTileWidget(
         word: word,
-        isSelected: selectedWord == word ? true : false,
+        isSelected: _dictionaryBloc.wordView.getSelectedWord == word ? true : false,
         showSentence: _dictionaryBloc.wordView.doShowSentence(word),
       ),
     );
@@ -97,8 +82,6 @@ class _WordListWidgetState extends State<WordListWidget> {
 
   ///Unselect the word
   void _overlayClosed() {
-    setState(() {
-      selectedWord = null;
-    });
+    _dictionaryBloc.wordView.setSelectedWord(null);
   }
 }
