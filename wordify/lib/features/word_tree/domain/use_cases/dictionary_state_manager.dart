@@ -12,8 +12,11 @@ final FolderRepository _folderRepo = FolderRepositoryImpl();
 
 
 
-///The class that manages the dictionary of the app.
+///Manages the state of the folders in view of the dictionary.
+///Handles all the operations that have to do with the state of the
+///folders in view.
 class DictionaryFoldersInViewStateManager {
+
   ///Initialize the dictionary with the folder tree.
   Future<void> setFolderTree() async {
     List<Folder> rootFolders = await _folderRepo.getRootFolders();
@@ -55,9 +58,11 @@ class DictionaryFoldersInViewStateManager {
 
 
 
-///
+///Manages the state of the active folders of the dictionary.
+///Handles all the operations that have to do with the state of the
+///active folder.
 class DictionaryActiveFolderStateManager {
-  FolderWords? _currentInView;
+  FolderWords? _currentInView;  //current active folder
 
 
   ///Update the list of currently active folders.
@@ -166,6 +171,10 @@ class DictionaryActiveFolderStateManager {
 
   
   //Getters
+  ///Get the currently active folder.
+  ///If the last tracked folder is no longer active (due to delete perhaps)
+  ///then return the active folder at the top of the stack.
+  ///Else return the last trackeed active folder.
   FolderWords? get currentActiveFolder {
     if (_currentInView != null && !isFolderActive(_currentInView!.folder)) {
       _currentInView = _dictionary.activeFolders.getFirst;

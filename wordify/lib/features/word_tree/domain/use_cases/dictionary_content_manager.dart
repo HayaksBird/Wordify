@@ -58,7 +58,7 @@ class DictionaryWordsManager {
 ///FOLDERS OPERATION MANAGER FOR DICTIONARY
 class DictionaryFoldersManager {
 
-  ///
+  ///Add a new folder.
   Future<void> createFolder(Folder? parentFolder, Folder folder) async {
     Folder newFolder = await _folderRepo.addFolder(parentFolder, folder);
 

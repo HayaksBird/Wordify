@@ -57,7 +57,7 @@ class DictionaryBloc {
 ///the domain and the UI.
 class DictionaryFolderViewStateBloc {
   bool _showBuffer = true;
-  Folder? _selectedFolder;
+  Folder? _selectedFolder;  //The folder selected by the right click
   
 
   ///Set the folder tree and the buffer folder.
@@ -151,12 +151,11 @@ class DictionaryFolderViewStateBloc {
 
 ///
 class DictionaryWordViewStateBloc {
-  Word? _selectedWord;
+  Word? _selectedWord;  //The word selected by the right click
+
 
   ///If the folder is not activated, activate it; else ignore.
   ///Activate the state of words list and folders list.
-  ///The state for folders list must also be updated since the
-  ///array itlsef is updated.
   Future<void> accessFolder(Folder folder) async {
     bool wasActivated = await _dictionaryManager.activeFolderState.activateFolder(folder);
 
@@ -248,7 +247,7 @@ class DictionaryWordViewStateBloc {
 
 
 
-///
+///Manage the actual content in the dictionary by altering it.
 class DictionaryContentBloc {
 
   ///Add new word to a folder.
@@ -263,6 +262,9 @@ class DictionaryContentBloc {
 
 
   ///Update the word in a folder.
+  ///If the user moves the word to another folder then delete it in the original folder and
+  ///create it in a new one.
+  ///Else 
   Future<void> updateWord(FolderWords expandedFolder, Folder newStorage, Word oldWord, Word newWord) async {
     if (expandedFolder.folder != newStorage) {
       createWord(newStorage, newWord);
@@ -271,10 +273,9 @@ class DictionaryContentBloc {
     } else {
       Word updatedWord = await _dictionaryManager.words.updateWord(expandedFolder.folder, oldWord, newWord);
       
-      if (_activeSentences.contains(oldWord)) {
+      if (_activeSentences.contains(oldWord)) { //So the sentence view remains
         _activeSentences.remove(oldWord);
-
-        if (expandedFolder.folder == newStorage) { _activeSentences.add(updatedWord); }
+        _activeSentences.add(updatedWord);
       }
     }
 
@@ -282,7 +283,7 @@ class DictionaryContentBloc {
   }
 
 
-  ///
+  ///Delete the word.
   Future<void> deleteWord(FolderWords expandedFolder, Word word) async {
     await _dictionaryManager.words.deleteWord(expandedFolder.folder, word);
     _activeSentences.remove(word);
@@ -291,7 +292,9 @@ class DictionaryContentBloc {
   }
 
 
-  ///
+  ///Remove the folder with all of its subfolders.
+  ///Note that the subfolders are also removed from the _expandedFolders
+  ///list to not take the space.
   Future<void> deleteFolder(Folder folder) async {
     List<Folder> subfolders = await _dictionaryManager.folders.deleteFolder(folder);
 
@@ -304,7 +307,7 @@ class DictionaryContentBloc {
   }
 
 
-  ///
+  ///Update the folder.
   Future<void> updateFolder(Folder oldFolder, Folder newFolder) async {
     Folder updatedFolder = await _dictionaryManager.folders.updateFolder(oldFolder, newFolder);
 
@@ -316,7 +319,7 @@ class DictionaryContentBloc {
   }
 
 
-  ///
+  ///Create folder.
   Future<void> createFolder(Folder? parentFolder, Folder folder) async {
     await _dictionaryManager.folders.createFolder(parentFolder, folder);
 

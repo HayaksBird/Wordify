@@ -124,15 +124,11 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
           return ValueListenableBuilder<Folder>(
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
+              newStorageFolder = folder;
+
               return ChooseWordTemplateWidget(
                 goBack: () { _goBack(valueNotifier); },
-                folders: ValueListenableBuilder<Folder>(
-                  valueListenable: valueNotifier,
-                  builder: (context, folder, child) {
-                    newStorageFolder = folder;
-                    return ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier);
-                  },
-                ),
+                folders: ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier),
                 path: _dictionaryBloc.folderView.getFullPath(valueNotifier.value)
               );
             }

@@ -8,11 +8,13 @@ import 'package:wordify/core/ui_kit/colors.dart';
 class ExpandViewWidget extends StatelessWidget {
   static const double diameter = 55;
   final VoidCallback expand;
+  final bool isExpanded;
 
 
   const ExpandViewWidget({
     super.key,
-    required this.expand
+    required this.expand,
+    required this.isExpanded
   });
 
 
@@ -41,11 +43,17 @@ class ExpandViewWidget extends StatelessWidget {
   Widget _expandButton() {
     return GestureDetector(
       onTap: expand,
-      child: const Icon(
+      child: !isExpanded ? const Icon(
         Icons.keyboard_double_arrow_right_rounded,
         color: AppColors.navigationSecondary,
         size: 25
-      ),
+      )
+      :
+      const Icon(
+        Icons.keyboard_double_arrow_left_rounded,
+        color: AppColors.navigationSecondary,
+        size: 25
+      )
     );
   } 
 }

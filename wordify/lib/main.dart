@@ -17,8 +17,6 @@ class Wordify extends StatelessWidget {
       //Set args
       title: 'Wordify',
       theme: ThemeData(
-        //primaryColor: AppColors.primary,
-        //scaffoldBackgroundColor: AppColors.primaryDarkerVariant,
         primarySwatch: Colors.blue,
       ),
       //Set the DictionaryProvider widget in the tree and set its notifier
