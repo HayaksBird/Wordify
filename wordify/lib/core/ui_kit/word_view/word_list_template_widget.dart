@@ -114,24 +114,32 @@ class WordListTemplateWidget extends StatelessWidget {
 
   ///
   Widget _addWordButton() {
-    return IconButton(
-      icon: const Icon(
-        Icons.add_circle,
-        color: AppColors.navigation,
-      ),
-      onPressed: addWordPressed,
+    return Tooltip(
+      message: 'Add new word',
+      waitDuration: const Duration(milliseconds: 400),
+      child: IconButton(
+        icon: const Icon(
+          Icons.add_circle,
+          color: AppColors.navigation,
+        ),
+        onPressed: addWordPressed
+      )
     );
   }
 
 
   ///
   Widget _closeButton() {
-    return IconButton(
-      icon: const Icon(
-        Icons.close_rounded,
-        color: AppColors.navigation,
-      ),
-      onPressed: closePressed,
+    return Tooltip(
+      message: 'Close',
+      waitDuration: const Duration(milliseconds: 400),
+      child: IconButton(
+        icon: const Icon(
+          Icons.close_rounded,
+          color: AppColors.navigation,
+        ),
+        onPressed: closePressed
+      )
     );
   }
 }

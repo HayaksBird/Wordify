@@ -243,6 +243,8 @@ class DictionaryWordViewStateBloc {
   Stream<FolderWords?> get activeFolders => _activeFoldersController.stream;
 
   Word? get getSelectedWord => _selectedWord;
+
+  bool get didGoBelow => _dictionaryManager.activeFolderState.didGoBelow;
 }
 
 

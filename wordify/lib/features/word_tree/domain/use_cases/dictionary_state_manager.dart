@@ -63,6 +63,7 @@ class DictionaryFoldersInViewStateManager {
 ///active folder.
 class DictionaryActiveFolderStateManager {
   FolderWords? _currentInView;  //current active folder
+  bool didGoBelow = false;
 
 
   ///Update the list of currently active folders.
@@ -88,6 +89,7 @@ class DictionaryActiveFolderStateManager {
         _dictionary.activeFolders.insert(folder, expandedFolder);
       }
 
+      didGoBelow = false;
       _currentInView = expandedFolder;
 
       return true;
@@ -102,6 +104,8 @@ class DictionaryActiveFolderStateManager {
 
       if (!_dictionary.activeFolders.containsKey(expandedFolder.folder)) {
         _dictionary.activeFolders.insert(expandedFolder.folder, expandedFolder);
+
+        didGoBelow = false;
         _currentInView = expandedFolder;
 
         return true;
@@ -117,8 +121,14 @@ class DictionaryActiveFolderStateManager {
     if (_dictionary.activeFolders.containsKey(expandedFolder.folder)) { //If the folder is active
       FolderWords? below = _dictionary.activeFolders.getBelow(expandedFolder.folder);
 
-      if (below == null) { _currentInView = _dictionary.activeFolders.getAbove(expandedFolder.folder); }
-      else { _currentInView = below; }
+      if (below == null) {
+        didGoBelow = false;
+        _currentInView = _dictionary.activeFolders.getAbove(expandedFolder.folder);
+      }
+      else {
+        didGoBelow = true;
+        _currentInView = below;
+      }
 
       _dictionary.activeFolders.remove(expandedFolder.folder);
 
@@ -148,6 +158,7 @@ class DictionaryActiveFolderStateManager {
     FolderWords? above = _dictionary.activeFolders.getAbove(folder);
 
     if (above != null) {
+      didGoBelow = false;
       _currentInView = above;
       return true;
     }
@@ -162,6 +173,7 @@ class DictionaryActiveFolderStateManager {
     FolderWords? below = _dictionary.activeFolders.getBelow(folder);
     
     if (below != null) {
+      didGoBelow = true;
       _currentInView = below;
       return true;
     }

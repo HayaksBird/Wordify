@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/animation_kit/switch_word_list_template.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
 import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
@@ -53,16 +54,21 @@ class _WordViewWidgetState extends State<WordViewWidget> {
           },
         ),
 
-        WordListTemplateWidget( //The template witht the folder content
-          path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
-          delimiter: '/',
-          isBuffer: activeFolder.folder == _dictionaryBloc.folderView.bufferFolder,
-          list: WordListWidget(
-            words: activeFolder.words,
-            activeFolder: activeFolder,
+        SwitchWordListTemplate(
+          oldActiveFolder: activeFolder,
+          didGoBelow: _dictionaryBloc.wordView.didGoBelow,
+          wordListTemplateWidget: WordListTemplateWidget( //The template witht the folder content
+            key: ValueKey(activeFolder),
+            path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
+            delimiter: '/',
+            isBuffer: activeFolder.folder == _dictionaryBloc.folderView.bufferFolder,
+            list: WordListWidget(
+              words: activeFolder.words,
+              activeFolder: activeFolder,
+            ),
+            closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
+            addWordPressed: () { _openWordTemplate(activeFolder.folder); },
           ),
-          closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
-          addWordPressed: () { _openWordTemplate(activeFolder.folder); },
         ),
 
         Positioned( //Add the buttons for the navigation between the active folders

@@ -2,17 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
 
 ///
-class WordifyFloatingActionButton extends FloatingActionButton {
+class WordifyFloatingActionButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String tooltip;
+
   const WordifyFloatingActionButton({
     super.key,
-    required VoidCallback super.onPressed,
-    required String tooltip,
-  }) : super(
-        child: const Icon(Icons.add, color: AppColors.text),
-        tooltip: tooltip,
+    required this.onPressed,
+    required this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      waitDuration: const Duration(milliseconds: 400),
+      child: FloatingActionButton(
+        onPressed: onPressed,
         backgroundColor: AppColors.navigation,
         shape: const CircleBorder(),
-      );
+        child: const Icon(Icons.add, color: AppColors.text),
+      ),
+    );
+  }
 }
 
 
@@ -35,27 +47,27 @@ class WordifyElevatedButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        backgroundColor: WidgetStateProperty.resolveWith<Color>(  //Button background
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.pressed)) {
-              return AppColors.navigation; // Change this to your desired pressed color
+              return AppColors.navigation;
             }
 
-            return AppColors.primary; // Default color
+            return AppColors.primary;
           },
         ),
 
-        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(  //Text
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.pressed)) {
-              return AppColors.primary; // Change this to your desired pressed color
+              return AppColors.primary;
             }
 
             return AppColors.navigation;
           },
         ),
 
-        textStyle: WidgetStateProperty.resolveWith<TextStyle>(
+        textStyle: WidgetStateProperty.resolveWith<TextStyle>(  //Text style
           (Set<WidgetState> states) {
             return const TextStyle(
               fontSize: 18,
@@ -64,12 +76,12 @@ class WordifyElevatedButton extends StatelessWidget {
           },
         ),
 
-        side: WidgetStateProperty.resolveWith<BorderSide>(
+        side: WidgetStateProperty.resolveWith<BorderSide>(  //Button border
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.hovered)) {
-              return const BorderSide(color: AppColors.navigation, width: 1.0); // Change this to your desired hover border
+              return const BorderSide(color: AppColors.navigation, width: 1.0);
             }
-            return BorderSide.none; // Default border
+            return BorderSide.none;
           },
         ),
 
@@ -77,7 +89,7 @@ class WordifyElevatedButton extends StatelessWidget {
           const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         ),
 
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>( //Round the button
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -165,22 +177,5 @@ class ArrowDownButton extends IconButton {
             color: AppColors.navigationSecondary,
             size: 25
           )
-        );
-}
-
-
-
-///
-class ExpandButton extends IconButton{
-  const ExpandButton({
-    super.key,
-    required VoidCallback super.onPressed,
-  }) : super(
-          icon: const Icon(
-            Icons.keyboard_double_arrow_right_rounded,
-            color: AppColors.navigationSecondary,
-            size: 25
-          ),
-          padding: EdgeInsets.zero,
         );
 }
