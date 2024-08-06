@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/animation_kit/fade_appearance.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
@@ -38,10 +39,9 @@ class WordTileWidget extends StatelessWidget {
           )
         ),
 
-        if (showSentence && word.sentence != null && word.sentence != '')...[
-          const SizedBox(height: 0.0),
-
-          Container(
+        FadeAppearance(
+          isVisible: showSentence && word.sentence != null && word.sentence != '',
+          child: Container(
             color: isSelected ? AppColors.backgroundMain : null,
             child: ListTile(
               title: Align(
@@ -54,8 +54,8 @@ class WordTileWidget extends StatelessWidget {
                 ),
               )
             ),
-          )
-        ],
+          ),
+        ),
 
         if (!isSelected)
           const Padding(

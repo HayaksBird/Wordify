@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/animation_kit/expand_folder_view.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/folder_view/expand_view_widget.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
@@ -50,11 +51,7 @@ class _MainScreenState extends State<MainScreen> {
                 ValueListenableBuilder<bool>(
                   valueListenable: valueNotifier,
                   builder: (context, toExpand, child) { //FolderViewWidget placed above
-                    if (!toExpand) {
-                      return _folderViewWidget(valueNotifier, 25, 75);  //Not expanded
-                    } else {
-                      return _folderViewWidget(valueNotifier, 75, 25);  //Expanded
-                    }
+                    return _folderViewWidget(valueNotifier, toExpand ? 75 : 25, toExpand ? 25 : 75);
                   }
                 )
               ],
@@ -112,12 +109,16 @@ class _MainScreenState extends State<MainScreen> {
 
   ///Create the Folder view.
   Widget _folderViewWidget(ValueNotifier<bool> valueNotifier, int flex1, int flex2) {
+    double width = MediaQuery.of(context).size.width;
+    double width1 = (flex1 * width) / (flex1 + flex2);
+
     return Row(  
       children: [
-        Expanded( //FolderViewWidget
-          flex: flex1,
-          child: const FolderViewWidget(),
+        ExpandFolderView(
+          width: width1,
+          folderViewWidget: const FolderViewWidget()
         ),
+        
         Expanded(
           flex: flex2,
           child: Stack(
