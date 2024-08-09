@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/ui_kit/colors.dart';
 import 'package:wordify/features/word_tree/presentation/pages/main_screen.dart';
 
 
@@ -17,7 +18,7 @@ class Wordify extends StatelessWidget {
       //Set args
       title: 'Wordify',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: AppColors.backgroundMain
       ),
       //Set the DictionaryProvider widget in the tree and set its notifier
       home: const MainScreen()

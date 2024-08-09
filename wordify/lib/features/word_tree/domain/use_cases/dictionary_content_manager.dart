@@ -19,6 +19,12 @@ class DictionaryWordsManager {
   ///If the folder is in cache, then update the folder of the new word and store it in cache.
   ///If necessary, then also update the active folder list.
   Future<void> addNewWord(Folder folder, Word word) async {
+    //If saving to buffer (because buffer can be absent in active folders list)
+    if (folder == _dictionary.buffer?.folder) {
+      _dictionary.buffer?.words.add(await _wordRepo.addWord(folder, word));
+      return;
+    }
+
     FolderWords? fromCache = _dictionary.cachedFolders.get(folder);
     FolderWords? activeFolder = _dictionary.activeFolders.get(folder);
 

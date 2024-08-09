@@ -6,18 +6,15 @@ import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 
-
 ///Create the list of words presented in the word view.
 class WordListWidget extends StatelessWidget {
-  final List<Word> words;
   final FolderWords activeFolder;
   final _dictionaryBloc = DictionaryBloc();
 
 
   WordListWidget({
     super.key,
-    required this.words,
-    required this.activeFolder,
+    required this.activeFolder
   });
 
 
@@ -30,8 +27,8 @@ class WordListWidget extends StatelessWidget {
   ///
   Widget _buildList() {
     return ListView.builder(
-      itemCount: words.length,
-      itemBuilder: (context, index) => _buildFolderTile(context, words[index])
+      itemCount: activeFolder.words.length,
+      itemBuilder: (context, index) => _buildFolderTile(context, activeFolder.words[index])
     );
   }
 

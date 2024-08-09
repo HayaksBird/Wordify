@@ -268,7 +268,7 @@ class DictionaryContentBloc {
   ///create it in a new one.
   ///Else 
   Future<void> updateWord(FolderWords expandedFolder, Folder newStorage, Word oldWord, Word newWord) async {
-    if (expandedFolder.folder != newStorage) {
+    if (expandedFolder.folder != newStorage) {  //Move to different folder
       createWord(newStorage, newWord);
       deleteWord(expandedFolder, oldWord);
       _activeSentences.remove(oldWord);

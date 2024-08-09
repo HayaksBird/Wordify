@@ -63,8 +63,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
             delimiter: '/',
             isBuffer: activeFolder.folder == _dictionaryBloc.folderView.bufferFolder,
             list: WordListWidget(
-              words: activeFolder.words,
-              activeFolder: activeFolder,
+              activeFolder: activeFolder
             ),
             closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
             addWordPressed: () { _openWordTemplate(activeFolder.folder); },
