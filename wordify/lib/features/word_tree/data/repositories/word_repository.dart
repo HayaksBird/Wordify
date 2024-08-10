@@ -50,7 +50,8 @@ class WordRepositoryImpl implements WordRepository {
 
     WordModel updatedWord = oldWordModel.copyWith(
       word: newWord.word,
-      translation: newWord.translation
+      translation: newWord.translation,
+      sentence:newWord.sentence
     );
 
     await WordPersistence.update(updatedWord);

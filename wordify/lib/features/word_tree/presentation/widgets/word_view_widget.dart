@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/folder_presentation.dart';
+import 'package:wordify/core/animation_kit/switch_word_list_template.dart';
+import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
+import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/presentation/pages/word_template_screen.dart';
+import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
 
 class WordViewWidget extends StatefulWidget {
   const WordViewWidget({super.key});
@@ -15,95 +18,78 @@ class WordViewWidget extends StatefulWidget {
 class _WordViewWidgetState extends State<WordViewWidget> {
   final _dictionaryBloc = DictionaryBloc();
 
-  
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<FolderWords>>(
-      stream: _dictionaryBloc.state.activeFolders,
+    return StreamBuilder<FolderWords?>(
+      stream: _dictionaryBloc.wordView.activeFolders,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
-        } else {
-          return _buildAccessedFoldersTiles(snapshot.data!);
-        }
+        return Background(
+          wordView: snapshot.connectionState != ConnectionState.waiting && snapshot.data != null ?
+          _buildFolderWordsView(snapshot.data!) :
+          const SizedBox.shrink()
+        );
       }
     );
   }
 
 
   ///
-  Widget _buildAccessedFoldersTiles(List<FolderWords> activeFolders) {
-    return ListView.builder(
-      itemCount: activeFolders.length,
-      itemBuilder: (context, index) => _buildWordsTile(activeFolders[index])
-    );
-  }
-
-
-  ///
-  Widget _buildWordsTile(FolderWords activeFolder) {
-    return FolderContentTemplate(
-      folderContent: FolderContentWidget(activeFolder: activeFolder)
-    );
-  }
-}
-
-
-
-//Needs bloc only if adds, updates words
-class FolderContentWidget extends StatelessWidget {
-  final _dictionaryBloc = DictionaryBloc();
-  final FolderWords activeFolder;
-
-
-  FolderContentWidget({super.key, required this.activeFolder});
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget _buildFolderWordsView(FolderWords activeFolder) {
+    return Stack(
       children: [
-        FolderHeader(
-          name: _dictionaryBloc.state.getFullPath(activeFolder.folder),
-          closePressed: () { _dictionaryBloc.state.closeFolder(activeFolder); }
+        GestureDetector(  //Background gesture detector to switch between active folders
+          onPanEnd: (details) {
+            final velocity = details.velocity.pixelsPerSecond;
+
+            //Swipe down (go up).
+            if (velocity.dy > 0) {
+              _dictionaryBloc.wordView.showActiveFolderAbove(activeFolder);
+            }
+          
+            //Swipe up (go down).
+            if (velocity.dy < 0) {
+              _dictionaryBloc.wordView.showActiveFolderBelow(activeFolder);
+            }
+          },
         ),
-        Expanded(child: _buildWordList(context))
+
+        SwitchWordListTemplate(
+          oldActiveFolder: activeFolder,
+          didGoBelow: _dictionaryBloc.wordView.didGoBelow,
+          wordListTemplateWidget: WordListTemplateWidget( //The template witht the folder content
+            key: ValueKey(activeFolder),
+            path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
+            delimiter: '/',
+            isBuffer: activeFolder.folder == _dictionaryBloc.folderView.bufferFolder,
+            list: WordListWidget(
+              activeFolder: activeFolder
+            ),
+            closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
+            addWordPressed: () { _openWordTemplate(activeFolder.folder); },
+          ),
+        ),
+
+        Positioned( //Add the buttons for the navigation between the active folders
+          top: 10.0,
+          right: 0.0,
+          child: Column(
+            children: [
+              ArrowUpButton(onPressed: () { _dictionaryBloc.wordView.showActiveFolderAbove(activeFolder); }),
+              ArrowDownButton(onPressed: () { _dictionaryBloc.wordView.showActiveFolderBelow(activeFolder); })
+            ]
+          )
+        )
       ],
     );
   }
 
 
   ///
-  Widget _buildWordList(BuildContext context) {
-    return ListView.builder(
-      itemCount: activeFolder.words.length,
-      itemBuilder: (context, index) => _buildFolderTile(context, activeFolder.words[index])
-    );
-  }
-
-
-  ///
-  Widget _buildFolderTile(BuildContext context, Word word) {
-    return InkWell(
-      onTap: () { //If clicked, open the corresponding template
-        _openWordTemplate(context, word);
-      },
-      child: ListTile(
-        title: Text(word.word),
-        subtitle: Text(word.translation)
-      ),
-    );
-  }
-
-
-  ///
-  void _openWordTemplate(BuildContext context, Word word) {
+  void _openWordTemplate(Folder folder) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => UpdateWordTemplate(
-          word: word,
-          expandedFolder: activeFolder,
-        )
+        builder: (_) => CreateWordTemplate(storageFolder: folder)
       ),
     );
   }

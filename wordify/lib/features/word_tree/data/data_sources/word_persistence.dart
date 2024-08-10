@@ -7,8 +7,8 @@ class WordPersistence {
     final db = await WordifyDatabase.instance.database;
 
     final int id = await db.rawInsert(
-      'INSERT INTO words (folder_id, word, translation) VALUES (?, ?, ?)',
-      [folderId, word.word, word.translation]
+      'INSERT INTO words (folder_id, word, translation, sentence) VALUES (?, ?, ?, ?)',
+      [folderId, word.word, word.translation, word.sentence]
     );
 
     return word.copyWith(id: id);
@@ -20,8 +20,8 @@ class WordPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.rawUpdate(
-      'UPDATE words SET word = ?, translation = ? WHERE id = ?',
-      [word.word, word.translation, word.id]
+      'UPDATE words SET word = ?, translation = ?, sentence = ? WHERE id = ?',
+      [word.word, word.translation, word.sentence, word.id]
     );
   }
 

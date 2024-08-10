@@ -158,26 +158,6 @@ class NTree<T> {
 
 
   ///
-  void changeActivityStatus(T item, bool status) {
-    _NTreeNode<T>? node = _itemInTree[item];
-
-    if (node != null) {
-      node.activity = status;
-    } else { throw ArgumentError('Cannot update activity status of item, since it does not exist'); }
-  }
-
-
-  ///
-  bool getActivityStatus(T item) {
-    _NTreeNode<T>? node = _itemInTree[item];
-
-    if (node != null) {
-      return node.activity;
-    } else { throw ArgumentError('Cannot get activity status of item, since it does not exist'); }
-  }
-
-
-  ///
   List<T> getChildren(T item) {
     _NTreeNode<T>? node = _itemInTree[item];
 
@@ -239,7 +219,6 @@ class _NTreeNode<T> {
   T? _item;
   final _NTreeNode<T>? _parent;
   List<_NTreeNode<T>> _childrenNodes;
-  bool _activity = false;
 
 
   _NTreeNode({
@@ -260,8 +239,6 @@ class _NTreeNode<T> {
   //Getters
   T? get item => _item;
 
-  bool get activity => _activity;
-
   _NTreeNode<T>? get parent => _parent;
 
   List<_NTreeNode<T>> get childrenNodes => _childrenNodes;
@@ -269,8 +246,6 @@ class _NTreeNode<T> {
 
   //Setters
   set item(T? value) { _item = value; }
-
-  set activity(bool value) { _activity = value; }
 
   set childrenNodes(List<_NTreeNode<T>> value) { _childrenNodes = value; }
 }

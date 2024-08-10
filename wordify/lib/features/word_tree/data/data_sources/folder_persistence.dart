@@ -60,9 +60,9 @@ class FolderPersistence {
   static Future<List<FolderModel>> getRootFolders() async {
     final db = await WordifyDatabase.instance.database;
 
-    //Corrected query to select folders where parent_id is NULL
+    // Corrected query to select folders where parent_id is NULL and name is not an empty string
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-      'SELECT * FROM folders WHERE parent_id IS NULL'
+      'SELECT * FROM folders WHERE parent_id IS NULL AND name != ""'
     );
 
     List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
@@ -84,5 +84,22 @@ class FolderPersistence {
     List<FolderModel> folders = List<FolderModel>.from(maps.map((map) => FolderModel.fromMap(map)));
 
     return folders;
+  }
+
+
+  ///
+  static Future<FolderModel> getBufferFolder() async {
+    final db = await WordifyDatabase.instance.database;
+
+    // Query to select the folder with parent_id as NULL and name as an empty string
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM folders WHERE parent_id IS NULL AND name = ""'
+    );
+
+    if (maps.isNotEmpty) {
+      return FolderModel.fromMap(maps.first);
+    } else {
+      throw Exception('Buffer folder not found');
+    }
   }
 }

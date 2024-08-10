@@ -51,6 +51,13 @@ class FolderRepositoryImpl implements FolderRepository {
     return FolderPersistence.getFolders(folderModel.id);
   }
 
+
+  ///
+  @override
+  Future<Folder> getBuffer() {
+    return FolderPersistence.getBufferFolder();
+  }
+
   
   ///
   @override
