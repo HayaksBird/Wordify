@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/release
 
 #Exclude anything not related to the code
+.DS_Store
 .dart_tool/
 .idea/
 android/
