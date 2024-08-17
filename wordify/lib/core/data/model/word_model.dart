@@ -1,27 +1,28 @@
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
+import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
-///Represents the database table row as an object.
-///Used for ORM
-class WordModel extends Word {
+///
+class WordModel implements WordContent{
   final int id;
   final int folderId;
-  
+  @override
+  final String word;
+  @override
+  final String translation;
+  @override
+  final String? sentence;
+  final int oldestAttempt, middleAttempt, newestAttempt;
+
 
   const WordModel({
     required this.id,
     required this.folderId,
-    required super.word,
-    required super.translation,
-    required super.sentence
+    required this.word,
+    required this.translation,
+    this.sentence,
+    this.oldestAttempt = 1,
+    this.middleAttempt = 1,
+    this.newestAttempt = 1
   });
-
-
-  ///
-  WordModel.fromWord(Word word, {this.id = -1, this.folderId = -1})
-      : super(word: word.word,
-              translation: word.translation,
-              sentence: word.sentence
-        );
 
 
   // Create a Word from a Map
@@ -31,7 +32,10 @@ class WordModel extends Word {
       folderId: map['folder_id'] as int,
       word: map['word'] as String,
       translation: map['translation'] as String,
-      sentence: map['sentence'] as String?
+      sentence: map['sentence'] as String?,
+      oldestAttempt: map['oldest_attempt'],
+      middleAttempt: map['middle_attempt'],
+      newestAttempt: map['newest_attempt']
     );
   }
 
@@ -42,14 +46,20 @@ class WordModel extends Word {
     int? folderId,
     String? word,
     String? translation,
-    String? sentence
+    String? sentence,
+    int? oldestAttempt,
+    int? middleAttempt,
+    int? newestAttempt
   }) {
     return WordModel(
       id: id ?? this.id,
       folderId: this.folderId,
       word: word ?? this.word,
       translation: translation ?? this.translation,
-      sentence: sentence ?? this.sentence
+      sentence: sentence ?? this.sentence,
+      oldestAttempt: oldestAttempt ?? this.oldestAttempt,
+      middleAttempt: middleAttempt ?? this.middleAttempt,
+      newestAttempt: newestAttempt ?? this.newestAttempt,
     );
   }
 

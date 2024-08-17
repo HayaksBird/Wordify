@@ -8,7 +8,7 @@ import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart
 
 ///
 class UpdateFolderTemplate extends StatefulWidget {
-  final Folder folder;
+  final FolderContent folder;
 
 
   const UpdateFolderTemplate({
@@ -22,7 +22,7 @@ class UpdateFolderTemplate extends StatefulWidget {
 }
 
 class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
-  late final Folder folder;
+  late final FolderContent folder;
   final _formKey = GlobalKey<FormState>();
   final _dictionaryBloc = DictionaryBloc();
   final _validationBloc = ValidationBloc();
@@ -72,7 +72,7 @@ class _UpdateFolderTemplateState extends State<UpdateFolderTemplate> {
   ///
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final Folder newFolder = Folder(
+      final TempFolderContainer newFolder = TempFolderContainer(
         name: nameController.text
       );
 

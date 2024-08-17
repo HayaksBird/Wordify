@@ -9,8 +9,8 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 ///Shows the list of folders where the user can save the newly typed
 ///word.
 class ChooseFolderWidget extends StatelessWidget {
-  final List<Folder> folders;
-  final ValueNotifier<Folder?> valueNotifier;
+  final List<FolderContent> folders;
+  final ValueNotifier<FolderContent?> valueNotifier;
 
 
   const ChooseFolderWidget({
@@ -38,7 +38,7 @@ class ChooseFolderWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildFolderTile(Folder folder) {
+  Widget _buildFolderTile(FolderContent folder) {
     return InkWell(
       onTap: () {
         valueNotifier.value = folder;

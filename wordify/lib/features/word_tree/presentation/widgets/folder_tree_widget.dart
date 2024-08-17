@@ -10,7 +10,7 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 ///Responsible for creating the and styling the tree.
 ///In addition, handles the add/update/delete operations within the tree.
 class FolderTreetWidget extends StatelessWidget {
-  final List<Folder> rootFolders;
+  final List<FolderContent> rootFolders;
   final _dictionaryBloc = DictionaryBloc();
 
 
@@ -27,7 +27,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildRootFolderList(BuildContext context, List<Folder> rootFolders) {
+  Widget _buildRootFolderList(BuildContext context, List<FolderContent> rootFolders) {
     return ListView.builder(
       itemCount: rootFolders.length + 1,
       itemBuilder: (context, index) {
@@ -47,7 +47,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildInnerFolderList(BuildContext context, List<Folder> folders, int layer) {
+  Widget _buildInnerFolderList(BuildContext context, List<FolderContent> folders, int layer) {
     return Column(
       children: folders.map((folder) => _buildFolderTile(context, folder, layer)).toList(),
     );
@@ -55,7 +55,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildFolderTile(BuildContext context, Folder folder, int layer) {
+  Widget _buildFolderTile(BuildContext context, FolderContent folder, int layer) {
     return Column(
       children: [
         GestureDetector(
@@ -87,7 +87,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _showOverlay(BuildContext context, TapDownDetails details, Folder folder) {
+  void _showOverlay(BuildContext context, TapDownDetails details, FolderContent folder) {
     FolderActionsOverlay.showOverlay(
       create: () { _createFolder(context, folder); },
       update: () { _updateFolder(context, folder); },
@@ -100,7 +100,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _updateFolder(BuildContext context,Folder folder) {
+  void _updateFolder(BuildContext context, FolderContent folder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => UpdateFolderTemplate(
@@ -112,7 +112,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _createFolder(BuildContext context, Folder parentFolder) {
+  void _createFolder(BuildContext context, FolderContent parentFolder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CreateFolderTemplate(

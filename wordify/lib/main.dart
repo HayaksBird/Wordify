@@ -20,7 +20,6 @@ class Wordify extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.backgroundMain
       ),
-      //Set the DictionaryProvider widget in the tree and set its notifier
       home: const MainScreen()
     );
   }

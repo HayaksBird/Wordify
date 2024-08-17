@@ -33,22 +33,22 @@ class FolderValidationBloc {
 
 
   ///
-  String? validateInsertFolderName(String newName, Folder? parentFolder) {
-    NTree<Folder> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
+  String? validateInsertFolderName(String newName, FolderContent? parentFolder) {
+    NTree<FolderContent> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
 
     return _folderValidator.validateName(newName, parentFolder != null ? folderTree.getChildren(parentFolder) : folderTree.getRootItems);
   }
 
 
   ///
-  String? validateUpdateFolderName(String newName, Folder folder, String oldName) {
-    NTree<Folder> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
+  String? validateUpdateFolderName(String newName, FolderContent folder, String oldName) {
+    NTree<FolderContent> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
 
     return _folderValidator.validateName(newName, folderTree.getSiblingsInclusive(folder), oldName);
   }
 
 
-  String? validateChooseFolder(Folder? folder) {
+  String? validateChooseFolder(FolderContent? folder) {
     return _folderValidator.validateChooseFolder(folder);
   }
 }

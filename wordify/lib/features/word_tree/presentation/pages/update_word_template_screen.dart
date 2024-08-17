@@ -13,7 +13,7 @@ import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart
 ///
 class UpdateWordTemplate extends StatefulWidget {
   final FolderWords expandedFolder;
-  final Word word;
+  final WordContent word;
 
 
   const UpdateWordTemplate({
@@ -29,8 +29,8 @@ class UpdateWordTemplate extends StatefulWidget {
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
-  late Folder newStorageFolder;
-  late final Word word;
+  late FolderContent newStorageFolder;
+  late final WordContent word;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
   late final TextEditingController translationController;
@@ -106,7 +106,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
 
   ///
-  void _goBack(ValueNotifier<Folder> valueNotifier) {
+  void _goBack(ValueNotifier<FolderContent> valueNotifier) {
     valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value);
     newStorageFolder = valueNotifier.value;
   }
@@ -116,12 +116,12 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   ///Uses InheritedWidget
   Widget _chooseFolder() {
     return ChosenFolderProvider(
-      notifier: ValueNotifier<Folder>(newStorageFolder),
+      notifier: ValueNotifier<FolderContent>(newStorageFolder),
       child: Builder(
         builder: (context) {
-          final ValueNotifier<Folder> valueNotifier = ChosenFolderProvider.of(context);
+          final ValueNotifier<FolderContent> valueNotifier = ChosenFolderProvider.of(context);
 
-          return ValueListenableBuilder<Folder>(
+          return ValueListenableBuilder<FolderContent>(
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
               newStorageFolder = folder;
@@ -142,7 +142,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   ///
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final Word newWord = Word(
+      final TempWordContainer newWord = TempWordContainer(
         word: wordController.text, 
         translation: translationController.text,
         sentence: sentenceController.text

@@ -1,28 +1,32 @@
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
-
 ///Represents a folder.
-class Folder {
+abstract class FolderContent {
+  String get name;
+}
+
+
+///
+class TempFolderContainer {
   final String name;
 
-
-  const Folder({
-    required this.name,
-  }); 
+  const TempFolderContainer({
+    required this.name
+  });
 }
 
 
 ///
 class FolderWords {
-  Folder folder;
-  List<Word> words;
+  FolderContent folder;
+  List<WordContent> words;
 
 
   FolderWords(this.folder, this.words);
 
 
   ///
-  void updateWord(Word oldWord, Word newWord) {
+  void updateWord(WordContent oldWord, WordContent newWord) {
     int index = words.indexOf(oldWord);
 
     words[index] = newWord;

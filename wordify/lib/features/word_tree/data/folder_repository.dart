@@ -1,5 +1,5 @@
-import 'package:wordify/features/word_tree/data/data_sources/folder_persistence.dart';
-import 'package:wordify/features/word_tree/data/model/folder_model.dart';
+import 'package:wordify/core/data/data_sources/folder_persistence.dart';
+import 'package:wordify/core/data/model/folder_model.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
 
@@ -17,35 +17,33 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
-  Future<Folder> addFolder(Folder? parentFolder, Folder folder) async {
+  Future<FolderContent> addFolder(FolderContent? parentFolder, TempFolderContainer folder) async {
     FolderModel? parentFolderModel = parentFolder as FolderModel?;
-    FolderModel folderModel = FolderModel.fromFolder(folder);
 
-    FolderModel newFolderModel = folderModel.copyWith(
-      parentId: parentFolderModel?.id
+    return FolderPersistence.insert(
+      parentId: parentFolderModel?.id,
+      name: folder.name
     );
-
-    return FolderPersistence.insert(newFolderModel);
   }
 
 
   ///
   @override
-  Future<void> deleteFolder(Folder folder) async {
+  Future<void> deleteFolder(FolderContent folder) async {
     await FolderPersistence.delete(folder as FolderModel);
   }
 
 
   ///
   @override
-  Future<List<Folder>> getRootFolders() async {
+  Future<List<FolderContent>> getRootFolders() async {
     return FolderPersistence.getRootFolders();
   }
   
 
   ///
   @override
-  Future<List<Folder>> getChildFolders(Folder folder) {
+  Future<List<FolderContent>> getChildFolders(FolderContent folder) {
     FolderModel folderModel = folder as FolderModel;
 
     return FolderPersistence.getFolders(folderModel.id);
@@ -54,14 +52,14 @@ class FolderRepositoryImpl implements FolderRepository {
 
   ///
   @override
-  Future<Folder> getBuffer() {
+  Future<FolderContent> getBuffer() {
     return FolderPersistence.getBufferFolder();
   }
 
   
   ///
   @override
-  Future<Folder> updateFolder(Folder oldFolder, Folder newFolder) async {
+  Future<FolderContent> updateFolder(FolderContent oldFolder, TempFolderContainer newFolder) async {
     FolderModel oldFolderModel = oldFolder as FolderModel;
 
     FolderModel newFolderModel = oldFolderModel.copyWith(

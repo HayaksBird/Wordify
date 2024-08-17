@@ -1,18 +1,25 @@
-import 'package:wordify/features/word_tree/data/data_sources/init_database.dart';
-import 'package:wordify/features/word_tree/data/model/folder_model.dart';
+import 'package:wordify/core/data/data_sources/init_database.dart';
+import 'package:wordify/core/data/model/folder_model.dart';
 
 ///
 class FolderPersistence {
   ///
-  static Future<FolderModel> insert(FolderModel folder) async {
+  static Future<FolderModel> insert({
+    int? parentId,
+    required String name
+  }) async {
     final db = await WordifyDatabase.instance.database;
 
     final int id = await db.rawInsert(
       'INSERT INTO folders (name, parent_id) VALUES (?, ?)',
-      [folder.name, folder.parentId]
+      [name, parentId]
     );
 
-    return folder.copyWith(id: id);
+    return FolderModel(
+      id: id,
+      parentId: parentId,
+      name: name
+    );
   }
 
 
@@ -27,21 +34,6 @@ class FolderPersistence {
         [folder.id],
       );
     });
-
-    /*
-    await db.transaction((txn) async {
-      // Delete all words associated with the folder
-      await txn.rawDelete(
-        'DELETE FROM words WHERE folder_id = ?',
-        [folder.id],
-      );
-      
-      // Delete the folder itself
-      await txn.rawDelete(
-        'DELETE FROM folders WHERE id = ?',
-        [folder.id],
-      );
-    });*/
   }
 
 

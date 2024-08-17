@@ -36,7 +36,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Folder>>(
+    return StreamBuilder<List<FolderContent>>(
       stream: _dictionaryBloc.folderView.foldersInView,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

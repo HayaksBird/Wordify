@@ -1,13 +1,16 @@
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
-class FolderModel extends Folder {
+class FolderModel implements FolderContent{
   final int id;
   final int? parentId;
+  @override
+  final String name;
+
 
   const FolderModel({
     required this.id,
     required this.parentId,
-    required super.name
+    required this.name
   });
 
 
@@ -20,16 +23,11 @@ class FolderModel extends Folder {
   }
 
 
-  FolderModel.fromFolder(Folder folder, {this.id = -1, this.parentId})
-      : super(name: folder.name);
-
-
   ///Immitate update of an object, when you actually create a new instance of it.
   FolderModel copyWith({
     int? id,
     int? parentId,
-    String? name,
-    List<Word>? words,
+    String? name
   }) {
     return FolderModel(
       id: id ?? this.id,

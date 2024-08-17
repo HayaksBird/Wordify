@@ -5,7 +5,7 @@ class FolderValidation {
   static const List<String> exceptionCharacters = ['/', '\\'];
 
   ///
-  String? validateName(String newName, List<Folder> parentsChildren, [String? oldName]) {
+  String? validateName(String newName, List<FolderContent> parentsChildren, [String? oldName]) {
 
     if (newName.isEmpty) {
       return 'Provide a name';
@@ -20,7 +20,7 @@ class FolderValidation {
 
 
   ///
-  String? validateChooseFolder(Folder? folder) {
+  String? validateChooseFolder(FolderContent? folder) {
     if (folder == null) {
       return "Choose a folder";
     } else { return null; }

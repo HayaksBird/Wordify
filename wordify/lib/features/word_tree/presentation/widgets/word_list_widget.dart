@@ -34,7 +34,7 @@ class WordListWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildFolderTile(BuildContext context, Word word) {
+  Widget _buildFolderTile(BuildContext context, WordContent word) {
     return GestureDetector(
       onTap: () {
         _dictionaryBloc.wordView.toggleSentence(word);
@@ -44,7 +44,9 @@ class WordListWidget extends StatelessWidget {
         _showOverlay(context, details, word);
       },
       child: WordTileWidget(
-        word: word,
+        word: word.word,
+        translation: word.translation,
+        sentence: word.sentence,
         isSelected: _dictionaryBloc.wordView.getSelectedWord == word ? true : false,
         showSentence: _dictionaryBloc.wordView.doShowSentence(word),
       ),
@@ -53,7 +55,7 @@ class WordListWidget extends StatelessWidget {
 
 
   ///Show the overlay for the right click
-  void _showOverlay(BuildContext context, TapDownDetails details, Word word) {
+  void _showOverlay(BuildContext context, TapDownDetails details, WordContent word) {
     WordActionsOverlay.showOverlay(
       update: () { _openWordTemplate(context, word); },
       delete: () { _dictionaryBloc.content.deleteWord(activeFolder, word); },
@@ -65,7 +67,7 @@ class WordListWidget extends StatelessWidget {
 
 
   ///
-  void _openWordTemplate(BuildContext context, Word word) {
+  void _openWordTemplate(BuildContext context, WordContent word) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => UpdateWordTemplate(

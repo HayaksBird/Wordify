@@ -86,7 +86,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
 
 
   ///
-  void _openWordTemplate(Folder folder) {
+  void _openWordTemplate(FolderContent folder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CreateWordTemplate(storageFolder: folder)

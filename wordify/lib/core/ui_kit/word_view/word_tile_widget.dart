@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/animation_kit/fade_appearance.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 class WordTileWidget extends StatelessWidget {
-  final Word word;
+  final String word, translation;
+  final String? sentence;
   final bool isSelected;
   final bool showSentence;
 
@@ -12,6 +12,8 @@ class WordTileWidget extends StatelessWidget {
   const WordTileWidget({
     super.key,
     required this.word,
+    required this.translation,
+    this.sentence,
     this.isSelected = false,
     this.showSentence = false
   });
@@ -25,13 +27,13 @@ class WordTileWidget extends StatelessWidget {
           color: isSelected ? AppColors.backgroundMain : null,
           child: ListTile(
             title: Text( //Show the word itself
-              word.word,
+              word,
               style: const TextStyle(
                 color: AppColors.text,
               )
             ),
             subtitle: Text( //Show word's translation
-              word.translation,
+              translation,
               style: const TextStyle(
                 color: AppColors.text,
               ),
@@ -40,14 +42,14 @@ class WordTileWidget extends StatelessWidget {
         ),
 
         FadeAppearance(
-          isVisible: showSentence && word.sentence != null && word.sentence != '',
+          isVisible: showSentence && sentence != null && sentence != '',
           child: Container(
             color: isSelected ? AppColors.backgroundMain : null,
             child: ListTile(
               title: Align(
                 alignment: Alignment.centerLeft,
                 child: Text( //Show word's corresponding sentence
-                  word.sentence!,
+                  sentence!,
                   style: const TextStyle(
                     color: AppColors.text
                   )

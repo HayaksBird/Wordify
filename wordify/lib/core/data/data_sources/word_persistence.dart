@@ -1,17 +1,28 @@
-import 'package:wordify/features/word_tree/data/model/word_model.dart';
-import 'package:wordify/features/word_tree/data/data_sources/init_database.dart';
+import 'package:wordify/core/data/data_sources/init_database.dart';
+import 'package:wordify/core/data/model/word_model.dart';
 
 class WordPersistence {
   ///Insets the word into the database and returns its copy with an id present.
-  static Future<WordModel> insert(WordModel word, int folderId) async {
+  static Future<WordModel> insert({
+    required int folderId,
+    required String word,
+    required String translation,
+    String? sentence
+  }) async {
     final db = await WordifyDatabase.instance.database;
 
     final int id = await db.rawInsert(
       'INSERT INTO words (folder_id, word, translation, sentence) VALUES (?, ?, ?, ?)',
-      [folderId, word.word, word.translation, word.sentence]
+      [folderId, word, translation, sentence]
     );
 
-    return word.copyWith(id: id);
+    return WordModel(
+      id: id,
+      folderId: folderId,
+      word: word,
+      translation: translation,
+      sentence: sentence
+    );
   }
 
 

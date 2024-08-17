@@ -1,5 +1,5 @@
-import 'package:wordify/features/word_tree/data/repositories/folder_repository.dart';
-import 'package:wordify/features/word_tree/data/repositories/word_repository.dart';
+import 'package:wordify/features/word_tree/data/folder_repository.dart';
+import 'package:wordify/features/word_tree/data/word_repository.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
@@ -18,7 +18,7 @@ class DictionaryWordsManager {
   ///(we don't want to perform unnecessary caching).
   ///If the folder is in cache, then update the folder of the new word and store it in cache.
   ///If necessary, then also update the active folder list.
-  Future<void> addNewWord(Folder folder, Word word) async {
+  Future<void> addNewWord(FolderContent folder, TempWordContainer word) async {
     //If saving to buffer (because buffer can be absent in active folders list)
     if (folder == _dictionary.buffer?.folder) {
       _dictionary.buffer?.words.add(await _wordRepo.addWord(folder, word));
@@ -39,10 +39,10 @@ class DictionaryWordsManager {
 
   ///Update the folder with the updated word.
   ///Update the cache and the active folder list with the new folder.
-  Future<Word> updateWord(Folder folder, Word oldWord, Word newWord) async {
+  Future<WordContent> updateWord(FolderContent folder, WordContent oldWord, TempWordContainer newWord) async {
     FolderWords activeFolder = _dictionary.activeFolders.get(folder)!;
 
-    Word updatedWord = await _wordRepo.updateWord(folder, oldWord, newWord);
+    WordContent updatedWord = await _wordRepo.updateWord(folder, oldWord, newWord);
     FolderWords expandedFolder = activeFolder;
 
     expandedFolder.updateWord(oldWord, updatedWord);
@@ -52,7 +52,7 @@ class DictionaryWordsManager {
 
 
   ///
-  Future<void> deleteWord(Folder folder, Word word) async {
+  Future<void> deleteWord(FolderContent folder, WordContent word) async {
     FolderWords activeFolder = _dictionary.activeFolders.get(folder)!;
 
     activeFolder.words.remove(word);
@@ -65,19 +65,19 @@ class DictionaryWordsManager {
 class DictionaryFoldersManager {
 
   ///Add a new folder.
-  Future<void> createFolder(Folder? parentFolder, Folder folder) async {
-    Folder newFolder = await _folderRepo.addFolder(parentFolder, folder);
+  Future<void> createFolder(FolderContent? parentFolder, TempFolderContainer folder) async {
+    FolderContent newFolder = await _folderRepo.addFolder(parentFolder, folder);
 
     _dictionary.foldersInView.insertOne(parentFolder, newFolder);
   }
 
 
   ///
-  Future<Folder> updateFolder(Folder oldFolder, Folder newFolder) async {
-    Folder updatedFolder = await _folderRepo.updateFolder(oldFolder, newFolder);
-    List<Folder> subfolders = _dictionary.foldersInView.getSubitems(oldFolder);
+  Future<FolderContent> updateFolder(FolderContent oldFolder, TempFolderContainer newFolder) async {
+    FolderContent updatedFolder = await _folderRepo.updateFolder(oldFolder, newFolder);
+    List<FolderContent> subfolders = _dictionary.foldersInView.getSubitems(oldFolder);
 
-    for (Folder subfolder in subfolders) {
+    for (FolderContent subfolder in subfolders) {
       _dictionary.activeFolders.remove(subfolder);
       _dictionary.cachedFolders.remove(subfolder);
     }
@@ -90,10 +90,10 @@ class DictionaryFoldersManager {
   ///Delete a folder with its subfolders.
   ///Remove them from the cache and/or active folder list
   ///if they are present there.
-  Future<List<Folder>> deleteFolder(Folder folder) async {
-    List<Folder> subfolders = _dictionary.foldersInView.getSubitems(folder);
+  Future<List<FolderContent>> deleteFolder(FolderContent folder) async {
+    List<FolderContent> subfolders = _dictionary.foldersInView.getSubitems(folder);
 
-    for (Folder subfolder in subfolders) {
+    for (FolderContent subfolder in subfolders) {
       await _folderRepo.deleteFolder(subfolder);
 
       _dictionary.activeFolders.remove(subfolder);

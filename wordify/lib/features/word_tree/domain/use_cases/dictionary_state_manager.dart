@@ -1,6 +1,6 @@
 import 'package:wordify/core/util/n_tree.dart';
-import 'package:wordify/features/word_tree/data/repositories/folder_repository.dart';
-import 'package:wordify/features/word_tree/data/repositories/word_repository.dart';
+import 'package:wordify/features/word_tree/data/folder_repository.dart';
+import 'package:wordify/features/word_tree/data/word_repository.dart';
 import 'package:wordify/features/word_tree/domain/entities/dictionary.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
@@ -19,24 +19,24 @@ class DictionaryFoldersInViewStateManager {
 
   ///Initialize the dictionary with the folder tree.
   Future<void> setFolderTree() async {
-    List<Folder> rootFolders = await _folderRepo.getRootFolders();
+    List<FolderContent> rootFolders = await _folderRepo.getRootFolders();
 
-    _dictionary.foldersInView = NTree<Folder>()..setRoot(rootFolders);
+    _dictionary.foldersInView = NTree<FolderContent>()..setRoot(rootFolders);
 
-    for (Folder rootFolder in rootFolders) {
+    for (FolderContent rootFolder in rootFolders) {
       await _setFolderSubtree(rootFolder);
     }
   }
 
 
   ///Set all the subfolders of a certain folder.
-  Future<void> _setFolderSubtree(Folder folder) async {
-    List<Folder> subfolders = await _folderRepo.getChildFolders(folder);
+  Future<void> _setFolderSubtree(FolderContent folder) async {
+    List<FolderContent> subfolders = await _folderRepo.getChildFolders(folder);
 
     if (subfolders.isNotEmpty) {
       _dictionary.foldersInView.insert(folder, subfolders);
 
-      for (Folder subfolder in subfolders) {
+      for (FolderContent subfolder in subfolders) {
         _setFolderSubtree(subfolder);
       }
     }
@@ -44,16 +44,16 @@ class DictionaryFoldersInViewStateManager {
 
 
   ///
-  String fullPath(Folder folder) {
+  String fullPath(FolderContent folder) {
     return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
   }
 
 
   //GETTERS
   ///
-  NTree<Folder> get foldersInView => _dictionary.foldersInView; 
+  NTree<FolderContent> get foldersInView => _dictionary.foldersInView; 
 
-  Folder? get bufferFolder => _dictionary.buffer?.folder;
+  FolderContent? get bufferFolder => _dictionary.buffer?.folder;
 }
 
 
@@ -73,7 +73,7 @@ class DictionaryActiveFolderStateManager {
   ///folder list.
   ///
   ///If the folder has been activated return true; else false.
-  Future<bool> activateFolder(Folder folder) async {
+  Future<bool> activateFolder(FolderContent folder) async {
     FolderWords expandedFolder;
     FolderWords? fromCache = _dictionary.cachedFolders.get(folder);
     
@@ -139,13 +139,13 @@ class DictionaryActiveFolderStateManager {
 
   ///Extarct the buffer folder from the DB.
   Future<void> setBufferFolder() async {
-    Folder bufferFolder = await _folderRepo.getBuffer();
+    FolderContent bufferFolder = await _folderRepo.getBuffer();
     _dictionary.buffer = FolderWords(bufferFolder, await _wordRepo.getWordsOfFolder(bufferFolder));
   }
 
 
   ///Is folder in the active folders list?
-  bool isFolderActive(Folder folder) {
+  bool isFolderActive(FolderContent folder) {
     bool val = _dictionary.activeFolders.containsKey(folder);
 
     return val;
@@ -154,7 +154,7 @@ class DictionaryActiveFolderStateManager {
 
   ///Try to shift the view to the active folder above.
   ///Shift only if there is a folder above.
-  bool shiftCurrentActiveFolderUp(Folder folder) {
+  bool shiftCurrentActiveFolderUp(FolderContent folder) {
     FolderWords? above = _dictionary.activeFolders.getAbove(folder);
 
     if (above != null) {
@@ -169,7 +169,7 @@ class DictionaryActiveFolderStateManager {
 
   ///Try to shift the view to the active folder below.
   ///Shift only if there is a folder below.
-  bool shiftCurrentActiveFolderDown(Folder folder) {
+  bool shiftCurrentActiveFolderDown(FolderContent folder) {
     FolderWords? below = _dictionary.activeFolders.getBelow(folder);
     
     if (below != null) {

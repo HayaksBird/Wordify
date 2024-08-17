@@ -7,7 +7,7 @@ import 'package:wordify/features/word_tree/presentation/state_management/validat
 import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart';
 
 class CreateFolderTemplate extends StatefulWidget {
-  final Folder? parentFolder;
+  final FolderContent? parentFolder;
 
 
   const CreateFolderTemplate({
@@ -21,7 +21,7 @@ class CreateFolderTemplate extends StatefulWidget {
 }
 
 class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
-  late final Folder? parentFolder;
+  late final FolderContent? parentFolder;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final _dictionaryBloc = DictionaryBloc();
@@ -70,7 +70,7 @@ class _CreateFolderTemplateState extends State<CreateFolderTemplate> {
   ///
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final Folder newFolder = Folder(
+      final TempFolderContainer newFolder = TempFolderContainer(
         name: nameController.text
       );
 
