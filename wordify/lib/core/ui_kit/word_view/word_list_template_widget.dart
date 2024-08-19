@@ -6,6 +6,7 @@ class WordListTemplateWidget extends StatelessWidget {
   final String path, delimiter;
   final bool isBuffer;
   final Widget list;
+  final void Function() callFlashcards;
   final void Function() closePressed;
   final void Function() addWordPressed;
 
@@ -17,7 +18,8 @@ class WordListTemplateWidget extends StatelessWidget {
     required this.list,
     required this.closePressed,
     this.isBuffer = false,
-    required this.addWordPressed
+    required this.addWordPressed,
+    required this.callFlashcards
   });
 
 
@@ -75,9 +77,10 @@ class WordListTemplateWidget extends StatelessWidget {
     
         Padding(
           padding: const EdgeInsets.only(left: 5.0),
-          child: _addWordButton()
+          child: _callFlashcards()
         ),
-    
+
+        _addWordButton(),
         _closeButton()
       ]
     );
@@ -103,11 +106,29 @@ class WordListTemplateWidget extends StatelessWidget {
 
         Padding(
           padding: const EdgeInsets.only(left: 5.0),
-          child: _addWordButton()
+          child: _callFlashcards()
         ),
-    
+
+        _addWordButton(),
         _closeButton()
       ],
+    );
+  }
+
+
+  ///
+  Widget _callFlashcards() {
+    return Tooltip(
+      message: 'Test words',
+      waitDuration: const Duration(milliseconds: 400),
+      child: IconButton(
+        icon: const Icon(
+          Icons.filter_none_rounded,
+          color: AppColors.navigation,
+        ),
+        onPressed: callFlashcards,
+        iconSize: 22,
+      )
     );
   }
 

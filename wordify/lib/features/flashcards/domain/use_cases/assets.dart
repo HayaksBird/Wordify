@@ -35,14 +35,14 @@ final double performanceInterval = _countPerformanceInterval;
 ///This algorithm chooses such weightFactor so that the weighted average score
 ///will lie between 1 and maxRating.
 double get _countWeightFactor {
-  int sum = ((attemptsStored * (attemptsStored + 1)) / 2) as int;
+  int sum = ((attemptsStored * (attemptsStored + 1)) / 2).truncate();
 
-  return attemptsStored / sum;
+  return double.parse((attemptsStored / sum).toStringAsFixed(2)); //2 digits after the dot
 }
 
 
 ///Get the interval to split the maxRating into three equal parts. (Will be
 ///used for the flashcards algorithm).
 double get _countPerformanceInterval {
-  return (maxRating - 1) / 3;
+  return double.parse(((maxRating - 1) / 3).toStringAsFixed(2));
 }

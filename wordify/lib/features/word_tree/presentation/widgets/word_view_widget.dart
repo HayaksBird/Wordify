@@ -3,7 +3,10 @@ import 'package:wordify/core/animation_kit/switch_word_list_template.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
 import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
 import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
+import 'package:wordify/features/flashcards/domain/entities/word.dart';
+import 'package:wordify/features/flashcards/presentation/pages/show_flashcard_page.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
@@ -67,6 +70,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
             ),
             closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
             addWordPressed: () { _openWordTemplate(activeFolder.folder); },
+            callFlashcards: () { _callFlashcards(activeFolder.words); },
           ),
         ),
 
@@ -90,6 +94,15 @@ class _WordViewWidgetState extends State<WordViewWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CreateWordTemplate(storageFolder: folder)
+      ),
+    );
+  }
+
+
+  void _callFlashcards(List<WordContent> words) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ShowFlashcardPage(words: words.cast<WordContentStats>())
       ),
     );
   }

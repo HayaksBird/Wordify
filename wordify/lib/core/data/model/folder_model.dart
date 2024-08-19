@@ -1,5 +1,6 @@
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
+///The exact model of a folder from the database.
 class FolderModel implements FolderContent{
   final int id;
   final int? parentId;

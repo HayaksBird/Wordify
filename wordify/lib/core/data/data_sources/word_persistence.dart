@@ -15,7 +15,7 @@ class WordPersistence {
       'INSERT INTO words (folder_id, word, translation, sentence) VALUES (?, ?, ?, ?)',
       [folderId, word, translation, sentence]
     );
-
+      
     return WordModel(
       id: id,
       folderId: folderId,
@@ -31,8 +31,8 @@ class WordPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.rawUpdate(
-      'UPDATE words SET word = ?, translation = ?, sentence = ? WHERE id = ?',
-      [word.word, word.translation, word.sentence, word.id]
+      'UPDATE words SET word = ?, translation = ?, sentence = ?, oldest_attempt = ?, middle_attempt = ?, newest_attempt = ? WHERE id = ?',
+      [word.word, word.translation, word.sentence, word.oldestAttempt, word.middleAttempt, word.newestAttempt, word.id]
     );
   }
 

@@ -1,7 +1,10 @@
+import 'package:wordify/features/flashcards/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
-///
-class WordModel implements WordContent{
+///The exact model of a word from the database.
+///Implements multiple interfaces from different features to
+///segregate the view for them.
+class WordModel implements WordContent, WordContentStats {
   final int id;
   final int folderId;
   @override
@@ -10,6 +13,7 @@ class WordModel implements WordContent{
   final String translation;
   @override
   final String? sentence;
+  @override
   final int oldestAttempt, middleAttempt, newestAttempt;
 
 
@@ -33,9 +37,9 @@ class WordModel implements WordContent{
       word: map['word'] as String,
       translation: map['translation'] as String,
       sentence: map['sentence'] as String?,
-      oldestAttempt: map['oldest_attempt'],
-      middleAttempt: map['middle_attempt'],
-      newestAttempt: map['newest_attempt']
+      oldestAttempt: map['oldest_attempt'] as int,
+      middleAttempt: map['middle_attempt'] as int,
+      newestAttempt: map['newest_attempt'] as int
     );
   }
 

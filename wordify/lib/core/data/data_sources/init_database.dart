@@ -51,6 +51,44 @@ class WordifyDatabase {
       await db.execute('''
         ALTER TABLE words ADD COLUMN newest_attempt INTEGER DEFAULT 1;
       ''');
+
+      //ADD NEW CODE HERE
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 3, middle_attempt = 1, newest_attempt = 1 WHERE word = 'Kirche';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 2, middle_attempt = 2, newest_attempt = 1 WHERE word = 'Stadt';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 1, middle_attempt = 2, newest_attempt = 1 WHERE word = 'Essen';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 1, middle_attempt = 1, newest_attempt = 2 WHERE word = 'Trinken';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 1, middle_attempt = 1, newest_attempt = 1 WHERE word = 'Schlafen';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 2, middle_attempt = 1, newest_attempt = 3 WHERE word = 'Laufen';
+      ''');
+
+      await db.execute('''
+        UPDATE words SET oldest_attempt = 2, middle_attempt = 2, newest_attempt = 2 WHERE word = 'Lesen';
+      ''');
+
+      // Insert new words
+      await db.execute('''
+        INSERT INTO words (folder_id, word, translation, sentence, oldest_attempt, middle_attempt, newest_attempt) VALUES
+          ((SELECT id FROM folders WHERE id = 2), 'Spielen', 'To play', 'Ich spiele gern.', 2, 1, 3),
+          ((SELECT id FROM folders WHERE id = 2), 'Mutter', 'Mother', 'Das ist meine Mutter.', 2, 2, 3),
+          ((SELECT id FROM folders WHERE id = 2), 'Vater', 'Father', 'Das ist mein Vater.', 1, 3, 3),
+          ((SELECT id FROM folders WHERE id = 2), 'Hallo', 'Hello', 'Hallo, wie geht es dir?', 3, 3, 3);
+      ''');
     }
   }
 
