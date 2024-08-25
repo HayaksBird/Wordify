@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/template_view/choose_folder_tile_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_folder_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 
 
@@ -10,7 +10,7 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 ///word.
 class ChooseFolderWidget extends StatelessWidget {
   final List<FolderContent> folders;
-  final ValueNotifier<FolderContent?> valueNotifier;
+  final ValueNotifier<FolderContent> valueNotifier;
 
 
   const ChooseFolderWidget({

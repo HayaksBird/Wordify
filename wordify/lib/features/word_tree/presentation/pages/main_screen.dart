@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/animation_kit/expand_folder_view.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/folder_view/expand_view_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/expand_view_widget.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/is_folder_view_expanded_provider.dart';

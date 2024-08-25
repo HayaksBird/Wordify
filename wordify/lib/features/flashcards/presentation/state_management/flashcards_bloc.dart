@@ -38,7 +38,9 @@ class FlashcardsBloc {
 
 
   ///
-  void setNextWord() {
+  void setNextWord(WordContentStats currentWord, int rating) {
+    _flashcardsManager.updateNewAttempt(currentWord, rating);
+
     WordContentStats? word = _flashcardsManager.getNextWord;
     if (word != null) { _updateWordInView(word); }
   }

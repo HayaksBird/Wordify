@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/template_view/choose_word_template_widget.dart';
-import 'package:wordify/core/ui_kit/template_view/template_frame.dart';
-import 'package:wordify/core/ui_kit/template_view/word_form_decoration.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_word_template_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/template_frame.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/word_form_decoration.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';

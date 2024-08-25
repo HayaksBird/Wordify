@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:wordify/features/flashcards/data/word_repository.dart';
 import 'package:wordify/features/flashcards/domain/entities/word.dart';
+import 'package:wordify/features/flashcards/domain/repositories/word_repository.dart';
 import 'package:wordify/features/flashcards/domain/use_cases/assets.dart';
 
 ///
@@ -8,6 +10,7 @@ class FlashcardsManager {
   int _currentCategory = 0;
   int _wordsTakenFromGivenCategory = 0;
   final Random _random = Random();
+  final WordRepository _wordRepo = WordRepositoryImpl(); 
 
   final List<WordContentStats> _worstLearned = [];
   final List<WordContentStats> _averageLearned = [];
@@ -64,6 +67,12 @@ class FlashcardsManager {
     }
 
     return word;
+  }
+
+  
+  ///
+  void updateNewAttempt(WordContentStats currentWord, int rating) {
+    _wordRepo.storeNewAttempt(currentWord, rating);
   }
 
 

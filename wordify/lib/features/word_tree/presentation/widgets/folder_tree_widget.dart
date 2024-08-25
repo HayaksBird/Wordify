@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/folder_view/folder_actions_overlay.dart';
-import 'package:wordify/core/ui_kit/folder_view/folder_row_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folder_actions_overlay.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folder_row_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
