@@ -6,11 +6,13 @@ class WordifyFloatingActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String tooltip;
 
+
   const WordifyFloatingActionButton({
     super.key,
     required this.onPressed,
     required this.tooltip,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,4 +180,84 @@ class ArrowDownButton extends IconButton {
             size: 25
           )
         );
+}
+
+
+
+///Naviagte back button with a navigation arrow pointed to the left.
+class NavigationBackButton extends StatelessWidget {
+  final String text;
+  final VoidCallback goBack;
+
+
+  const NavigationBackButton({
+    super.key,
+    required this.text,
+    required this.goBack
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: goBack,
+      child: Row(
+        children: [
+          const Icon(
+            Icons.keyboard_arrow_left_sharp,
+            size: 18.0,
+            color: AppColors.navigation
+          ),
+          const SizedBox(width: 4.0),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14.0,
+              color: AppColors.navigation
+            ),
+          )
+        ]
+      )
+    );
+  }
+}
+
+
+
+///Naviagte forward button with a navigation arrow pointed to the right.
+class NavigationForwardButton extends StatelessWidget {
+  final String text;
+  final VoidCallback goForward;
+
+
+  const NavigationForwardButton({
+    super.key,
+    required this.text,
+    required this.goForward
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: goForward,
+      child: Row(
+        children: [
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14.0,
+              color: AppColors.navigation
+            ),
+          ),
+          const SizedBox(width: 4.0),
+          const Icon(
+            Icons.keyboard_arrow_right_sharp,
+            size: 18.0,
+            color: AppColors.navigation
+          )
+        ]
+      )
+    );
+  }
 }

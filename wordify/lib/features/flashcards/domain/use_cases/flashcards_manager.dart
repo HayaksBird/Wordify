@@ -1,24 +1,25 @@
 import 'dart:math';
 
-import 'package:wordify/features/flashcards/data/word_repository.dart';
 import 'package:wordify/features/flashcards/domain/entities/word.dart';
-import 'package:wordify/features/flashcards/domain/repositories/word_repository.dart';
 import 'package:wordify/features/flashcards/domain/use_cases/assets.dart';
 
-///
+///This class sets the algorithm for the flashcards.
+///It takes a list of words to be used with flashcards and organizes them
+///into category lists -> worst, average, best.
+///Once the user requests the next word it will be given to them from one of
+///these 3 categories depending on the algorithm.
 class FlashcardsManager {
   int _currentCategory = 0;
   int _wordsTakenFromGivenCategory = 0;
   final Random _random = Random();
-  final WordRepository _wordRepo = WordRepositoryImpl(); 
 
-  final List<WordContentStats> _worstLearned = [];
-  final List<WordContentStats> _averageLearned = [];
-  final List<WordContentStats> _bestLearned = [];
+  final List<WordContentStats> _worstLearned = [], _averageLearned = [], _bestLearned = [];
   late final List<_MaxWordsForCategory> _allPerformanceLists;
 
 
-  ///
+  ///Set the category lists with the maximum count of words for each category list
+  ///which tells how many words can be extracted from the category list before
+  ///moving on to the next one.
   FlashcardsManager() {
     _allPerformanceLists = [
       _MaxWordsForCategory(_worstLearned, 4),
@@ -30,7 +31,7 @@ class FlashcardsManager {
 
   ///Count the weighted average score for each word and depending on that value, place the word
   ///in either of the three lists (worst, average, best).
-  void setPerformanceLists(List<WordContentStats> words) {
+  void setFlashcards(List<WordContentStats> words) {
     for (WordContentStats word in words) {
       double weightedAverageScore = (weightFactor * (word.oldestAttempt + (2 * word.middleAttempt) + (3 * word.newestAttempt))) / attemptsStored;
 
@@ -38,7 +39,7 @@ class FlashcardsManager {
         _worstLearned.add(word);
       } else if (weightedAverageScore < (1 + performanceInterval * 2)) {
         _averageLearned.add(word);
-      } else {  ///weightedAverageScore < (1 + performanceInterval * 3)
+      } else {  ///weightedAverageScore <= (1 + performanceInterval * 3)
         _bestLearned.add(word);
       }
     }
@@ -63,21 +64,19 @@ class FlashcardsManager {
       word = _getWordFromList(_allPerformanceLists[_currentCategory].categoryList, _allPerformanceLists[_currentCategory].wordsFromCurrentCategoryLimit);
 
       if (word != null) { break; }
+      //Move to next category
       else { _currentCategory = (_currentCategory + 1) % _allPerformanceLists.length; }
     }
 
     return word;
   }
 
-  
-  ///
-  void updateNewAttempt(WordContentStats currentWord, int rating) {
-    _wordRepo.storeNewAttempt(currentWord, rating);
-  }
 
-
-  ///This method decides whether to extract a word from the current category or to move
+  ///This method decides whether to extract a word from the current category list or to move
   ///forward.
+  ///If the _wordsTakenFromGivenCategory counter is still below the limit for that category
+  ///then extract the word from the category list.
+  ///Else reset the counter to 0 and return null signalling to change the category list. 
   WordContentStats? _getWordFromList(
     List<WordContentStats> categoryList,
     int wordsFromCurrentCategoryLimit

@@ -7,7 +7,7 @@ class WordRepositoryImpl implements WordRepository{
 
   ///Add the new attempt
   @override
-  Future<void> storeNewAttempt(WordContentStats currentWord, int rating) async {
+  Future<WordContentStats> storeNewAttempt(WordContentStats currentWord, int rating) async {
     WordModel oldModel = currentWord as WordModel;
     WordModel newModel = oldModel.copyWith(
       oldestAttempt: oldModel.middleAttempt,
@@ -15,7 +15,22 @@ class WordRepositoryImpl implements WordRepository{
       newestAttempt: rating
     );
 
-    await WordPersistence.update(newModel);
-  }
+    WordPersistence.update(newModel);
 
+    return newModel;
+  }
+  
+
+  ///
+  @override
+  Future<WordContentStats> updateNewestAttempt(WordContentStats currentWord, int rating) async {
+    WordModel oldModel = currentWord as WordModel;
+    WordModel newModel = oldModel.copyWith(
+      newestAttempt: rating
+    );
+
+    WordPersistence.update(newModel);
+
+    return newModel;
+  }
 }

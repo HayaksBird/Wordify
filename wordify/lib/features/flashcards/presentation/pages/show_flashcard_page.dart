@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/colors.dart';
 import 'package:wordify/features/flashcards/domain/entities/word.dart';
 import 'package:wordify/features/flashcards/domain/use_cases/assets.dart';
 import 'package:wordify/features/flashcards/presentation/state_management/chosen_rating.dart';
 import 'package:wordify/features/flashcards/presentation/state_management/flashcards_bloc.dart';
+import 'package:wordify/features/flashcards/presentation/widgets/flashcard_view.dart';
+import 'package:wordify/features/flashcards/presentation/ui_kit/header.dart';
 import 'package:wordify/features/flashcards/presentation/ui_kit/word_rating.dart';
 
-///
+///Show the page with the flashcards.
 class ShowFlashcardPage extends StatefulWidget {
   final List<WordContentStats> words;
+  final String path;
 
 
   const ShowFlashcardPage({
     super.key,
-    required this.words
+    required this.words,
+    required this.path
   });
 
 
@@ -23,7 +25,6 @@ class ShowFlashcardPage extends StatefulWidget {
 }
 
 class _ShowFlashcardPageState extends State<ShowFlashcardPage> {
-  int givenRating = 0;
   final _flashcardsBloc = FlashcardsBloc();
 
 
@@ -43,57 +44,42 @@ class _ShowFlashcardPageState extends State<ShowFlashcardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<WordContentStats>(
+    return StreamBuilder<WordWithRating>(
       stream: _flashcardsBloc.wordInView,
       builder: (context, snapshot) {
          if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          WordContentStats word = snapshot.data!;
+          WordContentStats word = snapshot.data!.word;
 
           return Scaffold(
             body: ChosenRatingProvider(
-              notifier: ValueNotifier<int>(0),
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(
-                      word.word,
-                      style: const TextStyle(color: AppColors.text)
-                    ),
-                    Text(
-                      word.translation,
-                      style: const TextStyle(color: AppColors.text)
-                    ),
-                    Text(
-                      word.sentence ?? '',
-                      style: const TextStyle(color: AppColors.text)
-                    ),
-                    Builder(
-                      builder: (context) {
-                        final ValueNotifier<int> valueNotifier = ChosenRatingProvider.of(context);
-                        givenRating = valueNotifier.value;
+              notifier: ValueNotifier<int>(snapshot.data!.givenRating),
+              child: Builder(
+                builder: (context) {
+                  final ValueNotifier<int> valueNotifier = ChosenRatingProvider.of(context);
 
-                        return ValueListenableBuilder<int>(
-                          valueListenable: valueNotifier,
-                          builder: (context, rating, child) {
-                            return WordRating(
-                              maxRating: maxRating,
-                              chosenRating: rating,
-                              valueNotifier: valueNotifier,
-                            );
-                          }
-                        );
-                      }
-                    ),
-                    WordifyElevatedButton(
-                      text: 'Next',
-                      onPressed: () { _flashcardsBloc.setNextWord(word, givenRating != 0 ? givenRating : 2); },
-                    )
-                  ],
-                ),
-              ),
-            ),
+                  return ValueListenableBuilder<int>(
+                    valueListenable: valueNotifier,
+                    builder: (context, rating, child) {
+                      return FlashcardView(
+                        word: word,
+                        rating: rating,
+                        header: Header(
+                          path: widget.path,
+                          delimiter: '/'
+                        ),
+                        wordRating: WordRating(
+                          maxRating: maxRating,
+                          chosenRating: rating,
+                          valueNotifier: valueNotifier,
+                        )
+                      );
+                    }
+                  );
+                }
+              )
+            )
           );
         }
       }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/ui_kit/colors.dart';
-import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/stripe_list_widget.dart';
+import 'package:wordify/core/ui_kit/stripe_list_widget.dart';
 
 class WordListTemplateWidget extends StatelessWidget {
   final String path, delimiter;
