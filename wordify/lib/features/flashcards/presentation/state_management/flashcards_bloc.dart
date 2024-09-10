@@ -66,7 +66,6 @@ class FlashcardsBloc {
       _visitedWordIndx++;
     }
 
-    
     _updateWordInView(_visitedWords[_visitedWordIndx]);
   }
 
