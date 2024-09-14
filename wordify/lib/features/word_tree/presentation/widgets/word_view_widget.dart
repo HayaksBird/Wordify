@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/animation_kit/switch_word_list_template.dart';
-import 'package:wordify/core/data/mapper/word_mapper.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/presentation/animation_kit/switch_word_list_template.dart';
+import 'package:wordify/core/domain/mapper/word_mapper.dart';
+import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/background_widget.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_list_template_widget.dart';
 import 'package:wordify/features/flashcards/presentation/pages/show_flashcard_page.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_word_template_widget.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/template_frame.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/word_form_decoration.dart';

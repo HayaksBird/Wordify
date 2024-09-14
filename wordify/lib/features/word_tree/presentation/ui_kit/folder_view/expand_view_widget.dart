@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:wordify/core/ui_kit/colors.dart';
+import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 
 // This is the Painter class

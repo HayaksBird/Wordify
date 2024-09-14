@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/colors.dart';
+import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 ///The main (root) frame for the word template screen (both create & update).
 class TemplateFrame extends StatelessWidget {

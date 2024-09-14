@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
+import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/flashcards/presentation/ui_kit/word_counter.dart';
 
 ///

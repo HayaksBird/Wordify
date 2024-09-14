@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/colors.dart';
+import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 ///Custom TextFormField for Word.
 class WordFormField extends TextFormField {

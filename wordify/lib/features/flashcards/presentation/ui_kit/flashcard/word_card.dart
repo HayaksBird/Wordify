@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/colors.dart';
+import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 ///The flashcard itself with a word and the rating bar.
 class WordCard extends StatelessWidget {

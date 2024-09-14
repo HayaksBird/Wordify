@@ -25,7 +25,7 @@ class WordRepositoryImpl implements WordRepository {
     FolderModel folderModel = folder as FolderModel;
 
     return WordPersistence.insert(
-      folderId: folderModel.id,
+      folder: folderModel,
       word: word.word,
       translation: word.translation,
       sentence: word.sentence
@@ -45,7 +45,7 @@ class WordRepositoryImpl implements WordRepository {
   Future<List<WordContent>> getWordsOfFolder(FolderContent folder) async {
     FolderModel folderModel = folder as FolderModel;
 
-    return WordPersistence.getWordsOfFolder(folderModel.id);
+    return WordPersistence.getWordsOfFolder(folderModel);
   }
 
 

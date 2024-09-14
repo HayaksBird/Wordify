@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/colors.dart';
-import 'package:wordify/core/ui_kit/stripe_list_widget.dart';
+import 'package:wordify/core/presentation/ui_kit/buttons.dart';
+import 'package:wordify/core/presentation/ui_kit/colors.dart';
+import 'package:wordify/core/presentation/ui_kit/stripe_list_widget.dart';
 
 ///Show the header for the flashcards page.
 ///Contains the return button and the folder path.

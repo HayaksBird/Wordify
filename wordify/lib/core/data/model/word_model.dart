@@ -1,3 +1,4 @@
+import 'package:wordify/core/data/model/folder_model.dart';
 import 'package:wordify/features/flashcards/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
 
@@ -15,6 +16,8 @@ class WordModel implements WordContent, WordContentStats {
   final String? sentence;
   @override
   final int oldestAttempt, middleAttempt, newestAttempt;
+  @override
+  final FolderModel folder;
 
 
   const WordModel({
@@ -25,12 +28,13 @@ class WordModel implements WordContent, WordContentStats {
     this.sentence,
     this.oldestAttempt = 1,
     this.middleAttempt = 1,
-    this.newestAttempt = 1
+    this.newestAttempt = 1,
+    required this.folder
   });
 
 
   // Create a Word from a Map
-  factory WordModel.fromMap(Map<String, dynamic> map) {
+  factory WordModel.fromMap(Map<String, dynamic> map, FolderModel folder) {
     return WordModel(
       id: map['id'] as int,
       folderId: map['folder_id'] as int,
@@ -39,7 +43,8 @@ class WordModel implements WordContent, WordContentStats {
       sentence: map['sentence'] as String?,
       oldestAttempt: map['oldest_attempt'] as int,
       middleAttempt: map['middle_attempt'] as int,
-      newestAttempt: map['newest_attempt'] as int
+      newestAttempt: map['newest_attempt'] as int,
+      folder: folder
     );
   }
 
@@ -53,7 +58,8 @@ class WordModel implements WordContent, WordContentStats {
     String? sentence,
     int? oldestAttempt,
     int? middleAttempt,
-    int? newestAttempt
+    int? newestAttempt,
+    FolderModel? folder
   }) {
     return WordModel(
       id: id ?? this.id,
@@ -64,6 +70,7 @@ class WordModel implements WordContent, WordContentStats {
       oldestAttempt: oldestAttempt ?? this.oldestAttempt,
       middleAttempt: middleAttempt ?? this.middleAttempt,
       newestAttempt: newestAttempt ?? this.newestAttempt,
+      folder: folder ?? this.folder
     );
   }
 

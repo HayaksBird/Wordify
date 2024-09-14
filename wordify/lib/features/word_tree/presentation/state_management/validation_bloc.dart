@@ -1,10 +1,10 @@
 import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/domain/use_cases/dictionary_manager.dart';
+import 'package:wordify/features/word_tree/domain/use_cases/dictionary_service.dart';
 import 'package:wordify/features/word_tree/domain/validation/folder_validation.dart';
 import 'package:wordify/features/word_tree/domain/validation/word_validation.dart';
 
-final DictionaryManager _dictionaryManager = DictionaryManager();
+final DictionaryService _dictionaryService = DictionaryService();
 
 
 
@@ -34,7 +34,7 @@ class FolderValidationBloc {
 
   ///
   String? validateInsertFolderName(String newName, FolderContent? parentFolder) {
-    NTree<FolderContent> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
+    NTree<FolderContent> folderTree = _dictionaryService.foldersInViewState.foldersInView;
 
     return _folderValidator.validateName(newName, parentFolder != null ? folderTree.getChildren(parentFolder) : folderTree.getRootItems);
   }
@@ -42,7 +42,7 @@ class FolderValidationBloc {
 
   ///
   String? validateUpdateFolderName(String newName, FolderContent folder, String oldName) {
-    NTree<FolderContent> folderTree = _dictionaryManager.foldersInViewState.foldersInView;
+    NTree<FolderContent> folderTree = _dictionaryService.foldersInViewState.foldersInView;
 
     return _folderValidator.validateName(newName, folderTree.getSiblingsInclusive(folder), oldName);
   }

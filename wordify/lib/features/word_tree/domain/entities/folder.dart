@@ -8,7 +8,7 @@ abstract class FolderContent {
 
 
 
-///A DTo object for the folder.
+///A DTO object for the folder.
 class TempFolderContainer {
   final String name;
 
@@ -27,12 +27,4 @@ class FolderWords {
 
 
   FolderWords(this.folder, this.words);
-
-
-  ///
-  void updateWord(WordContent oldWord, WordContent newWord) {
-    int index = words.indexOf(oldWord);
-
-    words[index] = newWord;
-  }
 }
