@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/presentation/animation_kit/switch_word_list_template.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/presentation/animation_kit/switch_word_list_template.dart';
 import 'package:wordify/core/domain/mapper/word_mapper.dart';
 import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/background_widget.dart';
@@ -98,11 +99,12 @@ class _WordViewWidgetState extends State<WordViewWidget> {
   }
 
 
+  ///
   void _callFlashcards(FolderWords activeFolder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => ShowFlashcardPage(
-          words: WordMapper.toFlashcards(activeFolder.words),
+          words: activeFolder.words.map((word) => WordMapper.extendWord(word)).toList(),
           path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
         )
       ),

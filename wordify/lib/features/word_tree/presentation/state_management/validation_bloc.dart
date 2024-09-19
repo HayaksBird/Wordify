@@ -1,5 +1,5 @@
+import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/core/util/n_tree.dart';
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_service.dart';
 import 'package:wordify/features/word_tree/domain/validation/folder_validation.dart';
 import 'package:wordify/features/word_tree/domain/validation/word_validation.dart';

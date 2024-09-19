@@ -1,4 +1,6 @@
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/word.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 
 ///A source-ambiguous storage access point interface.
 abstract class WordRepository {

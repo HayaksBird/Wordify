@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_folder_tile_widget.dart';
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-
-
-
-
 
 ///Shows the list of folders where the user can save the newly typed
 ///word.

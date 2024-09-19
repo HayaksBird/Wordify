@@ -1,16 +1,3 @@
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-
-///A word interface that will be used to reference an actual word object
-///received from the data layer.
-abstract class WordContent {
-  String get word;
-  String get translation;
-  String? get sentence;
-  FolderContent get folder;
-}
-
-
-
 ///A DTO object for the word.
 class TempWordContainer {
   final String word;

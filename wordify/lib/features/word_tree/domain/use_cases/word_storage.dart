@@ -1,8 +1,10 @@
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/domain/mapper/folder_mapper.dart';
 import 'package:wordify/core/domain/mapper/word_mapper.dart';
 import 'package:wordify/core/domain/use_cases/dictionary_manager.dart';
 import 'package:wordify/features/word_tree/data/word_repository.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/repositories/word_repository.dart';
 
 ///WORDS OPERATION MANAGER FOR DICTIONARY

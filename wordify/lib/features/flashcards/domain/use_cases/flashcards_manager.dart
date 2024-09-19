@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:wordify/features/flashcards/domain/entities/word.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/features/flashcards/domain/use_cases/assets.dart';
 
 ///This class sets the algorithm for the flashcards.
@@ -32,6 +32,8 @@ class FlashcardsManager {
   ///Count the weighted average score for each word and depending on that value, place the word
   ///in either of the three lists (worst, average, best).
   void setFlashcards(List<WordContentStats> words) {
+    _reset();
+
     for (WordContentStats word in words) {
       double weightedAverageScore = (weightFactor * (word.oldestAttempt + (2 * word.middleAttempt) + (3 * word.newestAttempt))) / attemptsStored;
 
@@ -97,6 +99,16 @@ class FlashcardsManager {
     }
 
     return word;
+  }
+
+  
+  ///
+  void _reset() {
+    _currentCategory = 0;
+    _wordsTakenFromGivenCategory = 0;
+    _worstLearned.clear();
+    _averageLearned.clear();
+    _bestLearned.clear();
   }
 }
 

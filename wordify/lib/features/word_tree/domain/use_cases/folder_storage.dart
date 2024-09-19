@@ -1,3 +1,4 @@
+import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/core/domain/mapper/folder_mapper.dart';
 import 'package:wordify/core/domain/use_cases/dictionary_manager.dart';
 import 'package:wordify/features/word_tree/data/folder_repository.dart';

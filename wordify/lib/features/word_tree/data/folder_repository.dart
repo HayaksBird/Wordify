@@ -1,5 +1,6 @@
 import 'package:wordify/core/data/data_sources/folder_persistence.dart';
 import 'package:wordify/core/data/model/folder_model.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
 

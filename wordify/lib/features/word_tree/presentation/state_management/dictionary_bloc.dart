@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/util/n_tree.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/use_cases/dictionary_service.dart';
 
 

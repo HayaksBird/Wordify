@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/template_frame.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';

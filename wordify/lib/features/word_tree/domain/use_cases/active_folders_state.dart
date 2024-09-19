@@ -1,10 +1,11 @@
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/domain/mapper/folder_mapper.dart';
 import 'package:wordify/core/domain/mapper/word_mapper.dart';
 import 'package:wordify/core/domain/use_cases/dictionary_manager.dart';
 import 'package:wordify/features/word_tree/data/folder_repository.dart';
 import 'package:wordify/features/word_tree/data/word_repository.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
 import 'package:wordify/features/word_tree/domain/repositories/word_repository.dart';
 
@@ -22,24 +23,26 @@ class ActiveFoldersState {
 
   ///Activate the folder and shift the view to it (moving above).
   Future<bool> activateFolder(FolderContent folder) async {
+    final folderModel = FolderMapper.toFolderModel(folder);
     bool didActivate;
 
-    if (!_activeFoldersState.isFolderInCache(FolderMapper.toFolderModel(folder))) {
+    if (!_activeFoldersState.isFolderInCache(folderModel) && 
+        !_activeFoldersState.isFolderActive(folderModel)) {
       List<WordContent> words = await _wordRepo.getWordsOfFolder(folder);
 
       didActivate = _activeFoldersState.activateFolder(
-        FolderMapper.toFolderModel(folder),
+        folderModel,
         words.map((word) => WordMapper.toWordModel(word)).toList()
       );
     } else {
-      didActivate = _activeFoldersState.activateFolder(FolderMapper.toFolderModel(folder));
+      didActivate = _activeFoldersState.activateFolder(folderModel);
     }
 
     if (didActivate) {
       didGoBelow = false;
       _currentInView = FolderWords(
         folder,
-        _activeFoldersState.getActiveFolder(FolderMapper.toFolderModel(folder))!
+        _activeFoldersState.getActiveFolder(folderModel)!
       );
     }
 
@@ -67,10 +70,11 @@ class ActiveFoldersState {
   ///Shift the view to a folder below by default. If there is no folder below,
   ///then shift the view to an upper folder.
   bool deactivateFolder(FolderContent folder) {
-    FolderContent? below = _activeFoldersState.getFolderBelow(FolderMapper.toFolderModel(folder)); 
-    FolderContent? above = _activeFoldersState.getFolderAbove(FolderMapper.toFolderModel(folder));
+    final folderModel = FolderMapper.toFolderModel(folder);
+    FolderContent? below = _activeFoldersState.getFolderBelow(folderModel); 
+    FolderContent? above = _activeFoldersState.getFolderAbove(folderModel);
 
-    bool didDeactivate = _activeFoldersState.deactivateFolder(FolderMapper.toFolderModel(folder));
+    bool didDeactivate = _activeFoldersState.deactivateFolder(folderModel);
 
     if (didDeactivate) {
       if (below != null) {

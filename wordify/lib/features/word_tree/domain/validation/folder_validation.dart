@@ -1,4 +1,4 @@
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 
 ///
 class FolderValidation {

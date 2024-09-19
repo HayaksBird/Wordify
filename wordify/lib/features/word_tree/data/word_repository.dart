@@ -1,7 +1,9 @@
 import 'package:wordify/core/data/data_sources/word_persistence.dart';
 import 'package:wordify/core/data/model/folder_model.dart';
 import 'package:wordify/core/data/model/word_model.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/word.dart';
+import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/repositories/word_repository.dart';
 
 ///An implementation of the storage access point which utilizes the 

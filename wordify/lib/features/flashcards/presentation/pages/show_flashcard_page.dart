@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/features/flashcards/domain/entities/word.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/features/flashcards/domain/use_cases/assets.dart';
 import 'package:wordify/features/flashcards/presentation/state_management/chosen_rating_provider.dart';
 import 'package:wordify/features/flashcards/presentation/state_management/flashcards_bloc.dart';
-import 'package:wordify/features/flashcards/presentation/state_management/flip_card_provider.dart';
 import 'package:wordify/features/flashcards/presentation/widgets/flashcard_view.dart';
 import 'package:wordify/features/flashcards/presentation/ui_kit/header.dart';
 
@@ -26,14 +25,7 @@ class ShowFlashcardPage extends StatefulWidget {
 
 class _ShowFlashcardPageState extends State<ShowFlashcardPage> {
   final _flashcardsBloc = FlashcardsBloc();
-
-
-  @override
-  void initState() {
-    super.initState();
-    _flashcardsBloc.flashcardsSetup(widget.words);
-  }
-
+  
 
   @override
   void dispose() {
@@ -44,6 +36,8 @@ class _ShowFlashcardPageState extends State<ShowFlashcardPage> {
 
   @override
   Widget build(BuildContext context) {
+    _flashcardsBloc.flashcardsSetup(widget.words);
+    
     return StreamBuilder<WordWithRating>(
       stream: _flashcardsBloc.wordInView,
       builder: (context, snapshot) {
@@ -55,25 +49,20 @@ class _ShowFlashcardPageState extends State<ShowFlashcardPage> {
           return Scaffold(
             body: ChosenRatingProvider(
               notifier: ValueNotifier<int>(snapshot.data!.givenRating),
-              child: FlipCardProvider(
-                notifier: ValueNotifier<bool>(true),
-                child: Builder(
-                  builder: (context) {
-                    final ValueNotifier<int> valueNotifier = ChosenRatingProvider.of(context);
-                    final ValueNotifier<bool> cardSideNotifier = FlipCardProvider.of(context);
-                
-                    return FlashcardView(
-                      word: word,
-                      maxRating: maxRating,
-                      ratingNotifier: valueNotifier,
-                      cardSideNotifier: cardSideNotifier,
-                      header: Header(
-                        path: widget.path,
-                        delimiter: '/'
-                      )
-                    );
-                  }
-                ),
+              child: Builder(
+                builder: (context) {
+                  final ValueNotifier<int> valueNotifier = ChosenRatingProvider.of(context);
+              
+                  return FlashcardView(
+                    word: word,
+                    maxRating: maxRating,
+                    ratingNotifier: valueNotifier,
+                    header: Header(
+                      path: widget.path,
+                      delimiter: '/'
+                    )
+                  );
+                }
               )
             )
           );

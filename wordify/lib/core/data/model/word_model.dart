@@ -1,6 +1,5 @@
 import 'package:wordify/core/data/model/folder_model.dart';
-import 'package:wordify/features/flashcards/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 
 ///The exact model of a word from the database.
 ///Implements multiple interfaces from different features to

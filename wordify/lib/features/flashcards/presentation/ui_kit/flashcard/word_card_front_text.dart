@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
-import 'package:wordify/features/flashcards/domain/entities/word.dart';
 
 class WordCardFrontText extends StatelessWidget {
   final WordContentStats word;

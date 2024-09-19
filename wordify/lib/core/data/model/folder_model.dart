@@ -1,4 +1,4 @@
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 
 ///The exact model of a folder from the database.
 class FolderModel implements FolderContent {

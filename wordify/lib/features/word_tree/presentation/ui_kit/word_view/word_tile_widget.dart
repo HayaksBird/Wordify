@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/presentation/animation_kit/fade_appearance.dart';
+import 'package:wordify/features/word_tree/presentation/animation_kit/fade_appearance.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 class WordTileWidget extends StatelessWidget {

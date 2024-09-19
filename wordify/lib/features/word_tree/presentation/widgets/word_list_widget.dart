@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_actions_overlay.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
-import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
 

@@ -1,6 +1,6 @@
 import 'package:wordify/core/data/data_sources/word_persistence.dart';
 import 'package:wordify/core/data/model/word_model.dart';
-import 'package:wordify/features/flashcards/domain/entities/word.dart';
+import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/features/flashcards/domain/repositories/word_repository.dart';
 
 class WordRepositoryImpl implements WordRepository{
