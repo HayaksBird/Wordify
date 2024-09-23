@@ -4,12 +4,12 @@ import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
-import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_word_template_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/choose_folder_template_widget.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/template_frame.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/word_form_decoration.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/chosen_folder_provider.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/providers/chosen_folder_provider.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/validation_bloc/validation_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/choose_folder_widget.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/form_widget.dart';
 
@@ -32,7 +32,7 @@ class UpdateWordTemplate extends StatefulWidget {
 
 class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   late final FolderWords expandedFolder;
-  late FolderContent newStorageFolder;
+  late FolderContent? newStorageFolder;
   late final WordContent word;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController wordController;
@@ -46,7 +46,7 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   void initState() {
     super.initState();
     expandedFolder = widget.expandedFolder;
-    newStorageFolder = expandedFolder.folder;
+    newStorageFolder = expandedFolder.folder != _dictionaryBloc.folderView.bufferFolder ? expandedFolder.folder : null;
     word = widget.word;
     wordController = TextEditingController(text: word.word);
     translationController = TextEditingController(text: word.translation);
@@ -109,9 +109,11 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
 
 
   ///
-  void _goBack(ValueNotifier<FolderContent> valueNotifier) {
-    valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value);
-    newStorageFolder = valueNotifier.value;
+  void _goBack(ValueNotifier<FolderContent?> valueNotifier) {
+    if (valueNotifier.value != null) {
+      valueNotifier.value = _dictionaryBloc.folderView.getParentFolder(valueNotifier.value!);
+      newStorageFolder = valueNotifier.value;
+    }
   }
 
 
@@ -119,17 +121,17 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   ///Uses InheritedWidget
   Widget _chooseFolder() {
     return ChosenFolderProvider(
-      notifier: ValueNotifier<FolderContent>(newStorageFolder),
+      notifier: ValueNotifier<FolderContent?>(newStorageFolder),
       child: Builder(
         builder: (context) {
-          final ValueNotifier<FolderContent> valueNotifier = ChosenFolderProvider.of(context);
+          final ValueNotifier<FolderContent?> valueNotifier = ChosenFolderProvider.of(context);
 
-          return ValueListenableBuilder<FolderContent>(
+          return ValueListenableBuilder<FolderContent?>(
             valueListenable: valueNotifier,
             builder: (context, folder, child) {
               newStorageFolder = folder;
 
-              return ChooseWordTemplateWidget(
+              return ChooseFolderTemplateWidget(
                 goBack: () { _goBack(valueNotifier); },
                 folders: ChooseFolderWidget(folders: _dictionaryBloc.folderView.getSubfolders(folder), valueNotifier: valueNotifier),
                 path: _dictionaryBloc.folderView.getFullPath(valueNotifier.value)
@@ -146,12 +148,12 @@ class _UpdateWordTemplateState extends State<UpdateWordTemplate> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final TempWordContainer newWord = TempWordContainer(
-        word: wordController.text, 
-        translation: translationController.text,
-        sentence: sentenceController.text
+        word: wordController.text.trim(), 
+        translation: translationController.text.trim(),
+        sentence: sentenceController.text.trim()
       );
 
-      _dictionaryBloc.content.updateWord(expandedFolder, newStorageFolder, word, newWord);
+      _dictionaryBloc.wordContent.updateWord(expandedFolder, newStorageFolder, word, newWord);
   
       Navigator.pop(context);
     }

@@ -33,8 +33,8 @@ class WordPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.rawUpdate(
-      'UPDATE words SET word = ?, translation = ?, sentence = ?, oldest_attempt = ?, middle_attempt = ?, newest_attempt = ? WHERE id = ?',
-      [word.word, word.translation, word.sentence, word.oldestAttempt, word.middleAttempt, word.newestAttempt, word.id]
+      'UPDATE words SET folder_id = ?, word = ?, translation = ?, sentence = ?, oldest_attempt = ?, middle_attempt = ?, newest_attempt = ? WHERE id = ?',
+      [word.folderId, word.word, word.translation, word.sentence, word.oldestAttempt, word.middleAttempt, word.newestAttempt, word.id]
     );
   }
 

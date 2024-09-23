@@ -169,4 +169,8 @@ class ActiveFoldersState {
 
     return _currentInView;
   }
+
+
+  ///GETTERS
+  FolderContent? get bufferFolder => _activeFoldersState.getBufferFolder;
 }

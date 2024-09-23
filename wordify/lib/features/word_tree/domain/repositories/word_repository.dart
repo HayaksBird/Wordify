@@ -8,6 +8,8 @@ abstract class WordRepository {
   Future<WordContent> addWord(FolderContent folder, TempWordContainer word);
   ///Update a word within a folder.
   Future<WordContent> updateWord(FolderContent folder, WordContent oldWord, TempWordContainer newWord);
+  ///Change the folder of a word.
+  Future<WordContent> changeFolder(FolderContent newFolder, WordContent word);
   ///Delete a word from a folder.
   Future<void> deleteWord(WordContent word);
   ///Get all words from a certain folder

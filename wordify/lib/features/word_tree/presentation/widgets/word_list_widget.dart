@@ -4,7 +4,7 @@ import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_ac
 import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_tile_widget.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_word_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
 ///Create the list of words presented in the word view.
 class WordListWidget extends StatelessWidget {
@@ -58,7 +58,7 @@ class WordListWidget extends StatelessWidget {
   void _showOverlay(BuildContext context, TapDownDetails details, WordContent word) {
     WordActionsOverlay.showOverlay(
       update: () { _openWordTemplate(context, word); },
-      delete: () { _dictionaryBloc.content.deleteWord(activeFolder, word); },
+      delete: () { _dictionaryBloc.wordContent.deleteWord(activeFolder, word); },
       position: details.globalPosition,
       onOverlayClosed: _overlayClosed,
       context: context

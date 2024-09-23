@@ -42,8 +42,8 @@ class FolderPersistence {
     final db = await WordifyDatabase.instance.database;
 
     await db.rawUpdate(
-      'UPDATE folders SET name = ? WHERE id = ?',
-      [folder.name, folder.id],
+      'UPDATE folders SET name = ?, parent_id = ? WHERE id = ?',
+      [folder.name, folder.parentId, folder.id],
     );
   }
 

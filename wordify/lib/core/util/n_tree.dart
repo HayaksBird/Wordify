@@ -128,6 +128,22 @@ class NTree<T> {
 
 
   ///
+  void changeParent(T? newParent, T item) {
+    _NTreeNode<T>? node = _itemInTree[item];
+    _NTreeNode<T>? newParentNode = newParent != null ? _itemInTree[newParent] : _root;
+
+    if (node != null && newParentNode != null) {
+      _NTreeNode<T> parentNode = node._parent!;
+      parentNode._childrenNodes.remove(node);
+
+      node._parent = newParentNode;
+
+      newParentNode._childrenNodes.add(node);
+    } else { throw ArgumentError('Item\'s parent cannot be changed since either the item or the parent does not exist'); }
+  }
+
+
+  ///
   bool containsChildren(T item) {
     bool containsChildren = false;
 
@@ -186,7 +202,8 @@ class NTree<T> {
     if (node != null) {
       _NTreeNode<T> parent = node.parent!;
 
-      return _toListItems(parent.childrenNodes..remove(node));
+      final list =  _toListItems(parent.childrenNodes);
+      return list..remove(node._item);
     } else { throw ArgumentError('Cannot get siblings of item, since it does not exist'); }
   }
 
@@ -217,7 +234,7 @@ class NTree<T> {
 ///
 class _NTreeNode<T> {
   T? _item;
-  final _NTreeNode<T>? _parent;
+  _NTreeNode<T>? _parent;
   List<_NTreeNode<T>> _childrenNodes;
 
 

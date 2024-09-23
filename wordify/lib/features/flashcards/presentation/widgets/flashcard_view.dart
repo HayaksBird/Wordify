@@ -31,8 +31,8 @@ class FlashcardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _flipCardController = FlipCardController();
-    final _switchCardController = SwitchCardController();
+    final flipCardController = FlipCardController();
+    final switchCardController = SwitchCardController();
 
 
     return Background(
@@ -47,27 +47,27 @@ class FlashcardView extends StatelessWidget {
               
                   //swipe left (go forward).
                   if (velocity.dx < 0) {
-                    _switchCardController.slideRight();
+                    switchCardController.slideRight();
                     _flashcardsBloc.setNextWord(word, ratingNotifier.value);
                   }
               
                   //swipe right (go back).
                   if (velocity.dx > 0) {
-                    _switchCardController.slideLeft();
+                    switchCardController.slideLeft();
                     _flashcardsBloc.setPreviousWord(word, ratingNotifier.value);
                   }
                 },
               
                 onTap: () {
-                  _flipCardController.flipCard();
+                  flipCardController.flipCard();
                 },
 
                 child: SwitchCard(
-                  controller: _switchCardController,
+                  controller: switchCardController,
                   identifier: word,
                   child: FlipCard(
                     key: ValueKey(word),
-                    controller: _flipCardController,
+                    controller: flipCardController,
                     front: WordCard(
                       content: WordCardFrontText(word: word),
                       wordRating: WordRating(
@@ -101,11 +101,11 @@ class FlashcardView extends StatelessWidget {
             right: 0,
             child: Navigation(
               goBack: () {
-                _switchCardController.slideLeft();
+                switchCardController.slideLeft();
                 _flashcardsBloc.setPreviousWord(word, ratingNotifier.value);
               },
               goForward: () {
-                _switchCardController.slideRight();
+                switchCardController.slideRight();
                 _flashcardsBloc.setNextWord(word, ratingNotifier.value);
               },
               currentWordPos: _flashcardsBloc.currentWordPos,

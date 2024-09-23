@@ -6,12 +6,13 @@ class FolderValidation {
 
   ///
   String? validateName(String newName, List<FolderContent> parentsChildren, [String? oldName]) {
+    String newNameTrimmed = newName.trim();
 
-    if (newName.isEmpty) {
+    if (newNameTrimmed.isEmpty) {
       return 'Provide a name';
-    } else if (parentsChildren.any((sibling) => sibling.name == newName) && (oldName == null || oldName != newName)) {
+    } else if (parentsChildren.any((sibling) => sibling.name == newNameTrimmed) && (oldName == null || oldName != newNameTrimmed)) {
       return 'Folder path must be unique';
-    } else if (exceptionCharacters.any((char) => newName.contains(char))) {
+    } else if (exceptionCharacters.any((char) => newNameTrimmed.contains(char))) {
       return 'Cannot use the following characters: ${exceptionCharacters.join(', ')}';
     }
     

@@ -3,8 +3,8 @@ import 'package:wordify/features/word_tree/presentation/animation_kit/expand_fol
 import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/expand_view_widget.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/is_folder_view_expanded_provider.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/providers/is_folder_view_expanded_provider.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/folder_view_widget.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/word_view_widget.dart';
 

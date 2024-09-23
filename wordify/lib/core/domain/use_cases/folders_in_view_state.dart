@@ -17,9 +17,37 @@ class FoldersInViewState {
     _dictionary.foldersInView.insert(parentFolder, children);
   }
 
+  
+  ///
+  void changeFolderParent(FolderModel? newParentFolder, FolderModel folder) {
+    _dictionary.foldersInView.changeParent(newParentFolder, folder);
+  }
+
 
   ///
-  String fullPath(FolderModel folder) {
-    return _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
-  } 
+  bool doesHaveChildren(FolderModel folder) => _dictionary.foldersInView.containsChildren(folder);
+
+
+  ///
+  List<FolderModel> getRootFolders() => _dictionary.foldersInView.getRootItems;
+
+
+  ///
+  List<FolderModel> getChildren(FolderModel folder) => _dictionary.foldersInView.getChildren(folder);
+
+
+  ///
+  FolderModel? getParent(FolderModel folder) => _dictionary.foldersInView.getParent(folder);
+
+
+  ///
+  List<FolderModel> getSiblingsInclusive(FolderModel folder) => _dictionary.foldersInView.getSiblingsInclusive(folder);
+
+
+  ///
+  List<FolderModel> getSiblingsExclusive(FolderModel folder) => _dictionary.foldersInView.getSiblingsExclusive(folder);
+  
+
+  ///
+  String fullPath(FolderModel folder) => _dictionary.foldersInView.getPathToItem(folder, (f) => f.name);
 }

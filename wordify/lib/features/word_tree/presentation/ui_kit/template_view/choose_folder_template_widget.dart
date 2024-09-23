@@ -3,18 +3,20 @@ import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
 ///Template for a path choice.
-class ChooseWordTemplateWidget extends StatelessWidget {
+class ChooseFolderTemplateWidget extends StatelessWidget {
   final Widget folders;
   final VoidCallback goBack;
   final String path;
+  final String pathMessage;
 
 
-  const ChooseWordTemplateWidget({
+  const ChooseFolderTemplateWidget({
     super.key,
     required this.folders,
     required this.goBack,
-    required path
-  }): path = 'Saving to: $path';
+    required path,
+    this.pathMessage = 'Saving to'
+  }): path = '$pathMessage: $path';
 
 
   @override

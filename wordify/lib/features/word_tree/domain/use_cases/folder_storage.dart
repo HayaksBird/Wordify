@@ -9,6 +9,7 @@ import 'package:wordify/features/word_tree/domain/repositories/folder_repository
 class FolderStorage {
   final FolderRepository _folderRepo = FolderRepositoryImpl();
   final _foldersContent = DictionaryManager().foldersContent;
+  final _foldersInViewState = DictionaryManager().foldersInViewState;
 
 
   ///Add a new folder.
@@ -19,6 +20,19 @@ class FolderStorage {
       parentFolder != null ? FolderMapper.toFolderModel(parentFolder) : null,
       FolderMapper.toFolderModel(newFolder),
     );
+  }
+
+
+  ///
+  Future<FolderContent> changeParentFolder(FolderContent folder, FolderContent? parentFolder) async {
+    FolderContent updatedFolder = await _folderRepo.changeParentFolder(folder, parentFolder);
+
+    _foldersInViewState.changeFolderParent(
+      parentFolder != null ? FolderMapper.toFolderModel(parentFolder) : null,
+      FolderMapper.toFolderModel(updatedFolder)
+    );
+
+    return updatedFolder;
   }
 
 

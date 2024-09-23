@@ -8,7 +8,7 @@ import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_li
 import 'package:wordify/features/flashcards/presentation/pages/show_flashcard_page.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
 
 class WordViewWidget extends StatefulWidget {
@@ -58,7 +58,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
         ),
 
         SwitchWordListTemplate(
-          oldActiveFolder: activeFolder,
+          identifier: activeFolder,
           didGoBelow: _dictionaryBloc.wordView.didGoBelow,
           wordListTemplateWidget: WordListTemplateWidget( //The template witht the folder content
             key: ValueKey(activeFolder),

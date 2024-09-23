@@ -6,7 +6,7 @@ import 'package:wordify/features/word_tree/presentation/ui_kit/template_view/cho
 ///word.
 class ChooseFolderWidget extends StatelessWidget {
   final List<FolderContent> folders;
-  final ValueNotifier<FolderContent> valueNotifier;
+  final ValueNotifier<FolderContent?> valueNotifier;
 
 
   const ChooseFolderWidget({

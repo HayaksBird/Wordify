@@ -9,7 +9,6 @@ import 'package:wordify/features/word_tree/domain/repositories/word_repository.d
 ///An implementation of the storage access point which utilizes the 
 ///database operations.
 class WordRepositoryImpl implements WordRepository {
-  //Singleton
   static final WordRepositoryImpl _instance = WordRepositoryImpl._internal();
 
 
@@ -60,6 +59,23 @@ class WordRepositoryImpl implements WordRepository {
       word: newWord.word,
       translation: newWord.translation,
       sentence:newWord.sentence
+    );
+
+    await WordPersistence.update(updatedWord);
+
+    return updatedWord;
+  }
+  
+
+  ///
+  @override
+  Future<WordContent> changeFolder(FolderContent newFolder, WordContent word) async {
+    WordModel wordModel = word as WordModel;
+    FolderModel newFolderModel = newFolder as FolderModel;
+
+    WordModel updatedWord = wordModel.copyWith(
+      folder: newFolderModel,
+      folderId: newFolderModel.id
     );
 
     await WordPersistence.update(updatedWord);

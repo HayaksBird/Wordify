@@ -43,6 +43,22 @@ class WordStorage {
 
 
   ///
+  Future<void> changeWordsFolder(FolderContent oldFolder, FolderContent newFolder, WordContent word) async {
+    WordContent updatedWord = await _wordRepo.changeFolder(newFolder, word);
+
+    _wordsContent.deleteWord(
+      FolderMapper.toFolderModel(oldFolder),
+      WordMapper.toWordModel(word)
+    );
+
+    _wordsContent.addNewWord(
+      FolderMapper.toFolderModel(newFolder),
+      WordMapper.toWordModel(updatedWord)
+    );
+  }
+
+
+  ///
   Future<void> deleteWord(FolderContent folder, WordContent word) async {
     _wordsContent.deleteWord(
       FolderMapper.toFolderModel(folder),

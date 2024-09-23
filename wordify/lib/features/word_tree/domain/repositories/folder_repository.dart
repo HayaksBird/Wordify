@@ -7,6 +7,8 @@ abstract class FolderRepository {
   Future<FolderContent> addFolder(FolderContent? parentFolder, TempFolderContainer folder);
   ///Update a folder.
   Future<FolderContent> updateFolder(FolderContent oldFolder, TempFolderContainer newFolder);
+  ///Change the parent folder for a folder.
+  Future<FolderContent> changeParentFolder(FolderContent folder, FolderContent? parentFolder);
   ///Delete a folder.
   Future<void> deleteFolder(FolderContent folder);
   ///Get a list of root folders in the system.

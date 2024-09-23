@@ -62,7 +62,7 @@ class WordModel implements WordContent, WordContentStats {
   }) {
     return WordModel(
       id: id ?? this.id,
-      folderId: this.folderId,
+      folderId: folderId ?? this.folderId,
       word: word ?? this.word,
       translation: translation ?? this.translation,
       sentence: sentence ?? this.sentence,

@@ -4,7 +4,7 @@ import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folde
 import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folder_row_widget.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
 ///Presents the folder tree in the folder view.
 ///Responsible for creating the and styling the tree.
@@ -91,7 +91,7 @@ class FolderTreetWidget extends StatelessWidget {
     FolderActionsOverlay.showOverlay(
       create: () { _createFolder(context, folder); },
       update: () { _updateFolder(context, folder); },
-      delete: () { _dictionaryBloc.content.deleteFolder(folder); },
+      delete: () { _dictionaryBloc.folderContent.deleteFolder(folder); },
       onOverlayClosed: _overlayClosed,
       position: details.globalPosition,
       context: context
