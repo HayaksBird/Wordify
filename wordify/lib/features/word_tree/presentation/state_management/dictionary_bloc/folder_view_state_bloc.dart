@@ -55,7 +55,7 @@ class FolderViewStateBloc {
   ///
   List<FolderContent> getSubfoldersWithException(FolderContent? folder, FolderContent exceptionFolder) {
     if (folder == null) { //if null then show the root folders
-      return dictionaryService.foldersInViewState.getRootFolders();
+      return dictionaryService.foldersInViewState.getRootFolders()..remove(exceptionFolder);
     } else {
       return dictionaryService.foldersInViewState.getChildren(folder)..remove(exceptionFolder);
     }

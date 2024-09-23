@@ -77,10 +77,10 @@ class FolderRepositoryImpl implements FolderRepository {
   @override
   Future<FolderContent> changeParentFolder(FolderContent folder, FolderContent? parentFolder) async {
     FolderModel oldFolderModel = folder as FolderModel;
-    FolderModel parentFolderModel = parentFolder as FolderModel;
+    FolderModel? parentFolderModel = parentFolder as FolderModel?;
 
     FolderModel newFolderModel = oldFolderModel.copyWith(
-      parentId: parentFolderModel.id
+      parentId: parentFolderModel?.id
     );
 
     await FolderPersistence.update(newFolderModel);

@@ -27,12 +27,12 @@ class FolderModel implements FolderContent {
   ///Immitate update of an object, when you actually create a new instance of it.
   FolderModel copyWith({
     int? id,
-    int? parentId,
+    Object? parentId = const Object(),  //parentId can be null intentionally
     String? name
   }) {
     return FolderModel(
       id: id ?? this.id,
-      parentId: parentId ?? this.parentId,
+      parentId: parentId == const Object() ? this.parentId : parentId as int?,
       name: name ?? this.name
     );
   }
