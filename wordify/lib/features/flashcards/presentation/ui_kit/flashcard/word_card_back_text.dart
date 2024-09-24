@@ -16,25 +16,28 @@ class WordCardBackText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            word.word,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 25,
-              fontWeight: FontWeight.bold
-            )
-          ),
-          const SizedBox(height: 10),
-          _cardTextBold('Translation'),
-          _cardText(word.translation),
-          if (word.sentence != null && word.sentence != '') ...[
-            _cardTextBold('Example'),
-            _cardText(word.sentence!)
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              word.word,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 27,
+                fontWeight: FontWeight.bold
+              )
+            ),
+            const SizedBox(height: 12),
+            _cardTextBold('Translation'),
+            _cardText(word.translation),
+            if (word.sentence != null && word.sentence != '') ...[
+              const SizedBox(height: 10),
+              _cardTextBold('Example'),
+              _cardText(word.sentence!)
+            ]
           ]
-        ]
+        ),
       ),
     );
   }
@@ -46,8 +49,8 @@ class WordCardBackText extends StatelessWidget {
       text,
       style: const TextStyle(
         color: AppColors.text,
-        fontSize: 20,
-        fontWeight: FontWeight.bold
+        fontSize: 15,
+        fontWeight: FontWeight.w300
       )
     );
   }

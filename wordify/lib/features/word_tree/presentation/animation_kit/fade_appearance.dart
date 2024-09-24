@@ -17,7 +17,7 @@ class FadeAppearance extends StatefulWidget {
 }
 
 class _FadeAppearanceState extends State<FadeAppearance> with SingleTickerProviderStateMixin {
-   //Controls the timing and progress of the animation
+  //Controls the timing and progress of the animation
   late AnimationController _controller;
   //Defines how the animation values change over time, specifically the opacity for the fade effect
   late Animation<double> _fadeAnimation;
@@ -62,6 +62,7 @@ class _FadeAppearanceState extends State<FadeAppearance> with SingleTickerProvid
   @override
   void didUpdateWidget(covariant FadeAppearance oldWidget) {
     super.didUpdateWidget(oldWidget);
+    
     if (widget.isVisible) {
       _controller.forward();
     } else {

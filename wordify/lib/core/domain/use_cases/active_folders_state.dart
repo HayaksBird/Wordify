@@ -3,6 +3,7 @@ import 'package:wordify/core/data/model/word_model.dart';
 import 'package:wordify/core/domain/entities/dictionary.dart';
 import 'package:wordify/core/domain/entities/folder_words_container.dart';
 
+///Manage the active folders list.
 class ActiveFoldersState {
   final Dictionary _dictionary = Dictionary();
 

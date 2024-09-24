@@ -4,9 +4,11 @@ import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
-///
+///BLoC class that maintains the content of words.
 class WordContentBloc {
+
   ///Add new word to a folder.
+  ///If the folder we are adding to is currently in view then update the state.
   Future<void> createWord(FolderContent? folder, TempWordContainer word) async {
     folder = folder ?? dictionaryService.activeFoldersState.bufferFolder!;
 
@@ -20,9 +22,8 @@ class WordContentBloc {
 
 
   ///Update the word in a folder.
-  ///If the user moves the word to another folder then delete it in the original folder and
-  ///create it in a new one.
-  ///Else 
+  ///If the user moves the word to another folder then update the corresponding folder of
+  ///a word.
   Future<void> updateWord(FolderWords expandedFolder, FolderContent? newStorage, WordContent oldWord, TempWordContainer newWord) async {
     newStorage = newStorage ?? dictionaryService.activeFoldersState.bufferFolder!;
 

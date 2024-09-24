@@ -1,8 +1,7 @@
 import 'package:wordify/core/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
-///BLoC class to work with the dictionary. It serves as an intermediary between
-///the domain and the UI.
+///BLoC class that maintains the state of the folder view.
 class FolderViewStateBloc {
   bool _showBuffer = true;
   FolderContent? _selectedFolder;  //The folder selected by the right click
@@ -42,7 +41,7 @@ class FolderViewStateBloc {
   }
 
 
-  ///
+  ///Get a list of subfolders of a certain folder.
   List<FolderContent> getSubfolders(FolderContent? folder) {
     if (folder == null) { //if null then show the root folders
       return dictionaryService.foldersInViewState.getRootFolders();
@@ -52,7 +51,8 @@ class FolderViewStateBloc {
   }
 
 
-  ///
+  ///Get a list of subfolders of a certain folder with a provided exception folder.
+  ///Meaning, if the exception folder is in the list then remove it.
   List<FolderContent> getSubfoldersWithException(FolderContent? folder, FolderContent exceptionFolder) {
     if (folder == null) { //if null then show the root folders
       return dictionaryService.foldersInViewState.getRootFolders()..remove(exceptionFolder);
@@ -62,7 +62,8 @@ class FolderViewStateBloc {
   }
 
 
-  ///
+  ///Get a parent folder of the provided folder. Note that if the root folder is given,
+  ///then the parent is null.
   FolderContent? getParentFolder(FolderContent folder) {
     return dictionaryService.foldersInViewState.getParent(folder);
   }

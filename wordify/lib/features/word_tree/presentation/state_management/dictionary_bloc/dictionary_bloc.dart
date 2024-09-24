@@ -30,7 +30,9 @@ void updateFolderView() {
 
 
 
-///
+///The BLoC class for the dictionary. It serves as an intermediary between
+///the domain and the UI. It is a composite class that gives access to other
+///BLoC objects to manipulate the state of the dictionary.
 class DictionaryBloc {
   static final DictionaryBloc _instance = DictionaryBloc._internal();
   

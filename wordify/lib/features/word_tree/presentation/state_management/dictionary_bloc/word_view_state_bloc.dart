@@ -3,7 +3,7 @@ import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
-///
+///BLoC class that maintains the state of the word view.
 class WordViewStateBloc {
   WordContent? _selectedWord;  //The word selected by the right click
 
@@ -86,6 +86,10 @@ class WordViewStateBloc {
     _selectedWord = word;
     updateWordView();
   }
+
+
+  ///Update the state of the word view.
+  void updateView() { updateWordView(); }
 
 
   ///Is the folder double clicked to show its content?

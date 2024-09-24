@@ -7,16 +7,13 @@ import 'package:wordify/features/word_tree/data/word_repository.dart';
 import 'package:wordify/features/word_tree/domain/entities/word.dart';
 import 'package:wordify/features/word_tree/domain/repositories/word_repository.dart';
 
-///WORDS OPERATION MANAGER FOR DICTIONARY
+///Stores the changed content of the words to the dictionary and to the DB.
 class WordStorage {  
   final WordRepository _wordRepo = WordRepositoryImpl();
   final _wordsContent = DictionaryManager().wordsContent;
 
 
-  ///If the folder of the word you are adding is not in cache, then just add in to db
-  ///(we don't want to perform unnecessary caching).
-  ///If the folder is in cache, then update the folder of the new word and store it in cache.
-  ///If necessary, then also update the active folder list.
+  ///Add a new word.
   Future<void> addNewWord(FolderContent folder, TempWordContainer word) async {
     WordContent newWord = await _wordRepo.addWord(folder, word);
 
@@ -27,8 +24,7 @@ class WordStorage {
   }
 
 
-  ///Update the folder with the updated word.
-  ///Update the cache and the active folder list with the new folder.
+  ///Update the folder.
   Future<WordContent> updateWord(FolderContent folder, WordContent oldWord, TempWordContainer newWord) async {
     WordContent updatedWord = await _wordRepo.updateWord(folder, oldWord, newWord);
    
@@ -42,7 +38,7 @@ class WordStorage {
   }
 
 
-  ///
+  ///Change the folder of a word.
   Future<void> changeWordsFolder(FolderContent oldFolder, FolderContent newFolder, WordContent word) async {
     WordContent updatedWord = await _wordRepo.changeFolder(newFolder, word);
 
@@ -58,7 +54,7 @@ class WordStorage {
   }
 
 
-  ///
+  ///Delete a word.
   Future<void> deleteWord(FolderContent folder, WordContent word) async {
     _wordsContent.deleteWord(
       FolderMapper.toFolderModel(folder),

@@ -5,9 +5,9 @@ import 'package:wordify/core/util/n_tree.dart';
 import 'package:wordify/core/util/stack_linked_hash_map.dart';
 
 ///A dictionary of the app. It contains a:
-///tree folders that are in view (could be/are opened)
+///tree of folders that are in view
 ///list of active folders (the folders that have been opened and are in view)
-///set of all folders which have ever been opened (a caching mechanism)
+///set of last n folders which have been opened (a caching mechanism)
 class Dictionary {
   static final Dictionary _instance = Dictionary._internal();
 

@@ -99,7 +99,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
   }
 
 
-  ///
+  ///Call the flashcards feature. After it is done executing, update the view state.
   void _callFlashcards(FolderWords activeFolder) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -108,6 +108,6 @@ class _WordViewWidgetState extends State<WordViewWidget> {
           path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
         )
       ),
-    );
+    ).then((_) { _dictionaryBloc.wordView.updateView(); });
   }
 }

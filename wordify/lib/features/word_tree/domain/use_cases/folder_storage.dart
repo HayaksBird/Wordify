@@ -5,7 +5,7 @@ import 'package:wordify/features/word_tree/data/folder_repository.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/domain/repositories/folder_repository.dart';
 
-///FOLDERS OPERATION MANAGER FOR DICTIONARY
+///Stores the changed content of the folders to the dictionary and to the DB.
 class FolderStorage {
   final FolderRepository _folderRepo = FolderRepositoryImpl();
   final _foldersContent = DictionaryManager().foldersContent;
@@ -23,7 +23,7 @@ class FolderStorage {
   }
 
 
-  ///
+  ///Change the parent folder of a folder.
   Future<FolderContent> changeParentFolder(FolderContent folder, FolderContent? parentFolder) async {
     FolderContent updatedFolder = await _folderRepo.changeParentFolder(folder, parentFolder);
 
@@ -36,7 +36,7 @@ class FolderStorage {
   }
 
 
-  ///
+  ///Update the folder content.
   Future<FolderContent> updateFolder(FolderContent oldFolder, TempFolderContainer newFolder) async {
     FolderContent updatedFolder = await _folderRepo.updateFolder(oldFolder, newFolder);
     
@@ -50,8 +50,6 @@ class FolderStorage {
 
 
   ///Delete a folder with its subfolders.
-  ///Remove them from the cache and/or active folder list
-  ///if they are present there.
   Future<List<FolderContent>> deleteFolder(FolderContent folder) async {
     List<FolderContent> subfolders = _foldersContent.deleteFolder(
       FolderMapper.toFolderModel(folder)

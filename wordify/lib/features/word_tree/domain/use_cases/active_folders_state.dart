@@ -22,6 +22,9 @@ class ActiveFoldersState {
 
 
   ///Activate the folder and shift the view to it (moving above).
+  ///
+  ///If the folder is not in cache and not in active folder list
+  ///then fetch its words from the DB.
   Future<bool> activateFolder(FolderContent folder) async {
     final folderModel = FolderMapper.toFolderModel(folder);
     bool didActivate;
@@ -154,7 +157,12 @@ class ActiveFoldersState {
   ///Get the currently active folder.
   ///If the last tracked folder is no longer active (due to delete perhaps)
   ///then return the active folder at the top of the stack.
-  ///Else return the last trackeed active folder.
+  ///Else return the last tracked active folder.
+  ///
+  ///Note that _currentInView simply points to one of the folders in active
+  ///words list which is located in the core. Thus, if the active folder in
+  ///the core is updated (e.g., a word is added or removed) the _currentInView
+  ///will reflect those changes
   FolderWords? get currentActiveFolder {
     if (_currentInView != null && !isFolderActive(_currentInView!.folder)) {
       FolderContent? newFolder = _activeFoldersState.getTopFolder;
