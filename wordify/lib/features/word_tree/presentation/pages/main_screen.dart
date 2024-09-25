@@ -116,7 +116,7 @@ class _MainScreenState extends State<MainScreen> {
       children: [
         ExpandFolderView(
           width: width1,
-          folderViewWidget: const FolderViewWidget()
+          folderViewWidget: FolderViewWidget(folderViewExpandNotifier: valueNotifier)
         ),
         
         Expanded(

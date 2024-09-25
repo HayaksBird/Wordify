@@ -9,7 +9,14 @@ import 'package:wordify/features/word_tree/presentation/widgets/folder_tree_widg
 ///Present the list of type FolderContentWidget,
 ///showing all words in an active folder list.
 class FolderViewWidget extends StatefulWidget {
-  const FolderViewWidget({super.key});
+  final ValueNotifier<bool> folderViewExpandNotifier;
+
+
+  const FolderViewWidget({
+    super.key,
+    required this.folderViewExpandNotifier
+  });
+
 
   @override
   State<FolderViewWidget> createState() => _FolderViewWidgetState();
@@ -36,6 +43,7 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<List<FolderContent>>(
       stream: _dictionaryBloc.folderView.foldersInView,
       builder: (context, snapshot) {
@@ -52,7 +60,10 @@ class _FolderViewWidgetState extends State<FolderViewWidget> {
               null,
               child: Stack(
                 children: [
-                  FolderTreetWidget(rootFolders: (snapshot.data!))
+                  FolderTreetWidget(
+                    rootFolders: (snapshot.data!),
+                    folderViewExpandNotifier: widget.folderViewExpandNotifier,
+                  )
                 ]
               )
             )

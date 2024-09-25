@@ -103,6 +103,9 @@ class FolderTileWidget extends StatelessWidget {
           fontSize: 14.0,
           color: isActivated ? AppColors.textClicked : AppColors.text,
         ),
+        overflow: TextOverflow.ellipsis,  //Add ellipsis if text overflows
+        maxLines: 1,  //Ensure the text is displayed in only one line
+        softWrap: false //Prevent the text from wrapping to the next line
       ),
     );
   }

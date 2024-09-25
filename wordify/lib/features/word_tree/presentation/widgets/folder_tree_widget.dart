@@ -12,11 +12,13 @@ import 'package:wordify/features/word_tree/presentation/state_management/diction
 class FolderTreetWidget extends StatelessWidget {
   final List<FolderContent> rootFolders;
   final _dictionaryBloc = DictionaryBloc();
+  final ValueNotifier<bool> folderViewExpandNotifier;
 
 
   FolderTreetWidget({
     super.key,
-    required this.rootFolders
+    required this.rootFolders,
+    required this.folderViewExpandNotifier
   });
 
 
@@ -64,8 +66,11 @@ class FolderTreetWidget extends StatelessWidget {
             _showOverlay(context, details, folder); 
           },
           child: FolderRowWidget(
-            isExpanded: _dictionaryBloc.folderView.isToExpand(folder),
-            toggleFolder: () { _dictionaryBloc.folderView.toggleFolder(folder); },
+            isExpanded: _dictionaryBloc.folderView.isToExpand(folder) && _dictionaryBloc.folderView.canShowSubfolders(folderViewExpandNotifier.value, layer),
+            toggleFolder: () {
+              _dictionaryBloc.folderView.toggleFolder(folderViewExpandNotifier.value, layer, folder);
+              if (_dictionaryBloc.folderView.triggerExpand(folderViewExpandNotifier.value, layer, folder)) { folderViewExpandNotifier.value = true; }
+            },
             layer: layer,
             isFirstFolder: folder == rootFolders[0],
             isSelected: folder == _dictionaryBloc.folderView.getSelectedFolder,
@@ -79,7 +84,7 @@ class FolderTreetWidget extends StatelessWidget {
           ),
         ),
 
-        if (_dictionaryBloc.folderView.isToExpand(folder))
+        if (_dictionaryBloc.folderView.isToExpand(folder) && _dictionaryBloc.folderView.canShowSubfolders(folderViewExpandNotifier.value, layer))
           _buildInnerFolderList(context, _dictionaryBloc.folderView.getSubfolders(folder), layer + 1)
       ]
     );

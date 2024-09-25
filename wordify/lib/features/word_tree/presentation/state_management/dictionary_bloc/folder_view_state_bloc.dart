@@ -16,13 +16,22 @@ class FolderViewStateBloc {
 
 
   ///Expand the folder if it is not expanded, or shrink it if it is expanded.
-  void toggleFolder(FolderContent folder) {
-    if (dictionaryService.foldersInViewState.doesHaveChildren(folder)) {
-      if (!expandedFolders.contains(folder)) {
-        expandedFolders.add(folder);
-      } else { expandedFolders.remove(folder); }
+  void toggleFolder(bool isFolderViewExpanded, int layer, FolderContent folder) {
+    ///If the folder view is not expanded, the current folder does contain subfolders, and
+    ///the current tree depth is 3 (layer 2) then simply add the folder to the expanded list
+    ///if it is not there because the view is about to expand.
+    if (!isFolderViewExpanded && layer == 2 && dictionaryService.foldersInViewState.doesHaveChildren(folder)) {
+      if (!expandedFolders.contains(folder)) { expandedFolders.add(folder); }
+    ///If we do not have the case mentioned above then simply toggle the folder.
+    ///Note that the folder can only be expanded if it has subfolders.
+    } else {
+      if (dictionaryService.foldersInViewState.doesHaveChildren(folder)) {
+        if (!expandedFolders.contains(folder)) {
+          expandedFolders.add(folder);
+        } else { expandedFolders.remove(folder); }
 
-      updateFolderView();
+        updateFolderView();
+      }
     }
   }
 
@@ -38,6 +47,21 @@ class FolderViewStateBloc {
   ///Can show child folders?
   bool isToExpand(FolderContent folder) {
     return expandedFolders.contains(folder) && dictionaryService.foldersInViewState.doesHaveChildren(folder);
+  }
+
+
+  ///Trigger the expand if the folder view is not expanded, the current folder
+  ///does contain subfolders, and the current tree depth is 3 (layer 2)
+  bool triggerExpand(bool isFolderViewExpanded, int layer, FolderContent folder) {
+    return !isFolderViewExpanded && layer == 2 && dictionaryService.foldersInViewState.doesHaveChildren(folder);
+  }
+
+  
+  ///If the folder view is in the shrinked view then show at max 2 layers.
+  ///(The layer count starts at 0).
+  bool canShowSubfolders(bool isFolderViewExpanded, int layer) {
+    if (!isFolderViewExpanded && layer >= 2) { return false; }
+    else { return true; }
   }
 
 
