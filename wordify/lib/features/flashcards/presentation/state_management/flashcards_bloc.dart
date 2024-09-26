@@ -106,7 +106,8 @@ class FlashcardsBloc {
   }
 
 
-  ///
+  ///Reset the data in the beginning to remove the data from the previous
+  ///flashcards run.
   void _reset(int wordCount) {
     _currentWordIndx = -1;
     _totalWordCount = wordCount;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
-///
+///The counter that shows the total word count in the current flashcards set
+///and the current word's position.
 class WordCounter extends StatelessWidget {
   final int currentWordPos, totalWordCount;
 

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/presentation/ui_kit/buttons.dart';
 import 'package:wordify/features/flashcards/presentation/ui_kit/word_counter.dart';
 
-///
+///The bottom bar of the flashcards page. It contains the counter at its
+///center and the navigation buttons (previous/next) at the sides.
 class Navigation extends StatelessWidget {
   final void Function() goBack, goForward;
   final int currentWordPos, wordsInTotal;

@@ -26,7 +26,7 @@ class WordifyDatabase {
   ///If the database does not exist, it will be created first.
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();  //Get the path of the place where the sqlite databases are stored.
-    final path = join(databasePath, 'wordify-test.db');
+    final path = join(databasePath, 'wordify.db');
 
     return await openDatabase(
       path,
@@ -50,44 +50,6 @@ class WordifyDatabase {
 
       await db.execute('''
         ALTER TABLE words ADD COLUMN newest_attempt INTEGER DEFAULT 1;
-      ''');
-
-      //ADD NEW CODE HERE
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 3, middle_attempt = 1, newest_attempt = 1 WHERE word = 'Kirche';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 2, middle_attempt = 2, newest_attempt = 1 WHERE word = 'Stadt';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 1, middle_attempt = 2, newest_attempt = 1 WHERE word = 'Essen';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 1, middle_attempt = 1, newest_attempt = 2 WHERE word = 'Trinken';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 1, middle_attempt = 1, newest_attempt = 1 WHERE word = 'Schlafen';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 2, middle_attempt = 1, newest_attempt = 3 WHERE word = 'Laufen';
-      ''');
-
-      await db.execute('''
-        UPDATE words SET oldest_attempt = 2, middle_attempt = 2, newest_attempt = 2 WHERE word = 'Lesen';
-      ''');
-
-      // Insert new words
-      await db.execute('''
-        INSERT INTO words (folder_id, word, translation, sentence, oldest_attempt, middle_attempt, newest_attempt) VALUES
-          ((SELECT id FROM folders WHERE id = 2), 'Spielen', 'To play', 'Ich spiele gern.', 2, 1, 3),
-          ((SELECT id FROM folders WHERE id = 2), 'Mutter', 'Mother', 'Das ist meine Mutter.', 2, 2, 3),
-          ((SELECT id FROM folders WHERE id = 2), 'Vater', 'Father', 'Das ist mein Vater.', 1, 3, 3),
-          ((SELECT id FROM folders WHERE id = 2), 'Hallo', 'Hello', 'Hallo, wie geht es dir?', 3, 3, 3);
       ''');
     }
   }
@@ -129,48 +91,7 @@ class WordifyDatabase {
     //INSERT A BUFFER FOLDER
     await db.execute('''
       INSERT INTO folders (name, parent_id) VALUES
-        ('', NULL),
-        ('German', NULL), 
-        ('Idioms', 2), 
-        ('Science', 2), 
-        ('Computer', 4),
-        ('Japanese', NULL), 
-        ('Idioms', 6), 
-        ('Biology', 4)
-    ''');
-
-    //SAMPLE WORDS
-    await db.execute('''
-    INSERT INTO words (folder_id, word, translation, sentence) VALUES
-      ((SELECT id FROM folders WHERE id = 2), 'Kirche', 'Church', 'Die Kirche ist sehr alt.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Stadt', 'City', 'Die Stadt ist sehr groß.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Essen', 'To eat', 'Wir gehen jetzt essen.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Trinken', 'To drink', 'Ich möchte etwas trinken.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Schlafen', 'To sleep', 'Ich gehe um 10 Uhr schlafen.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Laufen', 'To run', 'Ich laufe jeden Morgen.'),
-      ((SELECT id FROM folders WHERE id = 2), 'Lesen', 'To read', 'Ich lese gerne Bücher.'),
-      ((SELECT id FROM folders WHERE id = 3), 'Da liegt der Hund begraben', 'Thats the crux of the matter', 'Jetzt weiß ich, wo der Hund begraben liegt.'),
-      ((SELECT id FROM folders WHERE id = 3), 'Ich verstehe nur Bahnhof', 'I dont understand a thing', 'Bei dieser Erklärung verstehe ich nur Bahnhof.'),
-      ((SELECT id FROM folders WHERE id = 3), 'Die Katze im Sack kaufen', 'To buy a pig in a poke', 'Du solltest die Katze nicht im Sack kaufen.'),
-      ((SELECT id FROM folders WHERE id = 4), 'Schwerkraft', 'Gravity', 'Die Schwerkraft zieht uns zur Erde.'),
-      ((SELECT id FROM folders WHERE id = 4), 'Evolution', 'Evolution', 'Die Evolution erklärt die Vielfalt des Lebens.'),
-      ((SELECT id FROM folders WHERE id = 4), 'Photosynthese', 'Photosynthesis', 'Pflanzen betreiben Photosynthese zur Energiegewinnung.'),
-      ((SELECT id FROM folders WHERE id = 5), 'Algorithmus', 'Algorithm', 'Ein Algorithmus löst ein Problem Schritt für Schritt.'),
-      ((SELECT id FROM folders WHERE id = 5), 'Datenbank', 'Database', 'Die Daten werden in einer Datenbank gespeichert.'),
-      ((SELECT id FROM folders WHERE id = 5), 'Netzwerk', 'Network', 'Ein Netzwerk verbindet mehrere Computer.'),
-      ((SELECT id FROM folders WHERE id = 6), '愛 (あい)', 'Love', '愛は世界を動かす力です。'),
-      ((SELECT id FROM folders WHERE id = 6), '友達 (ともだち)', 'Friend', '友達と一緒に遊びました。'),
-      ((SELECT id FROM folders WHERE id = 6), '学校 (がっこう)', 'School', '学校へ行く時間です。'),
-      ((SELECT id FROM folders WHERE id = 6), '食べ物 (たべもの)', 'Food', 'おいしい食べ物がたくさんあります。'),
-      ((SELECT id FROM folders WHERE id = 6), '本 (ほん)', 'Book', '面白い本を読んでいます。'),
-      ((SELECT id FROM folders WHERE id = 6), '車 (くるま)', 'Car', '新しい車を買いました。'),
-      ((SELECT id FROM folders WHERE id = 6), '先生 (せんせい)', 'Teacher', '先生はとても親切です。'),
-      ((SELECT id FROM folders WHERE id = 7), '花より団子 (はなよりだんご)', 'Substance over style', '彼は花より団子だ。'),
-      ((SELECT id FROM folders WHERE id = 7), '猿も木から落ちる (さるもきからおちる)', 'Even monkeys fall from trees', '猿も木から落ちることがある。'),
-      ((SELECT id FROM folders WHERE id = 7), '案ずるより産むが易し (あんずるよりうむがやすし)', 'Giving birth to a baby is easier than worrying about it', '案ずるより産むが易しということわざがあります。'),
-      ((SELECT id FROM folders WHERE id = 8), 'Zelle', 'Cell', 'Eine Zelle ist die kleinste Einheit des Lebens.'),
-      ((SELECT id FROM folders WHERE id = 8), 'Genom', 'Genome', 'Das Genom enthält alle genetischen Informationen.'),
-      ((SELECT id FROM folders WHERE id = 8), 'Ökosystem', 'Ecosystem', 'Ein Ökosystem besteht aus vielen verschiedenen Organismen.')
+        ('', NULL)
     ''');
 
     _upgradeDatabase(db, 1, version);

@@ -1,8 +1,9 @@
 import 'package:wordify/core/data/data_sources/init_database.dart';
 import 'package:wordify/core/data/model/folder_model.dart';
 
-///
+///The persistence class for the folder model.
 class FolderPersistence {
+
   ///
   static Future<FolderModel> insert({
     int? parentId,

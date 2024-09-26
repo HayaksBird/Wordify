@@ -6,13 +6,13 @@ import 'package:wordify/features/flashcards/data/word_repository.dart';
 import 'package:wordify/features/flashcards/domain/repositories/word_repository.dart';
 
 
-///Update the word's data
+///Update word's data
 class WordStorage {
   final WordRepository _wordRepo = WordRepositoryImpl();
   final _wordsContent = DictionaryManager().wordsContent;
 
   
-  ///Stores the new attempt to the db, while eliminating the latest one.
+  ///Store the new attempt to the db and update the dictionary.
   Future<WordContentStats> addNewAttempt(
     WordContentStats oldword,
     WordContentStats currentWord,
@@ -30,7 +30,8 @@ class WordStorage {
   }
 
 
-  ///Updates the newest attempt's value (does not add a new attempt)
+  ///Update the newest attempt's value (does not add a new attempt)
+  ///and update the dictionary.
   Future<WordContentStats> updateNewestAttempt(
     WordContentStats oldword,
     WordContentStats currentWord,

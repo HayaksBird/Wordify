@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
+///The front content of the flashcard
 class WordCardFrontText extends StatelessWidget {
   final WordContentStats word;
 

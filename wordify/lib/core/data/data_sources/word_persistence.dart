@@ -2,8 +2,10 @@ import 'package:wordify/core/data/data_sources/init_database.dart';
 import 'package:wordify/core/data/model/folder_model.dart';
 import 'package:wordify/core/data/model/word_model.dart';
 
+///The persistence class for the word model.
 class WordPersistence {
-  ///Insets the word into the database and returns its copy with an id present.
+
+  ///Inserts the word into the database and returns its copy with an id present.
   static Future<WordModel> insert({
     required FolderModel folder,
     required String word,

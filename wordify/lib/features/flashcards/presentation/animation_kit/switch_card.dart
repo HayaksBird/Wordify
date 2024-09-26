@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/domain/entities/word.dart';
 
+///Allows to control the state of the SwitchCard's state through a variable
+///reference
 class SwitchCardController {
   _SwitchCardState? _state;
 
 
+  ///Specify that once a new card is passed, shift the view by
+  ///sliding to the left.
   void slideLeft() => _state?.slideLeft();
 
 
+  ///Specify that once a new card is passed, shift the view by
+  ///sliding to the right.
   void slideRight() => _state?.slideRight();
 }
 
 
 
+///Switch the view between the old flashcard and the new flashcard.
+///
 class SwitchCard extends StatefulWidget {
   final Widget child;
   final SwitchCardController controller;
@@ -35,9 +43,13 @@ class _SwitchCardState extends State<SwitchCard> {
   bool _doSlideRight = true;
 
 
+  ///Specify that once a new card is passed, shift the view by
+  ///sliding to the left.
   void slideLeft() { _doSlideRight = false; }
 
 
+  ///Specify that once a new card is passed, shift the view by
+  ///sliding to the right.
   void slideRight() { _doSlideRight = true; }
 
 

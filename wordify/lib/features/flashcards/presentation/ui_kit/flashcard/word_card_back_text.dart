@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordify/core/domain/entities/word.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
+///The back content of the flashcard
 class WordCardBackText extends StatelessWidget {
   final WordContentStats word;
 
@@ -50,7 +51,7 @@ class WordCardBackText extends StatelessWidget {
       style: const TextStyle(
         color: AppColors.text,
         fontSize: 15,
-        fontWeight: FontWeight.w300
+        fontWeight: FontWeight.w400
       )
     );
   }

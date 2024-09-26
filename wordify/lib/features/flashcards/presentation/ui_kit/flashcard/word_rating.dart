@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordify/core/presentation/ui_kit/colors.dart';
 
-///
+///The rating of a word given by the user that
+///indicates the performance in translating it.
 class WordRating extends StatelessWidget {
   final int maxRating, chosenRating;
   final ValueNotifier<int> valueNotifier;
