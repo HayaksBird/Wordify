@@ -1,14 +1,18 @@
 ///
 class WordValidation {
   String? validateWord(String word) {
-    if (word == '') {
+    String wordTrimmed = word.trim();
+
+    if (wordTrimmed == '') {
       return 'Provide a word';
     } else { return null; }
   }
   
   
   String? validateTranslation(String translation) {
-    if (translation == '') {
+    String translationTrimmed = translation.trim();
+
+    if (translationTrimmed == '') {
       return 'Provide a translation';
     } else { return null; }
   }

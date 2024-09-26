@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/animation_kit/switch_word_list_template.dart';
-import 'package:wordify/core/ui_kit/buttons.dart';
-import 'package:wordify/core/ui_kit/word_view/background_widget.dart';
-import 'package:wordify/core/ui_kit/word_view/word_list_template_widget.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/presentation/animation_kit/switch_word_list_template.dart';
+import 'package:wordify/core/domain/mapper/word_mapper.dart';
+import 'package:wordify/core/presentation/ui_kit/buttons.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/background_widget.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/word_view/word_list_template_widget.dart';
+import 'package:wordify/features/flashcards/presentation/pages/show_flashcard_page.dart';
 import 'package:wordify/features/word_tree/domain/entities/folder.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_word_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 import 'package:wordify/features/word_tree/presentation/widgets/word_list_widget.dart';
 
 class WordViewWidget extends StatefulWidget {
@@ -55,7 +58,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
         ),
 
         SwitchWordListTemplate(
-          oldActiveFolder: activeFolder,
+          identifier: activeFolder,
           didGoBelow: _dictionaryBloc.wordView.didGoBelow,
           wordListTemplateWidget: WordListTemplateWidget( //The template witht the folder content
             key: ValueKey(activeFolder),
@@ -67,6 +70,7 @@ class _WordViewWidgetState extends State<WordViewWidget> {
             ),
             closePressed: () { _dictionaryBloc.wordView.closeFolder(activeFolder); },
             addWordPressed: () { _openWordTemplate(activeFolder.folder); },
+            callFlashcards: () { _callFlashcards(activeFolder); },
           ),
         ),
 
@@ -86,11 +90,24 @@ class _WordViewWidgetState extends State<WordViewWidget> {
 
 
   ///
-  void _openWordTemplate(Folder folder) {
+  void _openWordTemplate(FolderContent folder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CreateWordTemplate(storageFolder: folder)
       ),
     );
+  }
+
+
+  ///Call the flashcards feature. After it is done executing, update the view state.
+  void _callFlashcards(FolderWords activeFolder) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ShowFlashcardPage(
+          words: activeFolder.words.map((word) => WordMapper.extendWord(word)).toList(),
+          path: _dictionaryBloc.folderView.getFullPath(activeFolder.folder),
+        )
+      ),
+    ).then((_) { _dictionaryBloc.wordView.updateView(); });
   }
 }

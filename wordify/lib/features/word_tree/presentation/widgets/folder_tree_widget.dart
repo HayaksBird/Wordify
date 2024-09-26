@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:wordify/core/ui_kit/folder_view/folder_actions_overlay.dart';
-import 'package:wordify/core/ui_kit/folder_view/folder_row_widget.dart';
-import 'package:wordify/features/word_tree/domain/entities/data_layer.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folder_actions_overlay.dart';
+import 'package:wordify/features/word_tree/presentation/ui_kit/folder_view/folder_row_widget.dart';
 import 'package:wordify/features/word_tree/presentation/pages/create_folder_template_screen.dart';
 import 'package:wordify/features/word_tree/presentation/pages/update_folder_template_screen.dart';
-import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc.dart';
+import 'package:wordify/features/word_tree/presentation/state_management/dictionary_bloc/dictionary_bloc.dart';
 
 ///Presents the folder tree in the folder view.
 ///Responsible for creating the and styling the tree.
 ///In addition, handles the add/update/delete operations within the tree.
 class FolderTreetWidget extends StatelessWidget {
-  final List<Folder> rootFolders;
+  final List<FolderContent> rootFolders;
   final _dictionaryBloc = DictionaryBloc();
+  final ValueNotifier<bool> folderViewExpandNotifier;
 
 
   FolderTreetWidget({
     super.key,
-    required this.rootFolders
+    required this.rootFolders,
+    required this.folderViewExpandNotifier
   });
 
 
@@ -27,7 +29,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildRootFolderList(BuildContext context, List<Folder> rootFolders) {
+  Widget _buildRootFolderList(BuildContext context, List<FolderContent> rootFolders) {
     return ListView.builder(
       itemCount: rootFolders.length + 1,
       itemBuilder: (context, index) {
@@ -47,7 +49,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildInnerFolderList(BuildContext context, List<Folder> folders, int layer) {
+  Widget _buildInnerFolderList(BuildContext context, List<FolderContent> folders, int layer) {
     return Column(
       children: folders.map((folder) => _buildFolderTile(context, folder, layer)).toList(),
     );
@@ -55,7 +57,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  Widget _buildFolderTile(BuildContext context, Folder folder, int layer) {
+  Widget _buildFolderTile(BuildContext context, FolderContent folder, int layer) {
     return Column(
       children: [
         GestureDetector(
@@ -64,8 +66,11 @@ class FolderTreetWidget extends StatelessWidget {
             _showOverlay(context, details, folder); 
           },
           child: FolderRowWidget(
-            isExpanded: _dictionaryBloc.folderView.isToExpand(folder),
-            toggleFolder: () { _dictionaryBloc.folderView.toggleFolder(folder); },
+            isExpanded: _dictionaryBloc.folderView.isToExpand(folder) && _dictionaryBloc.folderView.canShowSubfolders(folderViewExpandNotifier.value, layer),
+            toggleFolder: () {
+              _dictionaryBloc.folderView.toggleFolder(folderViewExpandNotifier.value, layer, folder);
+              if (_dictionaryBloc.folderView.triggerExpand(folderViewExpandNotifier.value, layer, folder)) { folderViewExpandNotifier.value = true; }
+            },
             layer: layer,
             isFirstFolder: folder == rootFolders[0],
             isSelected: folder == _dictionaryBloc.folderView.getSelectedFolder,
@@ -79,7 +84,7 @@ class FolderTreetWidget extends StatelessWidget {
           ),
         ),
 
-        if (_dictionaryBloc.folderView.isToExpand(folder))
+        if (_dictionaryBloc.folderView.isToExpand(folder) && _dictionaryBloc.folderView.canShowSubfolders(folderViewExpandNotifier.value, layer))
           _buildInnerFolderList(context, _dictionaryBloc.folderView.getSubfolders(folder), layer + 1)
       ]
     );
@@ -87,11 +92,11 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _showOverlay(BuildContext context, TapDownDetails details, Folder folder) {
+  void _showOverlay(BuildContext context, TapDownDetails details, FolderContent folder) {
     FolderActionsOverlay.showOverlay(
       create: () { _createFolder(context, folder); },
       update: () { _updateFolder(context, folder); },
-      delete: () { _dictionaryBloc.content.deleteFolder(folder); },
+      delete: () { _dictionaryBloc.folderContent.deleteFolder(folder); },
       onOverlayClosed: _overlayClosed,
       position: details.globalPosition,
       context: context
@@ -100,7 +105,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _updateFolder(BuildContext context,Folder folder) {
+  void _updateFolder(BuildContext context, FolderContent folder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => UpdateFolderTemplate(
@@ -112,7 +117,7 @@ class FolderTreetWidget extends StatelessWidget {
 
 
   ///
-  void _createFolder(BuildContext context, Folder parentFolder) {
+  void _createFolder(BuildContext context, FolderContent parentFolder) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CreateFolderTemplate(

@@ -1,17 +1,18 @@
-import 'package:wordify/features/word_tree/domain/entities/folder.dart';
+import 'package:wordify/core/domain/entities/folder.dart';
 
 ///
 class FolderValidation {
   static const List<String> exceptionCharacters = ['/', '\\'];
 
   ///
-  String? validateName(String newName, List<Folder> parentsChildren, [String? oldName]) {
+  String? validateName(String newName, List<FolderContent> parentsChildren, [String? oldName]) {
+    String newNameTrimmed = newName.trim();
 
-    if (newName.isEmpty) {
+    if (newNameTrimmed.isEmpty) {
       return 'Provide a name';
-    } else if (parentsChildren.any((sibling) => sibling.name == newName) && (oldName == null || oldName != newName)) {
+    } else if (parentsChildren.any((sibling) => sibling.name == newNameTrimmed) && (oldName == null || oldName != newNameTrimmed)) {
       return 'Folder path must be unique';
-    } else if (exceptionCharacters.any((char) => newName.contains(char))) {
+    } else if (exceptionCharacters.any((char) => newNameTrimmed.contains(char))) {
       return 'Cannot use the following characters: ${exceptionCharacters.join(', ')}';
     }
     
@@ -20,7 +21,7 @@ class FolderValidation {
 
 
   ///
-  String? validateChooseFolder(Folder? folder) {
+  String? validateChooseFolder(FolderContent? folder) {
     if (folder == null) {
       return "Choose a folder";
     } else { return null; }
